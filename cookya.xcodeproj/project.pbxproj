@@ -14,12 +14,15 @@
 		402655652F59ABA300D3C60A /* SavedRecipesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402655642F59AB9900D3C60A /* SavedRecipesView.swift */; };
 		402655672F59ABCC00D3C60A /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402655662F59ABC600D3C60A /* ProfileView.swift */; };
 		402655692F59ABDB00D3C60A /* IngredientInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402655682F59ABD600D3C60A /* IngredientInputView.swift */; };
-		40A100092F5A020000D3C60A /* RecipeResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100082F5A020000D3C60A /* RecipeResultView.swift */; };
-		40A1000B2F5A030000D3C60A /* RecipeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1000A2F5A030000D3C60A /* RecipeStore.swift */; };
 		40A100012F5A010000D3C60A /* Ingredient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100002F5A010000D3C60A /* Ingredient.swift */; };
 		40A100032F5A010000D3C60A /* Difficulty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100022F5A010000D3C60A /* Difficulty.swift */; };
 		40A100052F5A010000D3C60A /* Recipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100042F5A010000D3C60A /* Recipe.swift */; };
 		40A100072F5A010000D3C60A /* RecipeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100062F5A010000D3C60A /* RecipeViewModel.swift */; };
+		40A100092F5A020000D3C60A /* RecipeResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100082F5A020000D3C60A /* RecipeResultView.swift */; };
+		40A1000B2F5A030000D3C60A /* RecipeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1000A2F5A030000D3C60A /* RecipeStore.swift */; };
+		40A1000D2F5A060000D3C60A /* RecipeGeneratingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1000C2F5A060000D3C60A /* RecipeGeneratingService.swift */; };
+		40A1000F2F5A060000D3C60A /* OpenAIRecipeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1000E2F5A060000D3C60A /* OpenAIRecipeService.swift */; };
+		40A100112F5A060000D3C60A /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100102F5A060000D3C60A /* AppConfig.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,12 +53,15 @@
 		402655642F59AB9900D3C60A /* SavedRecipesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedRecipesView.swift; sourceTree = "<group>"; };
 		402655662F59ABC600D3C60A /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		402655682F59ABD600D3C60A /* IngredientInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientInputView.swift; sourceTree = "<group>"; };
-		40A100082F5A020000D3C60A /* RecipeResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeResultView.swift; sourceTree = "<group>"; };
-		40A1000A2F5A030000D3C60A /* RecipeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeStore.swift; sourceTree = "<group>"; };
 		40A100002F5A010000D3C60A /* Ingredient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ingredient.swift; sourceTree = "<group>"; };
 		40A100022F5A010000D3C60A /* Difficulty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Difficulty.swift; sourceTree = "<group>"; };
 		40A100042F5A010000D3C60A /* Recipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recipe.swift; sourceTree = "<group>"; };
 		40A100062F5A010000D3C60A /* RecipeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeViewModel.swift; sourceTree = "<group>"; };
+		40A100082F5A020000D3C60A /* RecipeResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeResultView.swift; sourceTree = "<group>"; };
+		40A1000A2F5A030000D3C60A /* RecipeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeStore.swift; sourceTree = "<group>"; };
+		40A1000C2F5A060000D3C60A /* RecipeGeneratingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeGeneratingService.swift; sourceTree = "<group>"; };
+		40A1000E2F5A060000D3C60A /* OpenAIRecipeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIRecipeService.swift; sourceTree = "<group>"; };
+		40A100102F5A060000D3C60A /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -174,6 +180,8 @@
 		4026555E2F59A90000D3C60A /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				40A1000E2F5A060000D3C60A /* OpenAIRecipeService.swift */,
+				40A1000C2F5A060000D3C60A /* RecipeGeneratingService.swift */,
 				40A1000A2F5A030000D3C60A /* RecipeStore.swift */,
 			);
 			path = Services;
@@ -189,6 +197,7 @@
 		402655602F59A91500D3C60A /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				40A100102F5A060000D3C60A /* AppConfig.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -343,11 +352,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				40A100032F5A010000D3C60A /* Difficulty.swift in Sources */,
+				40A100112F5A060000D3C60A /* AppConfig.swift in Sources */,
 				40A100012F5A010000D3C60A /* Ingredient.swift in Sources */,
 				402655692F59ABDB00D3C60A /* IngredientInputView.swift in Sources */,
 				402655572F59A83600D3C60A /* HomeView.swift in Sources */,
+				40A1000F2F5A060000D3C60A /* OpenAIRecipeService.swift in Sources */,
 				402655582F59A83600D3C60A /* cookyaApp.swift in Sources */,
 				402655672F59ABCC00D3C60A /* ProfileView.swift in Sources */,
+				40A1000D2F5A060000D3C60A /* RecipeGeneratingService.swift in Sources */,
 				40A100052F5A010000D3C60A /* Recipe.swift in Sources */,
 				40A100072F5A010000D3C60A /* RecipeViewModel.swift in Sources */,
 				40A100092F5A020000D3C60A /* RecipeResultView.swift in Sources */,
@@ -512,6 +524,9 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_OPENAI_API_KEY = "$(OPENAI_API_KEY)";
+				INFOPLIST_KEY_OPENAI_BASE_URL = "$(OPENAI_BASE_URL)";
+				INFOPLIST_KEY_OPENAI_MODEL = "$(OPENAI_MODEL)";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -527,6 +542,9 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
+				OPENAI_API_KEY = "";
+				OPENAI_BASE_URL = "https://api.openai.com";
+				OPENAI_MODEL = "gpt-4.1-mini";
 				PRODUCT_BUNDLE_IDENTIFIER = com.adityakrishna.cookya;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -554,6 +572,9 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_OPENAI_API_KEY = "$(OPENAI_API_KEY)";
+				INFOPLIST_KEY_OPENAI_BASE_URL = "$(OPENAI_BASE_URL)";
+				INFOPLIST_KEY_OPENAI_MODEL = "$(OPENAI_MODEL)";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -569,6 +590,9 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
+				OPENAI_API_KEY = "";
+				OPENAI_BASE_URL = "https://api.openai.com";
+				OPENAI_MODEL = "gpt-4.1-mini";
 				PRODUCT_BUNDLE_IDENTIFIER = com.adityakrishna.cookya;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;

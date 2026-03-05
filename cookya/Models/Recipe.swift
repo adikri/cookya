@@ -23,4 +23,23 @@ struct Recipe: Identifiable, Codable, Hashable {
         self.calories = calories
         self.difficulty = difficulty
     }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case title
+        case ingredients
+        case instructions
+        case calories
+        case difficulty
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        title = try container.decode(String.self, forKey: .title)
+        ingredients = try container.decode([Ingredient].self, forKey: .ingredients)
+        instructions = try container.decode([String].self, forKey: .instructions)
+        calories = try container.decode(Int.self, forKey: .calories)
+        difficulty = try container.decode(Difficulty.self, forKey: .difficulty)
+    }
 }

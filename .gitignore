@@ -12,3 +12,9 @@ xcuserdata/
 # Build artifacts
 build/
 DerivedData/
+
+# Local secrets
+cookya/Config/Secrets.xcconfig
+
+# Local scheme with env secrets
+cookya.xcodeproj/xcshareddata/xcschemes/cookya.xcscheme
