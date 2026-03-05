@@ -8,20 +8,20 @@
 import SwiftUI
 
 struct MainTabView: View {
-    
+
     var body: some View {
         TabView {
-            
+
             HomeView()
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
-            
+
             SavedRecipesView()
                 .tabItem {
                     Label("Saved", systemImage: "bookmark")
                 }
-            
+
             ProfileView()
                 .tabItem {
                     Label("Profile", systemImage: "person")
@@ -32,4 +32,5 @@ struct MainTabView: View {
 
 #Preview {
     MainTabView()
+        .environmentObject(RecipeStore())
 }

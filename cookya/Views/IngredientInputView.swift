@@ -8,39 +8,55 @@
 import SwiftUI
 
 struct IngredientInputView: View {
-    
-    @State private var ingredient = ""
-    @State private var ingredients: [String] = []
-    
+
+    @StateObject private var viewModel = RecipeViewModel()
+
     var body: some View {
-        NavigationStack {
-            
-            VStack(spacing: 20) {
-                
-                HStack {
-                    TextField("Enter ingredient", text: $ingredient)
-                        .textFieldStyle(.roundedBorder)
-                    
-                    Button("Add") {
-                        if !ingredient.isEmpty {
-                            ingredients.append(ingredient)
-                            ingredient = ""
-                        }
-                    }
+        VStack(spacing: 20) {
+            HStack {
+                TextField("Enter ingredient", text: $viewModel.ingredientInput)
+                    .textFieldStyle(.roundedBorder)
+
+                Button("Add") {
+                    viewModel.addIngredient()
                 }
-                
-                List(ingredients, id: \.self) { item in
-                    Text(item)
-                }
-                
-                Button("Generate Recipe") {
-                    
-                }
-                .buttonStyle(.borderedProminent)
-                
             }
-            .padding()
-            .navigationTitle("Ingredients")
+
+            Picker("Difficulty", selection: $viewModel.selectedDifficulty) {
+                ForEach(Difficulty.allCases, id: \.self) { difficulty in
+                    Text(difficulty.rawValue.capitalized).tag(difficulty)
+                }
+            }
+            .pickerStyle(.segmented)
+
+            if let error = viewModel.generationError {
+                Text(error)
+                    .font(.footnote)
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            List {
+                ForEach(viewModel.ingredients) { item in
+                    Text(item.name)
+                }
+                .onDelete(perform: viewModel.removeIngredients)
+            }
+
+            Button("Generate Recipe") {
+                viewModel.generateRecipe()
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(viewModel.isLoading || viewModel.ingredients.isEmpty)
+
+            if viewModel.isLoading {
+                ProgressView("Generating...")
+            }
+        }
+        .padding()
+        .navigationTitle("Ingredients")
+        .navigationDestination(item: $viewModel.generatedRecipe) { recipe in
+            RecipeResultView(recipe: recipe)
         }
     }
 }

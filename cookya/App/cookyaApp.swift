@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct cookyaApp: App {
+    @StateObject private var recipeStore = RecipeStore()
+
     var body: some Scene {
         WindowGroup {
             MainTabView()
+                .environmentObject(recipeStore)
         }
     }
 }
