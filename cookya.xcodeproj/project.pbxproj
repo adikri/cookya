@@ -6,6 +6,16 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		402655572F59A83600D3C60A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402655542F59A83600D3C60A /* HomeView.swift */; };
+		402655582F59A83600D3C60A /* cookyaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402655552F59A83600D3C60A /* cookyaApp.swift */; };
+		402655592F59A83600D3C60A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 402655532F59A83600D3C60A /* Assets.xcassets */; };
+		402655632F59AB7E00D3C60A /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402655622F59AB7E00D3C60A /* MainTabView.swift */; };
+		402655652F59ABA300D3C60A /* SavedRecipesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402655642F59AB9900D3C60A /* SavedRecipesView.swift */; };
+		402655672F59ABCC00D3C60A /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402655662F59ABC600D3C60A /* ProfileView.swift */; };
+		402655692F59ABDB00D3C60A /* IngredientInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402655682F59ABD600D3C60A /* IngredientInputView.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		402655362F599F4D00D3C60A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,14 +37,16 @@
 		402655282F599F4B00D3C60A /* cookya.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cookya.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		402655352F599F4D00D3C60A /* cookyaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cookyaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4026553F2F599F4D00D3C60A /* cookyaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = cookyaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		402655532F59A83600D3C60A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		402655542F59A83600D3C60A /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		402655552F59A83600D3C60A /* cookyaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cookyaApp.swift; sourceTree = "<group>"; };
+		402655622F59AB7E00D3C60A /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		402655642F59AB9900D3C60A /* SavedRecipesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedRecipesView.swift; sourceTree = "<group>"; };
+		402655662F59ABC600D3C60A /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		402655682F59ABD600D3C60A /* IngredientInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientInputView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		4026552A2F599F4B00D3C60A /* cookya */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = cookya;
-			sourceTree = "<group>";
-		};
 		402655382F599F4D00D3C60A /* cookyaTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = cookyaTests;
@@ -75,7 +87,7 @@
 		4026551F2F599F4B00D3C60A = {
 			isa = PBXGroup;
 			children = (
-				4026552A2F599F4B00D3C60A /* cookya */,
+				402655562F59A83600D3C60A /* cookya */,
 				402655382F599F4D00D3C60A /* cookyaTests */,
 				402655422F599F4D00D3C60A /* cookyaUITests */,
 				402655292F599F4B00D3C60A /* Products */,
@@ -92,6 +104,84 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		402655562F59A83600D3C60A /* cookya */ = {
+			isa = PBXGroup;
+			children = (
+				402655612F59A94E00D3C60A /* Resources */,
+				402655602F59A91500D3C60A /* Utilities */,
+				4026555F2F59A90900D3C60A /* Networking */,
+				4026555E2F59A90000D3C60A /* Services */,
+				4026555D2F59A8F400D3C60A /* Models */,
+				4026555C2F59A8E900D3C60A /* ViewModels */,
+				4026555B2F59A8D100D3C60A /* Views */,
+				4026555A2F59A88B00D3C60A /* App */,
+				402655532F59A83600D3C60A /* Assets.xcassets */,
+			);
+			path = cookya;
+			sourceTree = "<group>";
+		};
+		4026555A2F59A88B00D3C60A /* App */ = {
+			isa = PBXGroup;
+			children = (
+				402655552F59A83600D3C60A /* cookyaApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		4026555B2F59A8D100D3C60A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				402655682F59ABD600D3C60A /* IngredientInputView.swift */,
+				402655662F59ABC600D3C60A /* ProfileView.swift */,
+				402655642F59AB9900D3C60A /* SavedRecipesView.swift */,
+				402655542F59A83600D3C60A /* HomeView.swift */,
+				402655622F59AB7E00D3C60A /* MainTabView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4026555C2F59A8E900D3C60A /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		4026555D2F59A8F400D3C60A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4026555E2F59A90000D3C60A /* Services */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		4026555F2F59A90900D3C60A /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		402655602F59A91500D3C60A /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		402655612F59A94E00D3C60A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -106,9 +196,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				4026552A2F599F4B00D3C60A /* cookya */,
 			);
 			name = cookya;
 			packageProductDependencies = (
@@ -212,6 +299,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				402655592F59A83600D3C60A /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +324,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				402655692F59ABDB00D3C60A /* IngredientInputView.swift in Sources */,
+				402655572F59A83600D3C60A /* HomeView.swift in Sources */,
+				402655582F59A83600D3C60A /* cookyaApp.swift in Sources */,
+				402655672F59ABCC00D3C60A /* ProfileView.swift in Sources */,
+				402655652F59ABA300D3C60A /* SavedRecipesView.swift in Sources */,
+				402655632F59AB7E00D3C60A /* MainTabView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
