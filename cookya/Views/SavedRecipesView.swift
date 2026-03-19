@@ -25,21 +25,14 @@ struct SavedRecipesView: View {
                 } else {
                     List {
                         Section {
-                            ForEach(filteredRecipes) { saved in
+                            ForEach(sortedRecipes) { saved in
                                 NavigationLink {
                                     SavedRecipeDetailView(saved: saved)
                                 } label: {
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text(saved.recipe.title)
-                                            .font(.headline)
-                                        Text("\(saved.recipe.difficulty.rawValue.capitalized) • \(saved.recipe.calories) kcal")
-                                            .font(.subheadline)
-                                            .foregroundStyle(.secondary)
-                                        Text("Profile: \(saved.profileNameSnapshot)")
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
-                                    }
-                                    .padding(.vertical, 4)
+                                    SavedRecipeRow(
+                                        saved: saved,
+                                        readiness: readiness(for: saved)
+                                    )
                                 }
                             }
                             .onDelete(perform: removeFilteredRecipes)
@@ -60,14 +53,150 @@ struct SavedRecipesView: View {
         recipeStore.recipes(for: profileStore.activeProfile)
     }
 
+    private var sortedRecipes: [SavedRecipe] {
+        filteredRecipes.sorted { lhs, rhs in
+            let leftReadiness = readiness(for: lhs)
+            let rightReadiness = readiness(for: rhs)
+
+            if leftReadiness.priority != rightReadiness.priority {
+                return leftReadiness.priority < rightReadiness.priority
+            }
+
+            if leftReadiness.missingCount != rightReadiness.missingCount {
+                return leftReadiness.missingCount < rightReadiness.missingCount
+            }
+
+            return lhs.savedAt > rhs.savedAt
+        }
+    }
+
+    private func readiness(for saved: SavedRecipe) -> SavedRecipeReadiness {
+        let checks = inventoryStore.availabilityChecks(for: saved.recipe.ingredients)
+        guard !checks.isEmpty else {
+            return .needsReview("Needs pantry review")
+        }
+
+        let issues = checks.compactMap(\.issue)
+        if issues.isEmpty {
+            return .readyNow("Everything needed is in pantry")
+        }
+
+        let missingChecks = checks.filter(\.isMissing)
+        if !missingChecks.isEmpty {
+            let missingCount = missingChecks.count
+            if missingCount == 1, let first = missingChecks.first {
+                return .missingItems(
+                    count: missingCount,
+                    summary: "Missing 1 item: \(first.itemName)"
+                )
+            }
+
+            return .missingItems(
+                count: missingCount,
+                summary: "Missing \(missingCount) items"
+            )
+        }
+
+        return .needsReview("Needs pantry review")
+    }
+
     private func removeFilteredRecipes(at offsets: IndexSet) {
         let allRecipes = recipeStore.savedRecipes
-        let filtered = filteredRecipes
+        let filtered = sortedRecipes
         let mappedOffsets = IndexSet(offsets.compactMap { filteredIndex in
             let id = filtered[filteredIndex].id
             return allRecipes.firstIndex { $0.id == id }
         })
         recipeStore.removeRecipes(at: mappedOffsets)
+    }
+}
+
+private struct SavedRecipeRow: View {
+    let saved: SavedRecipe
+    let readiness: SavedRecipeReadiness
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(alignment: .top, spacing: 8) {
+                Text(saved.recipe.title)
+                    .font(.headline)
+
+                Spacer(minLength: 12)
+
+                Text(readiness.label)
+                    .font(.caption2.weight(.semibold))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(readiness.badgeColor.opacity(0.12), in: Capsule())
+                    .foregroundStyle(readiness.badgeColor)
+            }
+
+            Text(readiness.summary)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            Text("\(saved.recipe.difficulty.rawValue.capitalized) • \(saved.recipe.calories) kcal • \(saved.profileNameSnapshot)")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+private enum SavedRecipeReadiness {
+    case readyNow(String)
+    case missingItems(count: Int, summary: String)
+    case needsReview(String)
+
+    var priority: Int {
+        switch self {
+        case .readyNow:
+            return 0
+        case let .missingItems(count, _):
+            return 1 + min(count, 8)
+        case .needsReview:
+            return 20
+        }
+    }
+
+    var missingCount: Int {
+        switch self {
+        case .readyNow, .needsReview:
+            return 0
+        case let .missingItems(count, _):
+            return count
+        }
+    }
+
+    var label: String {
+        switch self {
+        case .readyNow:
+            return "Ready Now"
+        case let .missingItems(count, _):
+            return count == 1 ? "Missing 1" : "Missing \(count)"
+        case .needsReview:
+            return "Review"
+        }
+    }
+
+    var summary: String {
+        switch self {
+        case let .readyNow(summary), let .needsReview(summary):
+            return summary
+        case let .missingItems(_, summary):
+            return summary
+        }
+    }
+
+    var badgeColor: Color {
+        switch self {
+        case .readyNow:
+            return .green
+        case .missingItems:
+            return .orange
+        case .needsReview:
+            return .red
+        }
     }
 }
 
