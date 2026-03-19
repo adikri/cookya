@@ -4,10 +4,12 @@ struct GroceryListView: View {
     @EnvironmentObject private var inventoryStore: InventoryStore
     @EnvironmentObject private var recipeStore: RecipeStore
     @EnvironmentObject private var profileStore: ProfileStore
+    @EnvironmentObject private var cookedMealStore: CookedMealStore
 
     @State private var editorItem: GroceryItem?
     @State private var isAddingItem = false
     @State private var purchaseItem: GroceryItem?
+    @State private var purchaseFeedbackMessage: String?
 
     var body: some View {
         List {
@@ -110,14 +112,38 @@ struct GroceryListView: View {
         .sheet(item: $purchaseItem) { item in
             PurchaseExpirySheet(item: item) { quantityText, category, expiryDate in
                 Task {
+                    let unavailableSavedRecipeIDsBefore = Set(
+                        recipeStore.recipes(for: profileStore.activeProfile)
+                            .filter { !inventoryStore.availabilityIssues(for: $0.recipe.ingredients).isEmpty }
+                            .map(\.id)
+                    )
+                    let unavailableCookAgainTitlesBefore = Set(
+                        cookedMealStore.records(for: profileStore.activeProfile)
+                            .filter { !inventoryStore.availabilityIssues(for: $0.consumptions).isEmpty }
+                            .map(\.recipeTitle)
+                    )
+
                     await inventoryStore.markPurchased(
                         item,
                         quantityText: quantityText,
                         category: category,
                         expiryDate: expiryDate
                     )
+
+                    purchaseFeedbackMessage = newlyReadyFeedbackMessage(
+                        unavailableSavedRecipeIDsBefore: unavailableSavedRecipeIDsBefore,
+                        unavailableCookAgainTitlesBefore: unavailableCookAgainTitlesBefore
+                    )
                 }
             }
+        }
+        .alert("Pantry Updated", isPresented: Binding(
+            get: { purchaseFeedbackMessage != nil },
+            set: { if !$0 { purchaseFeedbackMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(purchaseFeedbackMessage ?? "")
         }
     }
 }
@@ -128,6 +154,7 @@ struct GroceryListView: View {
             .environmentObject(InventoryStore())
             .environmentObject(RecipeStore())
             .environmentObject(ProfileStore())
+            .environmentObject(CookedMealStore())
     }
 }
 
@@ -185,5 +212,28 @@ private extension GroceryListView {
                 ]
             )
         }
+    }
+
+    func newlyReadyFeedbackMessage(
+        unavailableSavedRecipeIDsBefore: Set<UUID>,
+        unavailableCookAgainTitlesBefore: Set<String>
+    ) -> String? {
+        if let newlyReadySaved = recipeStore.recipes(for: profileStore.activeProfile)
+            .first(where: { saved in
+                unavailableSavedRecipeIDsBefore.contains(saved.id)
+                && inventoryStore.availabilityIssues(for: saved.recipe.ingredients).isEmpty
+            }) {
+            return "\(newlyReadySaved.recipe.title) is now ready to cook."
+        }
+
+        if let newlyReadyCookAgain = cookedMealStore.records(for: profileStore.activeProfile)
+            .first(where: { record in
+                unavailableCookAgainTitlesBefore.contains(record.recipeTitle)
+                && inventoryStore.availabilityIssues(for: record.consumptions).isEmpty
+            }) {
+            return "\(newlyReadyCookAgain.recipeTitle) is now ready to cook again."
+        }
+
+        return "Added to Pantry."
     }
 }
