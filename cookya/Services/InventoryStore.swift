@@ -246,11 +246,26 @@ final class InventoryStore: ObservableObject {
     }
 
     func markPurchased(_ item: GroceryItem, expiryDate: Date?) async {
+        await markPurchased(
+            item,
+            quantityText: item.quantityText,
+            category: item.category,
+            expiryDate: expiryDate
+        )
+    }
+
+    func markPurchased(
+        _ item: GroceryItem,
+        quantityText: String,
+        category: InventoryCategory,
+        expiryDate: Date?
+    ) async {
         AppLogger.log(
             "Grocery item marked purchased",
             metadata: [
                 "item": item.name,
-                "quantity": item.quantityText,
+                "quantity": quantityText,
+                "category": category.rawValue,
                 "expirySet": expiryDate == nil ? "false" : "true"
             ]
         )
@@ -259,7 +274,18 @@ final class InventoryStore: ObservableObject {
         })
         groceryItems.removeAll { $0.id == item.id }
 
-        let localPantryItem = mergedPantryItemForPurchase(item, expiryDate: expiryDate)
+        let purchaseCandidate = GroceryItem(
+            id: item.id,
+            name: item.name,
+            quantityText: quantityText,
+            category: category,
+            note: item.note,
+            source: item.source,
+            reasonRecipes: item.reasonRecipes,
+            createdAt: item.createdAt
+        )
+
+        let localPantryItem = mergedPantryItemForPurchase(purchaseCandidate, expiryDate: expiryDate)
         replacePantryItemLocally(localPantryItem)
         persistCache()
 
@@ -269,7 +295,7 @@ final class InventoryStore: ObservableObject {
                 let mergedPantryItem = mergePantryItems(existing: existingPantryItem, incoming: localPantryItem, preferredExpiryDate: expiryDate)
                 syncedPantryItem = try await inventoryService.upsertPantryItem(mergedPantryItem)
             } else {
-                var purchasedPantryItem = try await inventoryService.markPurchased(groceryItem: item)
+                var purchasedPantryItem = try await inventoryService.markPurchased(groceryItem: purchaseCandidate)
                 purchasedPantryItem.expiryDate = expiryDate
                 syncedPantryItem = purchasedPantryItem
             }
@@ -345,6 +371,18 @@ final class InventoryStore: ObservableObject {
         )
 
         guard let existing = pantryItems.first(where: { Self.normalizeItemName($0.name) == Self.normalizeItemName(groceryItem.name) }) else {
+            return incoming
+        }
+
+        let purchasedIsFresh = expiryDate.map { Calendar.current.startOfDay(for: $0) >= Calendar.current.startOfDay(for: .now) } ?? true
+        if existing.isExpired && purchasedIsFresh {
+            AppLogger.log(
+                "Purchased pantry item kept separate from expired batch",
+                metadata: [
+                    "item": groceryItem.name,
+                    "expiredBatchId": existing.id.uuidString
+                ]
+            )
             return incoming
         }
 

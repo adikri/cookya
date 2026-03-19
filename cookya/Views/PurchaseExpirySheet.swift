@@ -26,23 +26,45 @@ struct PurchaseExpirySheet: View {
     @Environment(\.dismiss) private var dismiss
 
     let item: GroceryItem
-    let onConfirm: (Date?) -> Void
+    let onConfirm: (String, InventoryCategory, Date?) -> Void
 
     @State private var selectedOption: PurchaseExpiryOption = .today
     @State private var customDate: Date = .now
+    @State private var quantityText: String
+    @State private var category: InventoryCategory
+
+    init(item: GroceryItem, onConfirm: @escaping (String, InventoryCategory, Date?) -> Void) {
+        self.item = item
+        self.onConfirm = onConfirm
+        _quantityText = State(initialValue: item.quantityText)
+        _category = State(initialValue: item.category)
+    }
 
     var body: some View {
         NavigationStack {
             Form {
-                Section("Add to Pantry") {
+                Section {
                     Text(item.name)
                         .font(.headline)
-                    Text(item.quantityText.isEmpty ? item.category.displayName : "\(item.quantityText) • \(item.category.displayName)")
+                    Text("Confirm what should go into Pantry.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
+                } header: {
+                    Text("Add to Pantry")
                 }
 
-                Section("Expiry") {
+                Section {
+                    QuantityInputView(title: "Quantity", quantityText: $quantityText)
+                    Picker("Category", selection: $category) {
+                        ForEach(InventoryCategory.allCases, id: \.self) { category in
+                            Text(category.displayName).tag(category)
+                        }
+                    }
+                } header: {
+                    Text("Pantry Details")
+                }
+
+                Section {
                     ForEach(PurchaseExpiryOption.allCases) { option in
                         Button {
                             selectedOption = option
@@ -70,6 +92,8 @@ struct PurchaseExpirySheet: View {
                     if selectedOption == .custom {
                         DatePicker("Expiry Date", selection: $customDate, displayedComponents: .date)
                     }
+                } header: {
+                    Text("Expiry")
                 }
             }
             .navigationTitle("Purchased")
@@ -91,11 +115,17 @@ struct PurchaseExpirySheet: View {
                             screen: "PurchaseExpirySheet",
                             metadata: [
                                 "item": item.name,
+                                "quantity": quantityText.trimmingCharacters(in: .whitespacesAndNewlines),
+                                "category": category.rawValue,
                                 "option": selectedOption.rawValue,
                                 "expirySet": expiryDate == nil ? "false" : "true"
                             ]
                         )
-                        onConfirm(expiryDate)
+                        onConfirm(
+                            quantityText.trimmingCharacters(in: .whitespacesAndNewlines),
+                            category,
+                            expiryDate
+                        )
                         dismiss()
                     }
                 }
@@ -229,6 +259,6 @@ struct PantryExpirySheet: View {
 #Preview {
     PurchaseExpirySheet(
         item: GroceryItem(name: "Milk", quantityText: "1 L", category: .dairy),
-        onConfirm: { _ in }
+        onConfirm: { _, _, _ in }
     )
 }

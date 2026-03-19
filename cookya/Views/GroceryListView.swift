@@ -108,8 +108,15 @@ struct GroceryListView: View {
             }
         }
         .sheet(item: $purchaseItem) { item in
-            PurchaseExpirySheet(item: item) { expiryDate in
-                Task { await inventoryStore.markPurchased(item, expiryDate: expiryDate) }
+            PurchaseExpirySheet(item: item) { quantityText, category, expiryDate in
+                Task {
+                    await inventoryStore.markPurchased(
+                        item,
+                        quantityText: quantityText,
+                        category: category,
+                        expiryDate: expiryDate
+                    )
+                }
             }
         }
     }
