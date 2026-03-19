@@ -324,6 +324,8 @@ struct RecipeResultView: View {
                         name: trimmedName,
                         quantityText: ingredient.quantity,
                         category: .pantry,
+                        source: .extraIngredient,
+                        reasonRecipes: [recipe.title],
                         createdAt: .now
                     )
                 )

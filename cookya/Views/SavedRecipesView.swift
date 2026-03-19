@@ -229,6 +229,8 @@ private struct SavedRecipeDetailView: View {
                         name: ingredient.name,
                         quantityText: ingredient.quantity,
                         category: .pantry,
+                        source: .savedRecipe,
+                        reasonRecipes: [saved.recipe.title],
                         createdAt: .now
                     )
                 )

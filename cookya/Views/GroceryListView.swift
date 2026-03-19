@@ -2,6 +2,8 @@ import SwiftUI
 
 struct GroceryListView: View {
     @EnvironmentObject private var inventoryStore: InventoryStore
+    @EnvironmentObject private var recipeStore: RecipeStore
+    @EnvironmentObject private var profileStore: ProfileStore
 
     @State private var editorItem: GroceryItem?
     @State private var isAddingItem = false
@@ -9,6 +11,26 @@ struct GroceryListView: View {
 
     var body: some View {
         List {
+            if !nearMissRecipes.isEmpty {
+                Section("You're Close To Cooking") {
+                    ForEach(nearMissRecipes) { suggestion in
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(suggestion.saved.recipe.title)
+                                .font(.headline)
+                            Text("Missing \(suggestion.missingIngredients.count) item(s): \(suggestion.missingIngredients.map(\.name).joined(separator: ", "))")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+
+                            Button("Add Missing Items") {
+                                addMissingItems(for: suggestion)
+                            }
+                            .buttonStyle(.bordered)
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+            }
+
             if inventoryStore.sortedGroceryItems.isEmpty {
                 ContentUnavailableView(
                     "No Grocery Items",
@@ -26,6 +48,9 @@ struct GroceryListView: View {
                                     .foregroundStyle(.primary)
                                 Text(item.quantityText.isEmpty ? item.category.displayName : "\(item.quantityText) • \(item.category.displayName)")
                                     .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                Text(groceryReasonText(for: item))
+                                    .font(.caption)
                                     .foregroundStyle(.secondary)
                                 if let note = item.note, !note.isEmpty {
                                     Text(note)
@@ -94,5 +119,64 @@ struct GroceryListView: View {
     NavigationStack {
         GroceryListView()
             .environmentObject(InventoryStore())
+            .environmentObject(RecipeStore())
+            .environmentObject(ProfileStore())
+    }
+}
+
+private struct GroceryNearMissSuggestion: Identifiable {
+    let id = UUID()
+    let saved: SavedRecipe
+    let missingIngredients: [Ingredient]
+}
+
+private extension GroceryListView {
+    var nearMissRecipes: [GroceryNearMissSuggestion] {
+        recipeStore.recipes(for: profileStore.activeProfile)
+            .compactMap { saved in
+                let checks = inventoryStore.availabilityChecks(for: saved.recipe.ingredients)
+                let missingIngredients = zip(saved.recipe.ingredients, checks)
+                    .compactMap { ingredient, check in
+                        check.isMissing ? ingredient : nil
+                    }
+                guard !missingIngredients.isEmpty, missingIngredients.count <= 2 else { return nil }
+                return GroceryNearMissSuggestion(saved: saved, missingIngredients: missingIngredients)
+            }
+            .prefix(3)
+            .map { $0 }
+    }
+
+    func groceryReasonText(for item: GroceryItem) -> String {
+        if !item.reasonRecipes.isEmpty {
+            let reasons = item.reasonRecipes.joined(separator: ", ")
+            return "\(item.source.displayName): \(reasons)"
+        }
+        return item.source.displayName
+    }
+
+    func addMissingItems(for suggestion: GroceryNearMissSuggestion) {
+        Task {
+            for ingredient in suggestion.missingIngredients {
+                await inventoryStore.saveGroceryItem(
+                    GroceryItem(
+                        name: ingredient.name,
+                        quantityText: ingredient.quantity,
+                        category: .pantry,
+                        source: .savedRecipe,
+                        reasonRecipes: [suggestion.saved.recipe.title],
+                        createdAt: .now
+                    )
+                )
+            }
+
+            AppLogger.action(
+                "near_miss_missing_items_added",
+                screen: "GroceryList",
+                metadata: [
+                    "recipeTitle": suggestion.saved.recipe.title,
+                    "count": String(suggestion.missingIngredients.count)
+                ]
+            )
+        }
     }
 }

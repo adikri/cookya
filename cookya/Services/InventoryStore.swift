@@ -93,6 +93,11 @@ final class InventoryStore: ObservableObject {
         }
     }
 
+    func groceryItem(named name: String) -> GroceryItem? {
+        let normalizedName = Self.normalizeItemName(name)
+        return groceryItems.first { Self.normalizeItemName($0.name) == normalizedName }
+    }
+
     func findUsablePantryItem(named name: String) -> PantryItem? {
         let normalizedName = Self.normalizeItemName(name)
         return usablePantryItems.first { Self.normalizeItemName($0.name) == normalizedName }
@@ -357,7 +362,9 @@ final class InventoryStore: ObservableObject {
             name: incoming.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? existing.name : incoming.name,
             quantityText: Self.mergeQuantityText(existing.quantityText, incoming.quantityText),
             category: incoming.category,
-            note: incoming.note ?? existing.note,
+            note: Self.mergeNotes(existing.note, incoming.note),
+            source: incoming.source == .manual ? existing.source : incoming.source,
+            reasonRecipes: Array(Set(existing.reasonRecipes + incoming.reasonRecipes)).sorted(),
             createdAt: existing.createdAt
         )
     }
@@ -572,7 +579,17 @@ final class InventoryStore: ObservableObject {
         [
             "item": item.name,
             "quantity": item.quantityText,
-            "category": item.category.rawValue
+            "category": item.category.rawValue,
+            "source": item.source.rawValue
         ]
+    }
+
+    nonisolated private static func mergeNotes(_ existing: String?, _ incoming: String?) -> String? {
+        let parts = [existing, incoming]
+            .compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+
+        guard !parts.isEmpty else { return nil }
+        return Array(Set(parts)).sorted().joined(separator: " • ")
     }
 }

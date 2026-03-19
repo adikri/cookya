@@ -65,6 +65,8 @@ struct GroceryItemEditorView: View {
                             quantityText: quantityText.trimmingCharacters(in: .whitespacesAndNewlines),
                             category: category,
                             note: note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : note.trimmingCharacters(in: .whitespacesAndNewlines),
+                            source: item?.source ?? .manual,
+                            reasonRecipes: item?.reasonRecipes ?? [],
                             createdAt: item?.createdAt ?? .now
                         )
                         onSave(groceryItem)
