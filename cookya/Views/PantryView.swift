@@ -9,6 +9,7 @@ struct PantryView: View {
     @State private var isAddingItem = false
     @State private var isDiscardingExpiredItems = false
     @State private var isShowingExpiryReview = false
+    @State private var deletedPantryItem: PantryItem?
 
     var body: some View {
         List {
@@ -151,6 +152,23 @@ struct PantryView: View {
         } message: {
             Text("This will remove all expired pantry items. You can still update expiry individually if any item is still usable.")
         }
+        .safeAreaInset(edge: .bottom) {
+            if let item = deletedPantryItem {
+                UndoBannerView(
+                    message: "\(item.name) removed from Pantry.",
+                    undoTitle: "Undo"
+                ) {
+                    let itemToRestore = deletedPantryItem
+                    self.deletedPantryItem = nil
+                    guard let itemToRestore else { return }
+                    Task { await inventoryStore.restorePantryItem(itemToRestore) }
+                } onDismiss: {
+                    deletedPantryItem = nil
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 8)
+            }
+        }
     }
 
     private var activePantryItems: [PantryItem] {
@@ -270,7 +288,7 @@ struct PantryView: View {
                     screen: "Pantry",
                     metadata: ["item": item.name, "expired": item.isExpired ? "true" : "false"]
                 )
-                Task { await inventoryStore.deletePantryItem(item) }
+                deletePantryItemWithUndo(item)
             } label: {
                 Label(item.isExpired ? "Discard" : "Delete", systemImage: "trash")
             }
@@ -326,11 +344,16 @@ struct PantryView: View {
                     screen: "Pantry",
                     metadata: ["item": item.name, "expired": item.isExpired ? "true" : "false"]
                 )
-                Task { await inventoryStore.deletePantryItem(item) }
+                deletePantryItemWithUndo(item)
             } label: {
                 Label(item.isExpired ? "Discard" : "Delete", systemImage: "trash")
             }
         }
+    }
+
+    private func deletePantryItemWithUndo(_ item: PantryItem) {
+        deletedPantryItem = item
+        Task { await inventoryStore.deletePantryItem(item) }
     }
 }
 
@@ -392,5 +415,35 @@ private struct PantryQuickAdjustSheet: View {
     NavigationStack {
         PantryView()
             .environmentObject(InventoryStore())
+    }
+}
+
+struct UndoBannerView: View {
+    let message: String
+    let undoTitle: String
+    let onUndo: () -> Void
+    let onDismiss: () -> Void
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Text(message)
+                .font(.subheadline)
+                .foregroundStyle(.primary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Button(undoTitle, action: onUndo)
+                .font(.subheadline.weight(.semibold))
+
+            Button(action: onDismiss) {
+                Image(systemName: "xmark")
+                    .font(.caption.weight(.bold))
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(.secondary)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(color: .black.opacity(0.08), radius: 10, y: 4)
     }
 }

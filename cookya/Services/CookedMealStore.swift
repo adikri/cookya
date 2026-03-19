@@ -78,6 +78,15 @@ final class CookedMealStore: ObservableObject {
         persist()
     }
 
+    func restoreRecord(_ record: CookedMealRecord) {
+        records.removeAll { $0.id == record.id }
+        records.append(record)
+        records.sort { lhs, rhs in
+            lhs.cookedAt > rhs.cookedAt
+        }
+        persist()
+    }
+
     func staples(for profile: UserProfile?) -> [MealStaple] {
         let grouped = Dictionary(grouping: records(for: profile), by: \.recipeTitle)
         return grouped.compactMap { recipeTitle, records in

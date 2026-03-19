@@ -5,6 +5,7 @@ struct CookedHistoryView: View {
     @EnvironmentObject private var profileStore: ProfileStore
 
     @State private var selectedDate = Calendar.current.startOfDay(for: .now)
+    @State private var deletedRecord: CookedMealRecord?
 
     private var records: [CookedMealRecord] {
         cookedMealStore.records(for: profileStore.activeProfile)
@@ -52,7 +53,7 @@ struct CookedHistoryView: View {
                 }
             }
 
-            Section("Calendar") {
+            Section {
                 DatePicker("Cooked on", selection: $selectedDate, displayedComponents: .date)
                     .datePickerStyle(.graphical)
 
@@ -87,10 +88,12 @@ struct CookedHistoryView: View {
                     Text("No cooked meals for this date.")
                         .foregroundStyle(.secondary)
                 }
+            } header: {
+                Text("Calendar")
             }
 
             if !recordsForSelectedDate.isEmpty {
-                Section("Meals") {
+                Section {
                     ForEach(recordsForSelectedDate) { record in
                         NavigationLink {
                             CookedMealDetailView(record: record)
@@ -117,12 +120,14 @@ struct CookedHistoryView: View {
                                     screen: "CookedHistory",
                                     metadata: ["recipeTitle": record.recipeTitle]
                                 )
-                                cookedMealStore.deleteRecord(record)
+                                deleteRecordWithUndo(record)
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
                         }
                     }
+                } header: {
+                    Text("Meals")
                 }
             }
         }
@@ -133,6 +138,28 @@ struct CookedHistoryView: View {
             }
             AppLogger.screen("CookedHistory", metadata: ["profile": profileStore.activeProfile?.name ?? "Guest", "count": String(records.count)])
         }
+        .safeAreaInset(edge: .bottom) {
+            if let record = deletedRecord {
+                UndoBannerView(
+                    message: "\(record.recipeTitle) removed from cooked history.",
+                    undoTitle: "Undo"
+                ) {
+                    let recordToRestore = deletedRecord
+                    self.deletedRecord = nil
+                    guard let recordToRestore else { return }
+                    cookedMealStore.restoreRecord(recordToRestore)
+                } onDismiss: {
+                    deletedRecord = nil
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 8)
+            }
+        }
+    }
+
+    private func deleteRecordWithUndo(_ record: CookedMealRecord) {
+        deletedRecord = record
+        cookedMealStore.deleteRecord(record)
     }
 }
 
@@ -141,21 +168,25 @@ private struct CookedMealDetailView: View {
 
     var body: some View {
         List {
-            Section("Meal") {
+            Section {
                 LabeledContent("Recipe", value: record.recipeTitle)
                 LabeledContent("Cooked At") {
                     Text(record.cookedAt.formatted(date: .abbreviated, time: .shortened))
                 }
                 LabeledContent("Profile", value: record.profileNameSnapshot)
+            } header: {
+                Text("Meal")
             }
 
-            Section("Recipe Ingredients") {
+            Section {
                 ForEach(record.recipeIngredients) { ingredient in
                     Text(ingredient.quantity.isEmpty ? ingredient.name : "\(ingredient.name) (\(ingredient.quantity))")
                 }
+            } header: {
+                Text("Recipe Ingredients")
             }
 
-            Section("Used from Pantry") {
+            Section {
                 if record.consumptions.isEmpty {
                     Text("No pantry quantities were entered.")
                         .foregroundStyle(.secondary)
@@ -164,14 +195,18 @@ private struct CookedMealDetailView: View {
                         Text("\(consumption.pantryItemName): \(consumption.usedQuantityText)")
                     }
                 }
+            } header: {
+                Text("Used from Pantry")
             }
 
             if !record.warnings.isEmpty {
-                Section("Warnings") {
+                Section {
                     ForEach(record.warnings, id: \.self) { warning in
                         Text(warning)
                             .foregroundStyle(.orange)
                     }
+                } header: {
+                    Text("Warnings")
                 }
             }
         }

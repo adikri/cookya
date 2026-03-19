@@ -207,6 +207,23 @@ final class InventoryStore: ObservableObject {
         }
     }
 
+    func restorePantryItem(_ item: PantryItem) async {
+        AppLogger.log("Pantry item restored", metadata: ["item": item.name, "quantity": item.quantityText])
+        replacePantryItemLocally(item)
+        persistCache()
+
+        do {
+            let synced = try await inventoryService.upsertPantryItem(item)
+            replacePantryItemLocally(synced)
+            persistCache()
+            lastSyncError = nil
+        } catch let error as InventorySyncError {
+            handleSyncError(error)
+        } catch {
+            lastSyncError = "Could not sync pantry restore right now."
+        }
+    }
+
     func saveGroceryItem(_ item: GroceryItem) async {
         let resolvedItem = resolvedGroceryItemForSave(item)
         AppLogger.log("Grocery item saved", metadata: inventoryMetadata(for: resolvedItem))
@@ -238,6 +255,23 @@ final class InventoryStore: ObservableObject {
             handleSyncError(error)
         } catch {
             lastSyncError = "Could not sync grocery deletion right now."
+        }
+    }
+
+    func restoreGroceryItem(_ item: GroceryItem) async {
+        AppLogger.log("Grocery item restored", metadata: ["item": item.name, "quantity": item.quantityText])
+        replaceGroceryItemLocally(item)
+        persistCache()
+
+        do {
+            let synced = try await inventoryService.upsertGroceryItem(item)
+            replaceGroceryItemLocally(synced)
+            persistCache()
+            lastSyncError = nil
+        } catch let error as InventorySyncError {
+            handleSyncError(error)
+        } catch {
+            lastSyncError = "Could not sync grocery restore right now."
         }
     }
 

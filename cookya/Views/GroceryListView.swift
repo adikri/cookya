@@ -10,11 +10,12 @@ struct GroceryListView: View {
     @State private var isAddingItem = false
     @State private var purchaseItem: GroceryItem?
     @State private var purchaseFeedbackMessage: String?
+    @State private var deletedGroceryItem: GroceryItem?
 
     var body: some View {
         List {
             if !nearMissRecipes.isEmpty {
-                Section("You're Close To Cooking") {
+                Section {
                     ForEach(nearMissRecipes) { suggestion in
                         VStack(alignment: .leading, spacing: 8) {
                             Text(suggestion.saved.recipe.title)
@@ -30,6 +31,8 @@ struct GroceryListView: View {
                         }
                         .padding(.vertical, 4)
                     }
+                } header: {
+                    Text("You're Close To Cooking")
                 }
             }
 
@@ -75,7 +78,7 @@ struct GroceryListView: View {
                     }
                     .swipeActions {
                         Button(role: .destructive) {
-                            Task { await inventoryStore.deleteGroceryItem(item) }
+                            deleteGroceryItemWithUndo(item)
                         } label: {
                             Label("Delete", systemImage: "trash")
                         }
@@ -145,6 +148,28 @@ struct GroceryListView: View {
         } message: {
             Text(purchaseFeedbackMessage ?? "")
         }
+        .safeAreaInset(edge: .bottom) {
+            if let item = deletedGroceryItem {
+                UndoBannerView(
+                    message: "\(item.name) removed from Grocery.",
+                    undoTitle: "Undo"
+                ) {
+                    let itemToRestore = deletedGroceryItem
+                    self.deletedGroceryItem = nil
+                    guard let itemToRestore else { return }
+                    Task { await inventoryStore.restoreGroceryItem(itemToRestore) }
+                } onDismiss: {
+                    deletedGroceryItem = nil
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 8)
+            }
+        }
+    }
+
+    private func deleteGroceryItemWithUndo(_ item: GroceryItem) {
+        deletedGroceryItem = item
+        Task { await inventoryStore.deleteGroceryItem(item) }
     }
 }
 
