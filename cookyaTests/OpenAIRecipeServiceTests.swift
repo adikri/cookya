@@ -1,6 +1,7 @@
 import XCTest
 @testable import cookya
 
+@MainActor
 final class OpenAIRecipeServiceTests: XCTestCase {
 
     override func tearDown() {
@@ -51,9 +52,13 @@ final class OpenAIRecipeServiceTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(recipe.title, "Egg Bowl")
-        XCTAssertEqual(recipe.ingredients.first?.name, "Egg")
-        XCTAssertEqual(recipe.difficulty, .easy)
+        let title = recipe.title
+        let firstIngredientName = recipe.ingredients.first?.name
+        let difficulty = recipe.difficulty
+
+        XCTAssertEqual(title, "Egg Bowl")
+        XCTAssertEqual(firstIngredientName, "Egg")
+        XCTAssertEqual(difficulty, .easy)
     }
 
     func testGenerateRecipeMalformedModelContentThrowsDecodingFailed() async {

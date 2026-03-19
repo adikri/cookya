@@ -105,6 +105,44 @@ final class RecipeViewModelTests: XCTestCase {
         XCTAssertEqual(service.callCount, 1)
     }
 
+    func testGenerateAnotherRecipeBypassesCache() async {
+        let first = Recipe(
+            title: "First Recipe",
+            ingredients: [Ingredient(name: "Egg")],
+            instructions: ["Step 1"],
+            calories: 200,
+            difficulty: .easy
+        )
+        let second = Recipe(
+            title: "Second Recipe",
+            ingredients: [Ingredient(name: "Egg")],
+            instructions: ["Step 1"],
+            calories: 240,
+            difficulty: .easy
+        )
+        let service = MockRecipeService(results: [.success(first), .success(second)])
+        let store = makeRecipeStore()
+        let viewModel = RecipeViewModel(recipeService: service, recipeStore: store)
+
+        viewModel.addIngredient(named: "Egg")
+        viewModel.generateRecipe(profile: nil, pantryItems: [])
+
+        await waitUntil { !viewModel.isLoading }
+        XCTAssertEqual(viewModel.generatedRecipe?.title, "First Recipe")
+        XCTAssertEqual(service.callCount, 1)
+
+        viewModel.generateRecipe(profile: nil, pantryItems: [], forceRefresh: true)
+
+        await waitUntil { !viewModel.isLoading }
+        XCTAssertEqual(viewModel.generatedRecipe?.title, "Second Recipe")
+        XCTAssertEqual(service.callCount, 2)
+
+        viewModel.generateRecipe(profile: nil, pantryItems: [])
+
+        XCTAssertEqual(viewModel.generatedRecipe?.title, "Second Recipe")
+        XCTAssertEqual(service.callCount, 2)
+    }
+
     private func waitUntil(timeoutNanos: UInt64 = 2_000_000_000, condition: @escaping () -> Bool) async {
         let start = DispatchTime.now().uptimeNanoseconds
 
@@ -124,16 +162,21 @@ final class RecipeViewModelTests: XCTestCase {
 
 private final class MockRecipeService: RecipeGeneratingService {
     var callCount: Int = 0
-    private let result: Result<Recipe, Error>
+    private var results: [Result<Recipe, Error>]
     private(set) var lastRequest: RecipeGenerationRequest?
 
     init(result: Result<Recipe, Error>) {
-        self.result = result
+        self.results = [result]
+    }
+
+    init(results: [Result<Recipe, Error>]) {
+        self.results = results
     }
 
     func generateRecipe(request: RecipeGenerationRequest) async throws -> Recipe {
         callCount += 1
         lastRequest = request
-        return try result.get()
+        let nextResult = results.isEmpty ? .failure(RecipeGenerationError.networkError) : results.removeFirst()
+        return try nextResult.get()
     }
 }

@@ -291,12 +291,16 @@ final class InventoryStore: ObservableObject {
 
         do {
             let syncedPantryItem: PantryItem
-            if let existingPantryItem = existingPantryBeforePurchase {
+            if let existingPantryItem = existingPantryBeforePurchase,
+               existingPantryItem.id == localPantryItem.id {
                 let mergedPantryItem = mergePantryItems(existing: existingPantryItem, incoming: localPantryItem, preferredExpiryDate: expiryDate)
                 syncedPantryItem = try await inventoryService.upsertPantryItem(mergedPantryItem)
             } else {
                 var purchasedPantryItem = try await inventoryService.markPurchased(groceryItem: purchaseCandidate)
-                purchasedPantryItem.expiryDate = expiryDate
+                purchasedPantryItem.name = localPantryItem.name
+                purchasedPantryItem.quantityText = localPantryItem.quantityText
+                purchasedPantryItem.category = localPantryItem.category
+                purchasedPantryItem.expiryDate = localPantryItem.expiryDate
                 syncedPantryItem = purchasedPantryItem
             }
             replacePantryItemLocally(syncedPantryItem)
