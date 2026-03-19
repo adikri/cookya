@@ -416,9 +416,31 @@ struct HomeView: View {
         recipeStore.recipes(for: profileStore.activeProfile)
     }
 
+    private var favoriteSavedRecipes: [SavedRecipe] {
+        savedRecipes.filter(\.isFavorite)
+    }
+
+    private var stapleRecommendationRecord: CookedMealRecord? {
+        let records = cookedMealStore.records(for: profileStore.activeProfile)
+        for staple in cookedMealStore.staples(for: profileStore.activeProfile) {
+            if let record = records.first(where: { $0.recipeTitle == staple.recipeTitle && recentCookedCanBeCookedAgain($0) }) {
+                return record
+            }
+        }
+        return nil
+    }
+
     private var bestNextStep: HomeRecommendation? {
         if !inventoryStore.expiredPantryItems.isEmpty {
             return .expiredReview(count: inventoryStore.expiredPantryItems.count)
+        }
+
+        if let favoriteReadyRecipe = favoriteSavedRecipes.first(where: { inventoryStore.availabilityIssues(for: $0.recipe.ingredients).isEmpty }) {
+            return .favoriteReady(recipe: favoriteReadyRecipe)
+        }
+
+        if let stapleRecommendationRecord {
+            return .stapleReady(record: stapleRecommendationRecord)
         }
 
         if let latestCookedRecord, recentCookedCanBeCookedAgain(latestCookedRecord) {
@@ -485,6 +507,32 @@ struct HomeView: View {
                     subtitle: "\(count) pantry item(s) need review before they affect cooking decisions.",
                     systemImage: "exclamationmark.triangle",
                     tint: .red
+                )
+            }
+            .buttonStyle(.plain)
+
+        case .favoriteReady(let saved):
+            NavigationLink {
+                SavedRecipesView()
+            } label: {
+                actionCard(
+                    title: "Favorite ready: \(saved.recipe.title)",
+                    subtitle: "One of your favorites can be cooked right now from what’s already in pantry.",
+                    systemImage: "star.fill",
+                    tint: .yellow
+                )
+            }
+            .buttonStyle(.plain)
+
+        case .stapleReady(let record):
+            NavigationLink {
+                CookAgainView(record: record)
+            } label: {
+                actionCard(
+                    title: "Staple ready: \(record.recipeTitle)",
+                    subtitle: "You’ve made this multiple times and everything needed is available again.",
+                    systemImage: "flame.fill",
+                    tint: .orange
                 )
             }
             .buttonStyle(.plain)
@@ -566,6 +614,8 @@ private struct StatusChip: Identifiable {
 
 private enum HomeRecommendation {
     case expiredReview(count: Int)
+    case favoriteReady(recipe: SavedRecipe)
+    case stapleReady(record: CookedMealRecord)
     case cookAgain(record: CookedMealRecord)
     case savedRecipeReady(recipe: SavedRecipe)
     case savedRecipeNearMiss(recipe: SavedRecipe, missingCount: Int, reason: String)
