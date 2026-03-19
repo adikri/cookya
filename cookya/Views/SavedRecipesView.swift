@@ -204,7 +204,7 @@ private enum SavedRecipeReadiness {
     }
 }
 
-private struct SavedRecipeDetailView: View {
+struct SavedRecipeDetailView: View {
     @EnvironmentObject private var recipeStore: RecipeStore
     @EnvironmentObject private var inventoryStore: InventoryStore
     @EnvironmentObject private var profileStore: ProfileStore

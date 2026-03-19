@@ -513,7 +513,7 @@ struct HomeView: View {
 
         case .favoriteReady(let saved):
             NavigationLink {
-                SavedRecipesView()
+                SavedRecipeDetailView(saved: saved)
             } label: {
                 actionCard(
                     title: "Favorite ready: \(saved.recipe.title)",
@@ -552,7 +552,7 @@ struct HomeView: View {
 
         case .savedRecipeReady(let saved):
             NavigationLink {
-                SavedRecipesView()
+                SavedRecipeDetailView(saved: saved)
             } label: {
                 actionCard(
                     title: "Saved recipe ready",
@@ -565,7 +565,7 @@ struct HomeView: View {
 
         case .savedRecipeNearMiss(let saved, let missingCount, let reason):
             NavigationLink {
-                SavedRecipesView()
+                SavedRecipeDetailView(saved: saved)
             } label: {
                 actionCard(
                     title: "You're close to \(saved.recipe.title)",
