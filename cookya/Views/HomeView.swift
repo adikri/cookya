@@ -4,6 +4,7 @@ struct HomeView: View {
     @EnvironmentObject private var inventoryStore: InventoryStore
     @EnvironmentObject private var profileStore: ProfileStore
     @EnvironmentObject private var cookedMealStore: CookedMealStore
+    @EnvironmentObject private var recipeStore: RecipeStore
 
     var body: some View {
         NavigationStack {
@@ -22,111 +23,96 @@ struct HomeView: View {
                             .background(Color.orange.opacity(0.12), in: RoundedRectangle(cornerRadius: 12))
                     }
 
-                    cardSection("Let's Cook", subtitle: cookNowSubtitle) {
-                        VStack(alignment: .leading, spacing: 14) {
-                            NavigationLink {
-                                IngredientInputView()
-                            } label: {
-                                dashboardButtonLabel(
-                                    title: "Cook from pantry",
-                                    subtitle: "Select pantry items and add extras if needed",
-                                    systemImage: "fork.knife"
-                                )
-                            }
+                    heroCookCard
 
-                            if let latestCookedRecord {
-                                Divider()
-                                Text("Recently cooked")
-                                    .font(.subheadline)
-                                    .fontWeight(.semibold)
+                    if hasAttentionItems {
+                        sectionHeading("Attention Needed", subtitle: "Take care of the kitchen items that need action first.")
 
-                                NavigationLink {
-                                    CookAgainView(record: latestCookedRecord)
-                                } label: {
-                                    VStack(alignment: .leading, spacing: 8) {
-                                        Text(latestCookedRecord.recipeTitle)
-                                            .font(.headline)
-                                            .foregroundStyle(.primary)
-                                        Text(latestCookedRecord.cookedAt.formatted(date: .abbreviated, time: .shortened))
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
-                                        Text(recentCookedStatus(for: latestCookedRecord))
-                                            .font(.caption)
-                                            .foregroundStyle(recentCookedCanBeCookedAgain(latestCookedRecord) ? .green : .orange)
-                                    }
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                }
-                            }
-                        }
-                    }
-
-                    if !inventoryStore.expiredPantryItems.isEmpty {
-                        cardSection(
-                            "Expired Review",
-                            subtitle: "\(inventoryStore.expiredPantryItems.count) item(s) need attention in Pantry"
-                        ) {
+                        if !inventoryStore.expiredPantryItems.isEmpty {
                             NavigationLink {
                                 PantryView()
                             } label: {
-                                dashboardButtonLabel(
-                                    title: "Review expired items",
-                                    subtitle: "Discard them or update expiry before they affect your kitchen decisions",
-                                    systemImage: "exclamationmark.triangle"
+                                actionCard(
+                                    title: "Expired Review",
+                                    subtitle: "\(inventoryStore.expiredPantryItems.count) item(s) need review in Pantry",
+                                    systemImage: "exclamationmark.triangle",
+                                    tint: .red
                                 )
                             }
+                            .buttonStyle(.plain)
+                        }
+
+                        if !inventoryStore.expiringSoonItems.isEmpty {
+                            NavigationLink {
+                                PantryView()
+                            } label: {
+                                actionCard(
+                                    title: "Use Soon",
+                                    subtitle: expiringSoonSummary,
+                                    systemImage: "clock.badge.exclamationmark",
+                                    tint: .orange
+                                )
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
 
-                    cardSection("Expiring Soon", subtitle: expiringSoonSubtitle) {
-                        if inventoryStore.expiringSoonItems.isEmpty {
-                            Text("Nothing needs urgent use right now. Add expiry dates to pantry items to see smarter suggestions.")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        } else {
-                            VStack(spacing: 12) {
-                                ForEach(Array(inventoryStore.expiringSoonItems.prefix(3))) { item in
-                                    HStack {
-                                        VStack(alignment: .leading, spacing: 2) {
-                                            Text(item.name)
-                                                .fontWeight(.semibold)
-                                            Text(item.quantityText.isEmpty ? item.category.displayName : "\(item.quantityText) • \(item.category.displayName)")
-                                                .font(.caption)
-                                                .foregroundStyle(.secondary)
-                                        }
-                                        Spacer()
-                                        Text(expiryLabel(for: item))
-                                            .font(.caption)
-                                            .foregroundStyle(.orange)
-                                    }
-                                }
+                    sectionHeading("Cook Faster", subtitle: "Jump back into meals that already fit your kitchen.")
+
+                    VStack(spacing: 12) {
+                        if let latestCookedRecord {
+                            NavigationLink {
+                                CookAgainView(record: latestCookedRecord)
+                            } label: {
+                                actionCard(
+                                    title: "Cook Again",
+                                    subtitle: "\(latestCookedRecord.recipeTitle)\n\(recentCookedStatus(for: latestCookedRecord))",
+                                    systemImage: "arrow.clockwise.heart",
+                                    tint: recentCookedCanBeCookedAgain(latestCookedRecord) ? .green : .orange
+                                )
                             }
+                            .buttonStyle(.plain)
                         }
+
+                        NavigationLink {
+                            SavedRecipesView()
+                        } label: {
+                            actionCard(
+                                title: "Saved Recipes",
+                                subtitle: savedRecipesSubtitle,
+                                systemImage: "bookmark",
+                                tint: .blue
+                            )
+                        }
+                        .buttonStyle(.plain)
                     }
+
+                    sectionHeading("Kitchen Management", subtitle: "Keep pantry and grocery up to date without losing focus on cooking.")
 
                     HStack(alignment: .top, spacing: 16) {
-                        cardSection("Pantry", subtitle: "\(inventoryStore.pantryItems.count) items available") {
-                            NavigationLink {
-                                PantryView()
-                            } label: {
-                                dashboardButtonLabel(
-                                    title: "Manage pantry",
-                                    subtitle: "Add, edit, and remove ingredients at home",
-                                    systemImage: "cabinet"
-                                )
-                            }
+                        NavigationLink {
+                            PantryView()
+                        } label: {
+                            managementCard(
+                                title: "Pantry",
+                                subtitle: pantrySummary,
+                                detail: "Manage ingredients at home",
+                                systemImage: "cabinet"
+                            )
                         }
+                        .buttonStyle(.plain)
 
-                        cardSection("Grocery", subtitle: "\(inventoryStore.groceryItems.count) items on your list") {
-                            NavigationLink {
-                                GroceryListView()
-                            } label: {
-                                dashboardButtonLabel(
-                                    title: "Open grocery list",
-                                    subtitle: "Track what to buy and mark items purchased",
-                                    systemImage: "cart"
-                                )
-                            }
+                        NavigationLink {
+                            GroceryListView()
+                        } label: {
+                            managementCard(
+                                title: "Grocery",
+                                subtitle: grocerySummary,
+                                detail: "Track what to buy next",
+                                systemImage: "cart"
+                            )
                         }
+                        .buttonStyle(.plain)
                     }
                 }
                 .padding()
@@ -139,6 +125,46 @@ struct HomeView: View {
             }
             .refreshable {
                 await inventoryStore.refresh()
+            }
+        }
+    }
+
+    private var heroCookCard: some View {
+        cardSection("Let's Cook", subtitle: cookNowSubtitle) {
+            VStack(alignment: .leading, spacing: 14) {
+                NavigationLink {
+                    IngredientInputView()
+                } label: {
+                    VStack(alignment: .leading, spacing: 14) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Label("Cook from pantry", systemImage: "fork.knife")
+                                    .font(.headline)
+                                    .foregroundStyle(.primary)
+                                Text("Select what you already have and let Cookya build tonight's meal around it.")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right.circle.fill")
+                                .font(.title2)
+                                .foregroundStyle(.tint)
+                        }
+
+                        flowLayout(statusChips)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                    .background(
+                        LinearGradient(
+                            colors: [Color.accentColor.opacity(0.12), Color.accentColor.opacity(0.04)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        in: RoundedRectangle(cornerRadius: 18)
+                    )
+                }
+                .buttonStyle(.plain)
             }
         }
     }
@@ -159,6 +185,165 @@ struct HomeView: View {
     private var expiringSoonSubtitle: String? {
         guard !inventoryStore.expiringSoonItems.isEmpty else { return nil }
         return "Use these ingredients before they go to waste"
+    }
+
+    private var savedRecipesSubtitle: String {
+        let count = recipeStore.recipes(for: profileStore.activeProfile).count
+        if count == 0 {
+            return "No saved recipes yet. Save a recipe once you find one worth repeating."
+        }
+        if count == 1 {
+            return "1 saved recipe ready to revisit"
+        }
+        return "\(count) saved recipes ready to revisit"
+    }
+
+    private var pantrySummary: String {
+        if inventoryStore.pantryItems.isEmpty {
+            return "No items yet"
+        }
+        return "\(inventoryStore.pantryItems.count) items available"
+    }
+
+    private var grocerySummary: String {
+        if inventoryStore.groceryItems.isEmpty {
+            return "Nothing on your list"
+        }
+        return "\(inventoryStore.groceryItems.count) items on your list"
+    }
+
+    private var expiringSoonSummary: String {
+        let names = inventoryStore.expiringSoonItems.prefix(2).map(\.name).joined(separator: ", ")
+        if inventoryStore.expiringSoonItems.count <= 2 {
+            return names
+        }
+        return "\(names), and \(inventoryStore.expiringSoonItems.count - 2) more"
+    }
+
+    private var hasAttentionItems: Bool {
+        !inventoryStore.expiredPantryItems.isEmpty || !inventoryStore.expiringSoonItems.isEmpty
+    }
+
+    private var statusChips: [StatusChip] {
+        var chips: [StatusChip] = []
+
+        if !inventoryStore.expiringSoonItems.isEmpty {
+            chips.append(StatusChip(
+                text: "\(inventoryStore.expiringSoonItems.count) expiring soon",
+                systemImage: "clock",
+                tint: .orange
+            ))
+        }
+
+        if !inventoryStore.expiredPantryItems.isEmpty {
+            chips.append(StatusChip(
+                text: "\(inventoryStore.expiredPantryItems.count) expired",
+                systemImage: "exclamationmark.triangle",
+                tint: .red
+            ))
+        }
+
+        if let latestCookedRecord {
+            chips.append(StatusChip(
+                text: "Last cooked: \(latestCookedRecord.recipeTitle)",
+                systemImage: "flame",
+                tint: .green
+            ))
+        }
+
+        if chips.isEmpty {
+            chips.append(StatusChip(
+                text: "Pantry is ready for a fresh recipe",
+                systemImage: "sparkles",
+                tint: .blue
+            ))
+        }
+
+        return chips
+    }
+
+    private func sectionHeading(_ title: String, subtitle: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.headline)
+            Text(subtitle)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    private func actionCard(title: String, subtitle: String, systemImage: String, tint: Color) -> some View {
+        HStack(alignment: .top, spacing: 14) {
+            Image(systemName: systemImage)
+                .font(.title3)
+                .foregroundStyle(tint)
+                .frame(width: 28)
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text(title)
+                    .font(.headline)
+                    .foregroundStyle(.primary)
+                Text(subtitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
+            }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .foregroundStyle(.tertiary)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 16))
+    }
+
+    private func managementCard(title: String, subtitle: String, detail: String, systemImage: String) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Image(systemName: systemImage)
+                .font(.title2)
+                .foregroundStyle(.tint)
+
+            Text(title)
+                .font(.headline)
+                .foregroundStyle(.primary)
+
+            Text(subtitle)
+                .font(.subheadline)
+                .foregroundStyle(.primary)
+
+            Text(detail)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.leading)
+
+            HStack {
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(.tertiary)
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 16))
+    }
+
+    private func flowLayout(_ chips: [StatusChip]) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            ForEach(chips) { chip in
+                HStack(spacing: 8) {
+                    Image(systemName: chip.systemImage)
+                    Text(chip.text)
+                        .lineLimit(1)
+                }
+                .font(.caption.weight(.medium))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(chip.tint.opacity(0.12), in: Capsule())
+                .foregroundStyle(chip.tint)
+            }
+        }
     }
 
     private func dashboardButtonLabel(title: String, subtitle: String, systemImage: String) -> some View {
@@ -236,6 +421,13 @@ struct HomeView: View {
     private func replayIssues(for record: CookedMealRecord) -> [String] {
         inventoryStore.availabilityIssues(for: record.consumptions)
     }
+}
+
+private struct StatusChip: Identifiable {
+    let id = UUID()
+    let text: String
+    let systemImage: String
+    let tint: Color
 }
 
 private struct CookAgainView: View {
@@ -377,4 +569,5 @@ private struct CookAgainView: View {
         .environmentObject(InventoryStore())
         .environmentObject(ProfileStore())
         .environmentObject(CookedMealStore())
+        .environmentObject(RecipeStore())
 }
