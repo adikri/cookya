@@ -37,10 +37,19 @@ final class OpenAIRecipeServiceTests: XCTestCase {
 
         let service = OpenAIRecipeService(
             session: makeStubbedSession(),
-            config: AppConfig(openAIAPIKey: "test-key", openAIBaseURL: URL(string: "https://api.openai.com")!, openAIModel: "gpt-4.1-mini")
+            config: AppConfig(openAIAPIKey: "test-key", openAIBaseURL: URL(string: "https://api.openai.com")!, openAIModel: "gpt-4.1-mini", backendBaseURL: nil)
         )
 
-        let recipe = try await service.generateRecipe(ingredients: [Ingredient(name: "Egg")], difficulty: .easy)
+        let recipe = try await service.generateRecipe(
+            request: RecipeGenerationRequest(
+                pantrySelections: [],
+                manualIngredients: [Ingredient(name: "Egg")],
+                difficulty: .easy,
+                servings: 1,
+                profile: nil,
+                prioritizedIngredients: []
+            )
+        )
 
         XCTAssertEqual(recipe.title, "Egg Bowl")
         XCTAssertEqual(recipe.ingredients.first?.name, "Egg")
@@ -66,11 +75,20 @@ final class OpenAIRecipeServiceTests: XCTestCase {
 
         let service = OpenAIRecipeService(
             session: makeStubbedSession(),
-            config: AppConfig(openAIAPIKey: "test-key", openAIBaseURL: URL(string: "https://api.openai.com")!, openAIModel: "gpt-4.1-mini")
+            config: AppConfig(openAIAPIKey: "test-key", openAIBaseURL: URL(string: "https://api.openai.com")!, openAIModel: "gpt-4.1-mini", backendBaseURL: nil)
         )
 
         do {
-            _ = try await service.generateRecipe(ingredients: [Ingredient(name: "Egg")], difficulty: .easy)
+            _ = try await service.generateRecipe(
+                request: RecipeGenerationRequest(
+                    pantrySelections: [],
+                    manualIngredients: [Ingredient(name: "Egg")],
+                    difficulty: .easy,
+                    servings: 1,
+                    profile: nil,
+                    prioritizedIngredients: []
+                )
+            )
             XCTFail("Expected decodingFailed")
         } catch let error as RecipeGenerationError {
             XCTAssertEqual(error, .decodingFailed)
@@ -94,11 +112,20 @@ final class OpenAIRecipeServiceTests: XCTestCase {
 
         let service = OpenAIRecipeService(
             session: makeStubbedSession(),
-            config: AppConfig(openAIAPIKey: "test-key", openAIBaseURL: URL(string: "https://api.openai.com")!, openAIModel: "gpt-4.1-mini")
+            config: AppConfig(openAIAPIKey: "test-key", openAIBaseURL: URL(string: "https://api.openai.com")!, openAIModel: "gpt-4.1-mini", backendBaseURL: nil)
         )
 
         do {
-            _ = try await service.generateRecipe(ingredients: [Ingredient(name: "Egg")], difficulty: .easy)
+            _ = try await service.generateRecipe(
+                request: RecipeGenerationRequest(
+                    pantrySelections: [],
+                    manualIngredients: [Ingredient(name: "Egg")],
+                    difficulty: .easy,
+                    servings: 1,
+                    profile: nil,
+                    prioritizedIngredients: []
+                )
+            )
             XCTFail("Expected rateLimited")
         } catch let error as RecipeGenerationError {
             XCTAssertEqual(error, .rateLimited)
@@ -114,11 +141,20 @@ final class OpenAIRecipeServiceTests: XCTestCase {
 
         let service = OpenAIRecipeService(
             session: makeStubbedSession(),
-            config: AppConfig(openAIAPIKey: "test-key", openAIBaseURL: URL(string: "https://api.openai.com")!, openAIModel: "gpt-4.1-mini")
+            config: AppConfig(openAIAPIKey: "test-key", openAIBaseURL: URL(string: "https://api.openai.com")!, openAIModel: "gpt-4.1-mini", backendBaseURL: nil)
         )
 
         do {
-            _ = try await service.generateRecipe(ingredients: [Ingredient(name: "Egg")], difficulty: .easy)
+            _ = try await service.generateRecipe(
+                request: RecipeGenerationRequest(
+                    pantrySelections: [],
+                    manualIngredients: [Ingredient(name: "Egg")],
+                    difficulty: .easy,
+                    servings: 1,
+                    profile: nil,
+                    prioritizedIngredients: []
+                )
+            )
             XCTFail("Expected networkError")
         } catch let error as RecipeGenerationError {
             XCTAssertEqual(error, .networkError)

@@ -33,4 +33,7 @@ struct MainTabView: View {
 #Preview {
     MainTabView()
         .environmentObject(RecipeStore())
+        .environmentObject(InventoryStore())
+        .environmentObject(ProfileStore())
+        .environmentObject(CookedMealStore())
 }

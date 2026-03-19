@@ -1,11 +1,12 @@
 import Foundation
 
 protocol RecipeGeneratingService {
-    func generateRecipe(ingredients: [Ingredient], difficulty: Difficulty) async throws -> Recipe
+    func generateRecipe(request: RecipeGenerationRequest) async throws -> Recipe
 }
 
 enum RecipeGenerationError: LocalizedError, Equatable {
     case missingAPIKey
+    case missingBackendURL
     case networkError
     case invalidResponse
     case decodingFailed
@@ -17,6 +18,8 @@ enum RecipeGenerationError: LocalizedError, Equatable {
         switch self {
         case .missingAPIKey:
             return "OpenAI API key is missing. Add OPENAI_API_KEY in your local config."
+        case .missingBackendURL:
+            return "Backend URL is missing. Add COOKYA_BACKEND_BASE_URL in your local config."
         case .networkError:
             return "Network error. Check your internet connection and try again."
         case .invalidResponse:

@@ -9,12 +9,29 @@ import SwiftUI
 
 @main
 struct cookyaApp: App {
-    @StateObject private var recipeStore = RecipeStore()
+    @StateObject private var recipeStore = RecipeStore.shared
+    @StateObject private var profileStore = ProfileStore()
+    @StateObject private var inventoryStore = InventoryStore()
+    @StateObject private var cookedMealStore = CookedMealStore()
+    @StateObject private var knownItemStore = KnownItemStore()
+
+    init() {
+        AppLogger.log("App launched", metadata: ["logsDirectory": AppLogger.logsDirectoryPath])
+    }
 
     var body: some Scene {
         WindowGroup {
-            MainTabView()
-                .environmentObject(recipeStore)
+            if profileStore.hasCompletedOnboarding {
+                MainTabView()
+                    .environmentObject(recipeStore)
+                    .environmentObject(inventoryStore)
+                    .environmentObject(profileStore)
+                    .environmentObject(cookedMealStore)
+                    .environmentObject(knownItemStore)
+            } else {
+                ProfileOnboardingView()
+                    .environmentObject(profileStore)
+            }
         }
     }
 }

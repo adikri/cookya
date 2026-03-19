@@ -4,12 +4,12 @@ struct OpenAIRecipeService: RecipeGeneratingService {
     private let session: URLSession
     private let config: AppConfig
 
-    init(session: URLSession = .shared, config: AppConfig = .live) {
+    nonisolated init(session: URLSession = .shared, config: AppConfig = .live) {
         self.session = session
         self.config = config
     }
 
-    func generateRecipe(ingredients: [Ingredient], difficulty: Difficulty) async throws -> Recipe {
+    func generateRecipe(request generationRequest: RecipeGenerationRequest) async throws -> Recipe {
         guard !config.openAIAPIKey.isEmpty else {
             throw RecipeGenerationError.missingAPIKey
         }
@@ -24,7 +24,7 @@ struct OpenAIRecipeService: RecipeGeneratingService {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(config.openAIAPIKey)", forHTTPHeaderField: "Authorization")
 
-        let body = buildRequestBody(ingredients: ingredients, difficulty: difficulty)
+        let body = buildRequestBody(request: generationRequest)
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
         do {
@@ -63,13 +63,28 @@ struct OpenAIRecipeService: RecipeGeneratingService {
         }
     }
 
-    private func buildRequestBody(ingredients: [Ingredient], difficulty: Difficulty) -> [String: Any] {
-        let ingredientRows: [[String: String]] = ingredients.map {
+    private func buildRequestBody(request: RecipeGenerationRequest) -> [String: Any] {
+        let ingredientRows: [[String: String]] = request.allIngredients.map {
             [
                 "name": $0.name,
                 "quantity": $0.quantity
             ]
         }
+
+        let pantryRows = request.pantrySelections.map { selection in
+            [
+                "name": selection.pantryItem.name,
+                "availableQuantity": selection.pantryItem.quantityText,
+                "selectedQuantity": selection.selectedQuantityText.isEmpty ? "not specified" : selection.selectedQuantityText,
+                "category": selection.pantryItem.category.rawValue,
+                "expiryDate": selection.pantryItem.expiryDate?.formatted(date: .abbreviated, time: .omitted) ?? "none"
+            ]
+        }
+
+        let prioritizedIngredients = request.prioritizedIngredients.map(\.name).joined(separator: ", ")
+        let avoidFoods = request.profile?.avoidFoodItems.joined(separator: ", ") ?? "none"
+        let location = request.profile?.location ?? "not provided"
+        let dietary = request.profile?.isVegetarian == true ? "vegetarian" : "no vegetarian restriction"
 
         let userPrompt = """
         Create one home-cooking recipe using these ingredients and requested difficulty.
@@ -77,7 +92,23 @@ struct OpenAIRecipeService: RecipeGeneratingService {
         Ingredients:
         \(ingredientRows)
 
-        Difficulty: \(difficulty.rawValue)
+        Pantry context:
+        \(pantryRows)
+
+        Difficulty: \(request.difficulty.rawValue)
+        Servings: \(request.servings)
+        Dietary preference: \(dietary)
+        Avoid foods/allergens: \(avoidFoods)
+        Location context: \(location)
+        Prioritize these ingredients first if possible: \(prioritizedIngredients.isEmpty ? "none" : prioritizedIngredients)
+
+        Hard constraints:
+        - Never include any avoid foods.
+        - If vegetarian is requested, do not include meat, fish, or seafood.
+        - Keep recipe realistic for home cooking.
+        - Prefer expiring pantry items when they fit naturally.
+        - Make the recipe suitable for exactly \(request.servings) serving(s).
+        - If a selected pantry quantity is provided, treat it as the target amount to use for that ingredient.
 
         Output only JSON matching the schema exactly.
         """
