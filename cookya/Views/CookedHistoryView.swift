@@ -18,8 +18,40 @@ struct CookedHistoryView: View {
         records.filter { Calendar.current.isDate($0.cookedAt, inSameDayAs: selectedDate) }
     }
 
+    private var staples: [MealStaple] {
+        cookedMealStore.staples(for: profileStore.activeProfile)
+    }
+
     var body: some View {
         List {
+            if !staples.isEmpty {
+                Section {
+                    ForEach(staples.prefix(3)) { staple in
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack {
+                                Text(staple.recipeTitle)
+                                    .font(.headline)
+                                Spacer()
+                                Text("\(staple.cookCount)x")
+                                    .font(.caption.weight(.semibold))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color.accentColor.opacity(0.12), in: Capsule())
+                            }
+
+                            Text("Cooked often • Last made \(staple.lastCookedAt.formatted(date: .abbreviated, time: .omitted))")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.vertical, 2)
+                    }
+                } header: {
+                    Text("Staples")
+                } footer: {
+                    Text("Staples are meals you’ve cooked at least twice.")
+                }
+            }
+
             Section("Calendar") {
                 DatePicker("Cooked on", selection: $selectedDate, displayedComponents: .date)
                     .datePickerStyle(.graphical)

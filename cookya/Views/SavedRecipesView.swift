@@ -34,6 +34,9 @@ struct SavedRecipesView: View {
                                         readiness: readiness(for: saved)
                                     )
                                 }
+                                .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                    favoriteButton(for: saved)
+                                }
                             }
                             .onDelete(perform: removeFilteredRecipes)
                         } header: {
@@ -55,6 +58,10 @@ struct SavedRecipesView: View {
 
     private var sortedRecipes: [SavedRecipe] {
         filteredRecipes.sorted { lhs, rhs in
+            if lhs.isFavorite != rhs.isFavorite {
+                return lhs.isFavorite && !rhs.isFavorite
+            }
+
             let leftReadiness = readiness(for: lhs)
             let rightReadiness = readiness(for: rhs)
 
@@ -109,6 +116,19 @@ struct SavedRecipesView: View {
         })
         recipeStore.removeRecipes(at: mappedOffsets)
     }
+
+    @ViewBuilder
+    private func favoriteButton(for saved: SavedRecipe) -> some View {
+        Button(saved.isFavorite ? "Unfavorite" : "Favorite") {
+            recipeStore.updateFavoriteState(for: saved.id, isFavorite: !saved.isFavorite)
+            AppLogger.action(
+                saved.isFavorite ? "saved_recipe_unfavorited" : "saved_recipe_favorited",
+                screen: "SavedRecipes",
+                metadata: ["recipeTitle": saved.recipe.title]
+            )
+        }
+        .tint(.yellow)
+    }
 }
 
 private struct SavedRecipeRow: View {
@@ -118,8 +138,15 @@ private struct SavedRecipeRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .top, spacing: 8) {
-                Text(saved.recipe.title)
-                    .font(.headline)
+                HStack(spacing: 6) {
+                    if saved.isFavorite {
+                        Image(systemName: "star.fill")
+                            .foregroundStyle(.yellow)
+                    }
+
+                    Text(saved.recipe.title)
+                        .font(.headline)
+                }
 
                 Spacer(minLength: 12)
 
@@ -201,6 +228,7 @@ private enum SavedRecipeReadiness {
 }
 
 private struct SavedRecipeDetailView: View {
+    @EnvironmentObject private var recipeStore: RecipeStore
     @EnvironmentObject private var inventoryStore: InventoryStore
     @EnvironmentObject private var profileStore: ProfileStore
     @EnvironmentObject private var cookedMealStore: CookedMealStore
@@ -209,6 +237,10 @@ private struct SavedRecipeDetailView: View {
 
     @State private var isShowingCompletionSheet = false
     @State private var completionMessage: String?
+
+    private var isFavorite: Bool {
+        recipeStore.savedRecipes.first(where: { $0.id == saved.id })?.isFavorite ?? saved.isFavorite
+    }
 
     var body: some View {
         List {
@@ -279,6 +311,21 @@ private struct SavedRecipeDetailView: View {
             }
         }
         .navigationTitle("Saved Recipe")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    recipeStore.updateFavoriteState(for: saved.id, isFavorite: !isFavorite)
+                    AppLogger.action(
+                        isFavorite ? "saved_recipe_unfavorited" : "saved_recipe_favorited",
+                        screen: "SavedRecipeDetail",
+                        metadata: ["recipeTitle": saved.recipe.title]
+                    )
+                } label: {
+                    Image(systemName: isFavorite ? "star.fill" : "star")
+                        .foregroundStyle(isFavorite ? Color.yellow : Color.primary)
+                }
+            }
+        }
         .onAppear {
             AppLogger.screen("SavedRecipeDetail", metadata: ["recipeTitle": saved.recipe.title])
         }

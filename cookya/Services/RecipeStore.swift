@@ -52,6 +52,12 @@ final class RecipeStore: ObservableObject {
         persistSavedRecipes()
     }
 
+    func updateFavoriteState(for savedRecipeID: UUID, isFavorite: Bool) {
+        guard let index = savedRecipes.firstIndex(where: { $0.id == savedRecipeID }) else { return }
+        savedRecipes[index].isFavorite = isFavorite
+        persistSavedRecipes()
+    }
+
     func isSaved(_ recipe: Recipe, for profile: UserProfile?) -> Bool {
         let profileId = profile?.id ?? guestProfileId
         return savedRecipes.contains { $0.recipe.id == recipe.id && $0.profileId == profileId }

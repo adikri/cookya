@@ -1,6 +1,20 @@
 import SwiftUI
 import Combine
 
+struct MealStaple: Identifiable, Hashable {
+    let id: String
+    let recipeTitle: String
+    let cookCount: Int
+    let lastCookedAt: Date
+
+    init(recipeTitle: String, cookCount: Int, lastCookedAt: Date) {
+        self.id = recipeTitle
+        self.recipeTitle = recipeTitle
+        self.cookCount = cookCount
+        self.lastCookedAt = lastCookedAt
+    }
+}
+
 @MainActor
 final class CookedMealStore: ObservableObject {
     @Published private(set) var records: [CookedMealRecord] = []
@@ -62,6 +76,27 @@ final class CookedMealStore: ObservableObject {
     func deleteRecord(_ record: CookedMealRecord) {
         records.removeAll { $0.id == record.id }
         persist()
+    }
+
+    func staples(for profile: UserProfile?) -> [MealStaple] {
+        let grouped = Dictionary(grouping: records(for: profile), by: \.recipeTitle)
+        return grouped.compactMap { recipeTitle, records in
+            guard records.count >= 2,
+                  let latest = records.map(\.cookedAt).max() else {
+                return nil
+            }
+            return MealStaple(
+                recipeTitle: recipeTitle,
+                cookCount: records.count,
+                lastCookedAt: latest
+            )
+        }
+        .sorted { lhs, rhs in
+            if lhs.cookCount != rhs.cookCount {
+                return lhs.cookCount > rhs.cookCount
+            }
+            return lhs.lastCookedAt > rhs.lastCookedAt
+        }
     }
 
     private func loadRecords() {
