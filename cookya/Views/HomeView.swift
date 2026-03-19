@@ -23,6 +23,12 @@ struct HomeView: View {
                             .background(Color.orange.opacity(0.12), in: RoundedRectangle(cornerRadius: 12))
                     }
 
+                    if let bestNextStep {
+                        sectionHeading("Best Next Step", subtitle: "Cookya picked the most useful action for your kitchen right now.")
+
+                        bestNextStepCard(bestNextStep)
+                    }
+
                     heroCookCard
 
                     if hasAttentionItems {
@@ -406,6 +412,51 @@ struct HomeView: View {
         cookedMealStore.records(for: profileStore.activeProfile).first
     }
 
+    private var savedRecipes: [SavedRecipe] {
+        recipeStore.recipes(for: profileStore.activeProfile)
+    }
+
+    private var bestNextStep: HomeRecommendation? {
+        if !inventoryStore.expiredPantryItems.isEmpty {
+            return .expiredReview(count: inventoryStore.expiredPantryItems.count)
+        }
+
+        if let latestCookedRecord, recentCookedCanBeCookedAgain(latestCookedRecord) {
+            return .cookAgain(record: latestCookedRecord)
+        }
+
+        if let readySavedRecipe = savedRecipes.first(where: { inventoryStore.availabilityIssues(for: $0.recipe.ingredients).isEmpty }) {
+            return .savedRecipeReady(recipe: readySavedRecipe)
+        }
+
+        if let almostReadySavedRecipe = savedRecipes
+            .compactMap({ saved -> (SavedRecipe, [String], Int)? in
+                let issues = inventoryStore.availabilityIssues(for: saved.recipe.ingredients)
+                let missingCount = inventoryStore.availabilityChecks(for: saved.recipe.ingredients).filter(\.isMissing).count
+                guard !issues.isEmpty, missingCount > 0, missingCount <= 2 else { return nil }
+                return (saved, issues, missingCount)
+            })
+            .sorted(by: { $0.2 < $1.2 })
+            .first
+        {
+            return .savedRecipeNearMiss(
+                recipe: almostReadySavedRecipe.0,
+                missingCount: almostReadySavedRecipe.2,
+                reason: almostReadySavedRecipe.1.first ?? "A few ingredients are missing."
+            )
+        }
+
+        if !inventoryStore.expiringSoonItems.isEmpty {
+            return .useSoon(items: Array(inventoryStore.expiringSoonItems.prefix(2)))
+        }
+
+        if !inventoryStore.usablePantryItems.isEmpty {
+            return .cookFromPantry
+        }
+
+        return nil
+    }
+
     private func recentCookedCanBeCookedAgain(_ record: CookedMealRecord) -> Bool {
         replayIssues(for: record).isEmpty
     }
@@ -421,6 +472,89 @@ struct HomeView: View {
     private func replayIssues(for record: CookedMealRecord) -> [String] {
         inventoryStore.availabilityIssues(for: record.consumptions)
     }
+
+    @ViewBuilder
+    private func bestNextStepCard(_ recommendation: HomeRecommendation) -> some View {
+        switch recommendation {
+        case .expiredReview(let count):
+            NavigationLink {
+                PantryView()
+            } label: {
+                actionCard(
+                    title: "Review expired items",
+                    subtitle: "\(count) pantry item(s) need review before they affect cooking decisions.",
+                    systemImage: "exclamationmark.triangle",
+                    tint: .red
+                )
+            }
+            .buttonStyle(.plain)
+
+        case .cookAgain(let record):
+            NavigationLink {
+                CookAgainView(record: record)
+            } label: {
+                actionCard(
+                    title: "Cook again: \(record.recipeTitle)",
+                    subtitle: "You made this recently and everything needed is available right now.",
+                    systemImage: "arrow.clockwise.heart",
+                    tint: .green
+                )
+            }
+            .buttonStyle(.plain)
+
+        case .savedRecipeReady(let saved):
+            NavigationLink {
+                SavedRecipesView()
+            } label: {
+                actionCard(
+                    title: "Saved recipe ready",
+                    subtitle: "\(saved.recipe.title) can be cooked now from what you already have.",
+                    systemImage: "bookmark.fill",
+                    tint: .blue
+                )
+            }
+            .buttonStyle(.plain)
+
+        case .savedRecipeNearMiss(let saved, let missingCount, let reason):
+            NavigationLink {
+                SavedRecipesView()
+            } label: {
+                actionCard(
+                    title: "You're close to \(saved.recipe.title)",
+                    subtitle: "Missing \(missingCount) item(s). \(reason)",
+                    systemImage: "cart.badge.plus",
+                    tint: .orange
+                )
+            }
+            .buttonStyle(.plain)
+
+        case .useSoon(let items):
+            NavigationLink {
+                IngredientInputView()
+            } label: {
+                actionCard(
+                    title: "Use expiring ingredients tonight",
+                    subtitle: "Try cooking with \(items.map(\.name).joined(separator: ", ")) before they go to waste.",
+                    systemImage: "clock.badge.exclamationmark",
+                    tint: .orange
+                )
+            }
+            .buttonStyle(.plain)
+
+        case .cookFromPantry:
+            NavigationLink {
+                IngredientInputView()
+            } label: {
+                actionCard(
+                    title: "Cook from pantry",
+                    subtitle: "You already have ingredients at home. Let Cookya build a realistic meal around them.",
+                    systemImage: "fork.knife",
+                    tint: .accentColor
+                )
+            }
+            .buttonStyle(.plain)
+        }
+    }
 }
 
 private struct StatusChip: Identifiable {
@@ -428,6 +562,15 @@ private struct StatusChip: Identifiable {
     let text: String
     let systemImage: String
     let tint: Color
+}
+
+private enum HomeRecommendation {
+    case expiredReview(count: Int)
+    case cookAgain(record: CookedMealRecord)
+    case savedRecipeReady(recipe: SavedRecipe)
+    case savedRecipeNearMiss(recipe: SavedRecipe, missingCount: Int, reason: String)
+    case useSoon(items: [PantryItem])
+    case cookFromPantry
 }
 
 private struct CookAgainView: View {
