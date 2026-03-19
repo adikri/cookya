@@ -78,33 +78,10 @@ struct SavedRecipesView: View {
     }
 
     private func readiness(for saved: SavedRecipe) -> SavedRecipeReadiness {
-        let checks = inventoryStore.availabilityChecks(for: saved.recipe.ingredients)
-        guard !checks.isEmpty else {
-            return .needsReview("Needs pantry review")
-        }
-
-        let issues = checks.compactMap(\.issue)
-        if issues.isEmpty {
-            return .readyNow("Everything needed is in pantry")
-        }
-
-        let missingChecks = checks.filter(\.isMissing)
-        if !missingChecks.isEmpty {
-            let missingCount = missingChecks.count
-            if missingCount == 1, let first = missingChecks.first {
-                return .missingItems(
-                    count: missingCount,
-                    summary: "Missing 1 item: \(first.itemName)"
-                )
-            }
-
-            return .missingItems(
-                count: missingCount,
-                summary: "Missing \(missingCount) items"
-            )
-        }
-
-        return .needsReview("Needs pantry review")
+        RecipePlanningState(
+            recipe: saved.recipe,
+            checks: inventoryStore.availabilityChecks(for: saved.recipe.ingredients)
+        ).readiness
     }
 
     private func removeFilteredRecipes(at offsets: IndexSet) {
@@ -243,73 +220,20 @@ private struct SavedRecipeDetailView: View {
     }
 
     var body: some View {
-        List {
-            Section("Recipe") {
-                Text(saved.recipe.title)
-                    .font(.headline)
-                Text("\(saved.recipe.difficulty.rawValue.capitalized) • \(saved.recipe.calories) kcal")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                Text("Saved on \(saved.savedAt.formatted(date: .abbreviated, time: .shortened))")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            if availabilityChecks.isEmpty {
-                Section("Availability") {
-                    Text("This recipe does not have enough ingredient data for a pantry check yet.")
-                        .foregroundStyle(.secondary)
-                }
-            } else if availabilityIssues.isEmpty {
-                Section("Availability") {
-                    Label("Everything needed is available in pantry.", systemImage: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
-                }
-
-                Section {
-                    Button("Cook Again") {
-                        AppLogger.action(
-                            "saved_recipe_cook_again_tapped",
-                            screen: "SavedRecipeDetail",
-                            metadata: ["recipeTitle": saved.recipe.title, "result": "available"]
-                        )
-                        isShowingCompletionSheet = true
-                    }
-                    .frame(maxWidth: .infinity)
-                }
-            } else {
-                Section("Availability") {
-                    ForEach(availabilityIssues, id: \.self) { issue in
-                        Text(issue)
-                            .foregroundStyle(.orange)
-                    }
-                }
-
-                if !missingIngredients.isEmpty {
-                    Section {
-                        Button("Add Missing Items to Grocery") {
-                            addMissingItemsToGrocery()
-                        }
-                        .frame(maxWidth: .infinity)
-                    } footer: {
-                        Text("Only ingredients that are completely missing from pantry are added to Grocery.")
-                    }
-                }
-            }
-
-            Section("Ingredients") {
-                ForEach(saved.recipe.ingredients) { ingredient in
-                    Text(ingredient.quantity.isEmpty ? ingredient.name : "\(ingredient.name) (\(ingredient.quantity))")
-                }
-            }
-
-            Section("Instructions") {
-                ForEach(Array(saved.recipe.instructions.enumerated()), id: \.offset) { index, step in
-                    Text("\(index + 1). \(step)")
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-            }
-        }
+        RecipePlanningView(
+            recipe: saved.recipe,
+            headerFootnote: "Saved on \(saved.savedAt.formatted(date: .abbreviated, time: .shortened))",
+            primaryReadyActionTitle: "Cook This",
+            onCook: {
+                AppLogger.action(
+                    "saved_recipe_cook_again_tapped",
+                    screen: "SavedRecipeDetail",
+                    metadata: ["recipeTitle": saved.recipe.title, "result": "available"]
+                )
+                isShowingCompletionSheet = true
+            },
+            onAddMissingToGrocery: addMissingItemsToGrocery
+        )
         .navigationTitle("Saved Recipe")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -382,10 +306,6 @@ private struct SavedRecipeDetailView: View {
         inventoryStore.availabilityChecks(for: saved.recipe.ingredients)
     }
 
-    private var availabilityIssues: [String] {
-        availabilityChecks.compactMap(\.issue)
-    }
-
     private var replaySelections: [PantryRecipeSelection] {
         inventoryStore.replaySelections(for: saved.recipe.ingredients)
     }
@@ -422,6 +342,208 @@ private struct SavedRecipeDetailView: View {
             )
             completionMessage = "Missing items were added to Grocery."
         }
+    }
+}
+
+private struct RecipePlanningView: View {
+    @EnvironmentObject private var inventoryStore: InventoryStore
+
+    let recipe: Recipe
+    let headerFootnote: String?
+    let primaryReadyActionTitle: String
+    let onCook: () -> Void
+    let onAddMissingToGrocery: () -> Void
+
+    private var planningState: RecipePlanningState {
+        RecipePlanningState(
+            recipe: recipe,
+            checks: inventoryStore.availabilityChecks(for: recipe.ingredients)
+        )
+    }
+
+    var body: some View {
+        List {
+            Section {
+                Text(recipe.title)
+                    .font(.headline)
+                Text("\(recipe.difficulty.rawValue.capitalized) • \(recipe.calories) kcal")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                if let headerFootnote, !headerFootnote.isEmpty {
+                    Text(headerFootnote)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            } header: {
+                Text("Recipe")
+            }
+
+            Section {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text(planningState.readiness.label)
+                            .font(.caption.weight(.semibold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(planningState.readiness.badgeColor.opacity(0.12), in: Capsule())
+                            .foregroundStyle(planningState.readiness.badgeColor)
+                        Spacer()
+                    }
+
+                    Text(planningState.readiness.summary)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+
+                    if planningState.hasReviewIssues {
+                        Text("Some ingredients exist in pantry, but the stored quantity or unit needs review before the app can trust the recipe is ready.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            } header: {
+                Text("Readiness")
+            }
+
+            if !planningState.availableIngredients.isEmpty {
+                Section {
+                    ForEach(planningState.availableIngredients) { ingredient in
+                        RecipePlanningIngredientRow(ingredient: ingredient, tint: .green)
+                    }
+                } header: {
+                    Text("Available")
+                }
+            }
+
+            if !planningState.missingIngredients.isEmpty {
+                Section {
+                    ForEach(planningState.missingIngredients) { ingredient in
+                        RecipePlanningIngredientRow(ingredient: ingredient, tint: .orange)
+                    }
+                } header: {
+                    Text("Missing")
+                }
+            }
+
+            if !planningState.reviewIngredients.isEmpty {
+                Section {
+                    ForEach(planningState.reviewIngredients) { ingredient in
+                        VStack(alignment: .leading, spacing: 4) {
+                            RecipePlanningIngredientRow(ingredient: ingredient.ingredient, tint: .red)
+                            Text(ingredient.issue)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.vertical, 2)
+                    }
+                } header: {
+                    Text("Needs Review")
+                }
+            }
+
+            Section {
+                if planningState.isReadyToCook {
+                    Button(primaryReadyActionTitle, action: onCook)
+                        .frame(maxWidth: .infinity)
+                } else if !planningState.missingIngredients.isEmpty {
+                    Button("Add Missing Items to Grocery", action: onAddMissingToGrocery)
+                        .frame(maxWidth: .infinity)
+                }
+            } footer: {
+                if !planningState.missingIngredients.isEmpty {
+                    Text("Only ingredients that are completely missing from pantry are added to Grocery.")
+                }
+            }
+
+            Section {
+                ForEach(Array(recipe.instructions.enumerated()), id: \.offset) { index, step in
+                    Text("\(index + 1). \(step)")
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            } header: {
+                Text("Instructions")
+            }
+        }
+    }
+}
+
+private struct RecipePlanningIngredientRow: View {
+    let ingredient: Ingredient
+    let tint: Color
+
+    var body: some View {
+        Text(ingredient.quantity.isEmpty ? ingredient.name : "\(ingredient.name) (\(ingredient.quantity))")
+            .foregroundStyle(tint)
+    }
+}
+
+private struct RecipePlanningReviewIngredient: Identifiable {
+    let ingredient: Ingredient
+    let issue: String
+
+    var id: UUID { ingredient.id }
+}
+
+private struct RecipePlanningState {
+    let recipe: Recipe
+    let checks: [PantryAvailabilityCheck]
+
+    var readiness: SavedRecipeReadiness {
+        guard !checks.isEmpty else {
+            return .needsReview("Needs pantry review")
+        }
+
+        let issues = checks.compactMap(\.issue)
+        if issues.isEmpty {
+            return .readyNow("Everything needed is in pantry")
+        }
+
+        let missingChecks = checks.filter(\.isMissing)
+        if !missingChecks.isEmpty {
+            let missingCount = missingChecks.count
+            if missingCount == 1, let first = missingChecks.first {
+                return .missingItems(
+                    count: missingCount,
+                    summary: "Missing 1 item: \(first.itemName)"
+                )
+            }
+
+            return .missingItems(
+                count: missingCount,
+                summary: "Missing \(missingCount) items"
+            )
+        }
+
+        return .needsReview("Needs pantry review")
+    }
+
+    var availableIngredients: [Ingredient] {
+        zip(recipe.ingredients, checks)
+            .compactMap { ingredient, check in
+                check.issue == nil ? ingredient : nil
+            }
+    }
+
+    var missingIngredients: [Ingredient] {
+        zip(recipe.ingredients, checks)
+            .compactMap { ingredient, check in
+                check.isMissing ? ingredient : nil
+            }
+    }
+
+    var reviewIngredients: [RecipePlanningReviewIngredient] {
+        zip(recipe.ingredients, checks)
+            .compactMap { ingredient, check in
+                guard let issue = check.issue, !check.isMissing else { return nil }
+                return RecipePlanningReviewIngredient(ingredient: ingredient, issue: issue)
+            }
+    }
+
+    var isReadyToCook: Bool {
+        checks.isEmpty == false && checks.allSatisfy { $0.issue == nil }
+    }
+
+    var hasReviewIssues: Bool {
+        reviewIngredients.isEmpty == false
     }
 }
 
