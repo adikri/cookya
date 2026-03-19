@@ -8,6 +8,7 @@ struct PantryView: View {
     @State private var quantityAdjustItem: PantryItem?
     @State private var isAddingItem = false
     @State private var isDiscardingExpiredItems = false
+    @State private var isShowingExpiryReview = false
 
     var body: some View {
         List {
@@ -19,6 +20,35 @@ struct PantryView: View {
                 )
                 .listRowBackground(Color.clear)
             } else {
+                if !itemsNeedingExpiryReview.isEmpty {
+                    Section {
+                        Button {
+                            isShowingExpiryReview = true
+                        } label: {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Review pantry dates")
+                                        .font(.headline)
+                                        .foregroundStyle(.primary)
+                                    Text("\(itemsNeedingExpiryReview.count) item(s) need expiry review.")
+                                        .font(.subheadline)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Image(systemName: "calendar.badge.clock")
+                                    .font(.title3)
+                                    .foregroundStyle(.orange)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
+                            .padding(.vertical, 4)
+                        }
+                        .buttonStyle(.plain)
+                    } header: {
+                        Text("Quick Review")
+                    }
+                }
+
                 if !useSoonPantryItems.isEmpty {
                     Section {
                         ForEach(useSoonPantryItems) { item in
@@ -99,6 +129,14 @@ struct PantryView: View {
                 Task { await inventoryStore.savePantryItem(updated) }
             }
         }
+        .sheet(isPresented: $isShowingExpiryReview) {
+            PantryBatchExpiryReviewSheet(items: itemsNeedingExpiryReview) { item, expiryDate in
+                var updated = item
+                updated.expiryDate = expiryDate
+                updated.updatedAt = .now
+                Task { await inventoryStore.savePantryItem(updated) }
+            }
+        }
         .alert("Discard expired items?", isPresented: $isDiscardingExpiredItems) {
             Button("Cancel", role: .cancel) {}
             Button("Discard All", role: .destructive) {
@@ -125,6 +163,10 @@ struct PantryView: View {
 
     private var expiredPantryItems: [PantryItem] {
         inventoryStore.sortedPantryItems.filter(\.isExpired)
+    }
+
+    private var itemsNeedingExpiryReview: [PantryItem] {
+        expiredPantryItems + useSoonPantryItems
     }
 
     @ViewBuilder

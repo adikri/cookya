@@ -256,6 +256,148 @@ struct PantryExpirySheet: View {
     }
 }
 
+struct PantryBatchExpiryReviewSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    let items: [PantryItem]
+    let onConfirm: (PantryItem, Date?) -> Void
+
+    @State private var currentIndex = 0
+    @State private var selectedOption: PantryExpiryOption = .tomorrow
+    @State private var customDate: Date = .now
+
+    private var currentItem: PantryItem {
+        items[currentIndex]
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    Text("\(currentIndex + 1) of \(items.count)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Text(currentItem.name)
+                        .font(.headline)
+                    Text(currentItem.quantityText.isEmpty ? currentItem.category.displayName : "\(currentItem.quantityText) • \(currentItem.category.displayName)")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    if let expiryDate = currentItem.expiryDate {
+                        Text("Current expiry: \(expiryDate.formatted(date: .abbreviated, time: .omitted))")
+                            .font(.caption)
+                            .foregroundStyle(currentItem.isExpired ? .red : .orange)
+                    }
+                } header: {
+                    Text(currentItem.isExpired ? "Expired Item" : "Use Soon Item")
+                }
+
+                Section {
+                    ForEach(PantryExpiryOption.allCases) { option in
+                        Button {
+                            selectedOption = option
+                            AppLogger.action(
+                                "pantry_batch_expiry_option_selected",
+                                screen: "PantryBatchExpiryReview",
+                                metadata: ["item": currentItem.name, "option": option.rawValue]
+                            )
+                        } label: {
+                            HStack {
+                                Text(option.rawValue)
+                                Spacer()
+                                if selectedOption == option {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundStyle(.tint)
+                                }
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
+                            .padding(.vertical, 6)
+                        }
+                        .buttonStyle(.plain)
+                    }
+
+                    if selectedOption == .custom {
+                        DatePicker("Expiry Date", selection: $customDate, displayedComponents: .date)
+                    }
+                } header: {
+                    Text("Update Expiry")
+                } footer: {
+                    Text("Review items quickly and move through the queue without reopening each pantry row.")
+                }
+            }
+            .navigationTitle("Review Dates")
+            .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                AppLogger.screen("PantryBatchExpiryReview", metadata: ["count": String(items.count)])
+                syncSelectionWithCurrentItem()
+            }
+            .onChange(of: currentIndex) { _, _ in
+                syncSelectionWithCurrentItem()
+            }
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") { dismiss() }
+                }
+                ToolbarItemGroup(placement: .confirmationAction) {
+                    Button("Skip") {
+                        advance()
+                    }
+
+                    Button(currentIndex == items.count - 1 ? "Save" : "Save & Next") {
+                        let expiryDate = resolvedExpiryDate()
+                        AppLogger.action(
+                            "pantry_batch_expiry_confirmed",
+                            screen: "PantryBatchExpiryReview",
+                            metadata: [
+                                "item": currentItem.name,
+                                "option": selectedOption.rawValue,
+                                "expirySet": expiryDate == nil ? "false" : "true"
+                            ]
+                        )
+                        onConfirm(currentItem, expiryDate)
+                        advance()
+                    }
+                }
+            }
+        }
+    }
+
+    private func advance() {
+        if currentIndex == items.count - 1 {
+            dismiss()
+        } else {
+            currentIndex += 1
+        }
+    }
+
+    private func syncSelectionWithCurrentItem() {
+        if let expiryDate = currentItem.expiryDate {
+            customDate = expiryDate
+        } else {
+            customDate = .now
+        }
+        selectedOption = currentItem.isExpired ? .tomorrow : .custom
+    }
+
+    private func resolvedExpiryDate() -> Date? {
+        let calendar = Calendar.current
+        switch selectedOption {
+        case .today:
+            return calendar.startOfDay(for: .now)
+        case .tomorrow:
+            return calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: .now))
+        case .threeDays:
+            return calendar.date(byAdding: .day, value: 3, to: calendar.startOfDay(for: .now))
+        case .oneWeek:
+            return calendar.date(byAdding: .day, value: 7, to: calendar.startOfDay(for: .now))
+        case .custom:
+            return calendar.startOfDay(for: customDate)
+        case .remove:
+            return nil
+        }
+    }
+}
+
 #Preview {
     PurchaseExpirySheet(
         item: GroceryItem(name: "Milk", quantityText: "1 L", category: .dairy),
