@@ -201,6 +201,12 @@ final class InventoryStore: ObservableObject {
         }
     }
 
+    func deletePantryItems(_ items: [PantryItem]) async {
+        for item in items {
+            await deletePantryItem(item)
+        }
+    }
+
     func saveGroceryItem(_ item: GroceryItem) async {
         let resolvedItem = resolvedGroceryItemForSave(item)
         AppLogger.log("Grocery item saved", metadata: inventoryMetadata(for: resolvedItem))

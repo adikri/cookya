@@ -5,7 +5,9 @@ struct PantryView: View {
 
     @State private var editorItem: PantryItem?
     @State private var expiryItem: PantryItem?
+    @State private var quantityAdjustItem: PantryItem?
     @State private var isAddingItem = false
+    @State private var isDiscardingExpiredItems = false
 
     var body: some View {
         List {
@@ -30,10 +32,12 @@ struct PantryView: View {
                 }
 
                 if !activePantryItems.isEmpty {
-                    Section("Available") {
+                    Section {
                         ForEach(activePantryItems) { item in
                             pantryRow(for: item)
                         }
+                    } header: {
+                        Text("Available")
                     }
                 }
 
@@ -45,7 +49,13 @@ struct PantryView: View {
                     } header: {
                         Text("Expired")
                     } footer: {
-                        Text("Expired items stay visible so you can update expiry, discard them, or review what should no longer be used.")
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Expired items stay visible so you can update expiry, discard them, or review what should no longer be used.")
+                            Button("Discard All") {
+                                isDiscardingExpiredItems = true
+                            }
+                            .font(.caption.weight(.semibold))
+                        }
                     }
                 }
             }
@@ -83,6 +93,25 @@ struct PantryView: View {
                 updated.updatedAt = .now
                 Task { await inventoryStore.savePantryItem(updated) }
             }
+        }
+        .sheet(item: $quantityAdjustItem) { item in
+            PantryQuickAdjustSheet(item: item) { updated in
+                Task { await inventoryStore.savePantryItem(updated) }
+            }
+        }
+        .alert("Discard expired items?", isPresented: $isDiscardingExpiredItems) {
+            Button("Cancel", role: .cancel) {}
+            Button("Discard All", role: .destructive) {
+                let itemsToDelete = expiredPantryItems
+                AppLogger.action(
+                    "expired_items_bulk_discarded",
+                    screen: "Pantry",
+                    metadata: ["count": String(itemsToDelete.count)]
+                )
+                Task { await inventoryStore.deletePantryItems(itemsToDelete) }
+            }
+        } message: {
+            Text("This will remove all expired pantry items. You can still update expiry individually if any item is still usable.")
         }
     }
 
@@ -147,6 +176,18 @@ struct PantryView: View {
         .swipeActions(edge: .leading, allowsFullSwipe: false) {
             Button {
                 AppLogger.action(
+                    "pantry_adjust_quantity_tapped",
+                    screen: "Pantry",
+                    metadata: ["item": item.name]
+                )
+                quantityAdjustItem = item
+            } label: {
+                Label("Adjust Quantity", systemImage: "slider.horizontal.3")
+            }
+            .tint(.blue)
+
+            Button {
+                AppLogger.action(
                     "pantry_expiry_action_tapped",
                     screen: "Pantry",
                     metadata: ["item": item.name, "action": "update_expiry"]
@@ -158,6 +199,29 @@ struct PantryView: View {
             .tint(.orange)
         }
         .swipeActions {
+            Button {
+                AppLogger.action(
+                    "pantry_add_to_grocery",
+                    screen: "Pantry",
+                    metadata: ["item": item.name]
+                )
+                Task {
+                    await inventoryStore.saveGroceryItem(
+                        GroceryItem(
+                            name: item.name,
+                            quantityText: item.quantityText,
+                            category: item.category,
+                            note: "Restock pantry",
+                            source: .manual,
+                            createdAt: .now
+                        )
+                    )
+                }
+            } label: {
+                Label("Add to Grocery", systemImage: "cart.badge.plus")
+            }
+            .tint(.green)
+
             Button(role: .destructive) {
                 AppLogger.action(
                     "expired_item_discarded",
@@ -170,6 +234,39 @@ struct PantryView: View {
             }
         }
         .contextMenu {
+            Button {
+                AppLogger.action(
+                    "pantry_adjust_quantity_tapped",
+                    screen: "Pantry",
+                    metadata: ["item": item.name]
+                )
+                quantityAdjustItem = item
+            } label: {
+                Label("Adjust Quantity", systemImage: "slider.horizontal.3")
+            }
+
+            Button {
+                AppLogger.action(
+                    "pantry_add_to_grocery",
+                    screen: "Pantry",
+                    metadata: ["item": item.name]
+                )
+                Task {
+                    await inventoryStore.saveGroceryItem(
+                        GroceryItem(
+                            name: item.name,
+                            quantityText: item.quantityText,
+                            category: item.category,
+                            note: "Restock pantry",
+                            source: .manual,
+                            createdAt: .now
+                        )
+                    )
+                }
+            } label: {
+                Label("Add to Grocery", systemImage: "cart.badge.plus")
+            }
+
             Button {
                 AppLogger.action(
                     "pantry_expiry_action_tapped",
@@ -190,6 +287,60 @@ struct PantryView: View {
                 Task { await inventoryStore.deletePantryItem(item) }
             } label: {
                 Label(item.isExpired ? "Discard" : "Delete", systemImage: "trash")
+            }
+        }
+    }
+}
+
+private struct PantryQuickAdjustSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    let item: PantryItem
+    let onSave: (PantryItem) -> Void
+
+    @State private var quantityText: String
+
+    init(item: PantryItem, onSave: @escaping (PantryItem) -> Void) {
+        self.item = item
+        self.onSave = onSave
+        _quantityText = State(initialValue: item.quantityText)
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    Text(item.name)
+                        .font(.headline)
+                    Text(item.category.displayName)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } header: {
+                    Text("Item")
+                }
+
+                Section {
+                    QuantityInputView(title: "Quantity", quantityText: $quantityText)
+                } header: {
+                    Text("Quantity")
+                } footer: {
+                    Text("Use this for fast pantry corrections without opening the full edit screen.")
+                }
+            }
+            .navigationTitle("Adjust Quantity")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        var updated = item
+                        updated.quantityText = quantityText.trimmingCharacters(in: .whitespacesAndNewlines)
+                        updated.updatedAt = .now
+                        onSave(updated)
+                        dismiss()
+                    }
+                }
             }
         }
     }
