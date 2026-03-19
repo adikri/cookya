@@ -12,6 +12,7 @@ xcuserdata/
 # Build artifacts
 build/
 DerivedData/
+.deriveddata/
 
 # Local secrets
 cookya/Config/Secrets.xcconfig
