@@ -11,7 +11,6 @@ struct SavedRecipesView: View {
     @EnvironmentObject private var recipeStore: RecipeStore
     @EnvironmentObject private var profileStore: ProfileStore
     @EnvironmentObject private var inventoryStore: InventoryStore
-    @EnvironmentObject private var cookedMealStore: CookedMealStore
 
     var body: some View {
         NavigationStack {
@@ -24,31 +23,211 @@ struct SavedRecipesView: View {
                     )
                 } else {
                     List {
-                        Section {
-                            ForEach(sortedRecipes) { saved in
-                                NavigationLink {
-                                    SavedRecipeDetailView(saved: saved)
-                                } label: {
-                                    SavedRecipeRow(
-                                        saved: saved,
-                                        readiness: readiness(for: saved)
-                                    )
+                        if !favoriteRecipes.isEmpty {
+                            Section {
+                                ForEach(favoriteRecipes.prefix(3)) { saved in
+                                    NavigationLink {
+                                        SavedRecipeDetailView(saved: saved)
+                                    } label: {
+                                        SavedRecipeRow(
+                                            saved: saved,
+                                            readiness: readiness(for: saved)
+                                        )
+                                    }
                                 }
-                                .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                                    favoriteButton(for: saved)
-                                }
+                            } header: {
+                                Text("Favorite Picks")
+                            } footer: {
+                                Text("Recipes you explicitly marked as favorites.")
                             }
-                            .onDelete(perform: removeFilteredRecipes)
+                        }
+
+                        if !readyRecipes.isEmpty {
+                            Section {
+                                ForEach(readyRecipes.prefix(3)) { saved in
+                                    NavigationLink {
+                                        SavedRecipeDetailView(saved: saved)
+                                    } label: {
+                                        SavedRecipeRow(
+                                            saved: saved,
+                                            readiness: readiness(for: saved)
+                                        )
+                                    }
+                                }
+                            } header: {
+                                Text("Ready Now")
+                            } footer: {
+                                Text("These saved meals can be cooked right away with what’s already in pantry.")
+                            }
+                        }
+
+                        if !nearlyReadyRecipes.isEmpty {
+                            Section {
+                                ForEach(nearlyReadyRecipes.prefix(3)) { saved in
+                                    NavigationLink {
+                                        SavedRecipeDetailView(saved: saved)
+                                    } label: {
+                                        SavedRecipeRow(
+                                            saved: saved,
+                                            readiness: readiness(for: saved)
+                                        )
+                                    }
+                                }
+                            } header: {
+                                Text("Nearly Ready")
+                            } footer: {
+                                Text("These recipes are close. Open one to add only the missing ingredients to Grocery.")
+                            }
+                        }
+
+                        Section {
+                            NavigationLink {
+                                SavedRecipeLibraryView()
+                            } label: {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Browse All Saved Recipes")
+                                            .font(.headline)
+                                        Text("\(sortedRecipes.count) recipe(s) saved for \(profileStore.activeProfile?.name ?? "Guest")")
+                                            .font(.subheadline)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    Spacer()
+                                }
+                                .padding(.vertical, 4)
+                            }
                         } header: {
-                            Text(profileStore.activeProfile?.name ?? "Guest")
+                            Text("Library")
+                        }
+
+                        if favoriteRecipes.isEmpty && readyRecipes.isEmpty && nearlyReadyRecipes.isEmpty {
+                            Section {
+                                ForEach(sortedRecipes.prefix(5)) { saved in
+                                    NavigationLink {
+                                        SavedRecipeDetailView(saved: saved)
+                                    } label: {
+                                        SavedRecipeRow(
+                                            saved: saved,
+                                            readiness: readiness(for: saved)
+                                        )
+                                    }
+                                }
+                            } header: {
+                                Text("Saved Recipes")
+                            }
                         }
                     }
                 }
             }
-            .navigationTitle("Saved")
+            .navigationTitle("Plan a Recipe")
             .onAppear {
-                AppLogger.screen("SavedRecipes", metadata: ["profile": profileStore.activeProfile?.name ?? "Guest", "count": String(filteredRecipes.count)])
+                AppLogger.screen("RecipePlanningHub", metadata: ["profile": profileStore.activeProfile?.name ?? "Guest", "count": String(filteredRecipes.count)])
             }
+        }
+    }
+
+    private var filteredRecipes: [SavedRecipe] {
+        recipeStore.recipes(for: profileStore.activeProfile)
+    }
+
+    private var sortedRecipes: [SavedRecipe] {
+        filteredRecipes.sorted { lhs, rhs in
+            if lhs.isFavorite != rhs.isFavorite {
+                return lhs.isFavorite && !rhs.isFavorite
+            }
+
+            let leftReadiness = readiness(for: lhs)
+            let rightReadiness = readiness(for: rhs)
+
+            if leftReadiness.priority != rightReadiness.priority {
+                return leftReadiness.priority < rightReadiness.priority
+            }
+
+            if leftReadiness.missingCount != rightReadiness.missingCount {
+                return leftReadiness.missingCount < rightReadiness.missingCount
+            }
+
+            return lhs.savedAt > rhs.savedAt
+        }
+    }
+
+    private var favoriteRecipes: [SavedRecipe] {
+        sortedRecipes.filter(\.isFavorite)
+    }
+
+    private var readyRecipes: [SavedRecipe] {
+        sortedRecipes.filter { saved in
+            if saved.isFavorite {
+                return false
+            }
+            if case .readyNow = readiness(for: saved) {
+                return true
+            }
+            return false
+        }
+    }
+
+    private var nearlyReadyRecipes: [SavedRecipe] {
+        sortedRecipes.filter { saved in
+            if saved.isFavorite {
+                return false
+            }
+            switch readiness(for: saved) {
+            case let .missingItems(count, _):
+                return count <= 2
+            case .readyNow, .needsReview:
+                return false
+            }
+        }
+    }
+
+    private func readiness(for saved: SavedRecipe) -> SavedRecipeReadiness {
+        RecipePlanningState(
+            recipe: saved.recipe,
+            checks: inventoryStore.availabilityChecks(for: saved.recipe.ingredients)
+        ).readiness
+    }
+}
+
+private struct SavedRecipeLibraryView: View {
+    @EnvironmentObject private var recipeStore: RecipeStore
+    @EnvironmentObject private var profileStore: ProfileStore
+    @EnvironmentObject private var inventoryStore: InventoryStore
+
+    var body: some View {
+        Group {
+            if filteredRecipes.isEmpty {
+                ContentUnavailableView(
+                    "No Saved Recipes",
+                    systemImage: "bookmark",
+                    description: Text("Generate a recipe and save it for the current profile to find it here.")
+                )
+            } else {
+                List {
+                    Section {
+                        ForEach(sortedRecipes) { saved in
+                            NavigationLink {
+                                SavedRecipeDetailView(saved: saved)
+                            } label: {
+                                SavedRecipeRow(
+                                    saved: saved,
+                                    readiness: readiness(for: saved)
+                                )
+                            }
+                            .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                favoriteButton(for: saved)
+                            }
+                        }
+                        .onDelete(perform: removeFilteredRecipes)
+                    } header: {
+                        Text(profileStore.activeProfile?.name ?? "Guest")
+                    }
+                }
+            }
+        }
+        .navigationTitle("Saved")
+        .onAppear {
+            AppLogger.screen("SavedRecipes", metadata: ["profile": profileStore.activeProfile?.name ?? "Guest", "count": String(filteredRecipes.count)])
         }
     }
 
