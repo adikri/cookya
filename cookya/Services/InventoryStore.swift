@@ -536,23 +536,74 @@ final class InventoryStore: ObservableObject {
     }
 
     private func loadCache() {
-        if let pantryData = userDefaults.data(forKey: pantryStorageKey),
-           let pantry = try? decoder.decode([PantryItem].self, from: pantryData) {
-            pantryItems = pantry
+        if let pantryData = userDefaults.data(forKey: pantryStorageKey) {
+            guard PersistencePayloadValidator.matchesExpectedTopLevel(pantryData, shape: .array) else {
+                pantryItems = []
+                AppLogger.action(
+                    "persistence_decode_failed",
+                    screen: "InventoryStore",
+                    metadata: ["key": pantryStorageKey, "entity": "pantry", "error": "Unexpected top-level JSON shape"]
+                )
+                return
+            }
+            do {
+                pantryItems = try decoder.decode([PantryItem].self, from: pantryData)
+            } catch {
+                pantryItems = []
+                AppLogger.action(
+                    "persistence_decode_failed",
+                    screen: "InventoryStore",
+                    metadata: ["key": pantryStorageKey, "entity": "pantry", "error": String(describing: error)]
+                )
+            }
         }
 
-        if let groceryData = userDefaults.data(forKey: groceryStorageKey),
-           let grocery = try? decoder.decode([GroceryItem].self, from: groceryData) {
-            groceryItems = grocery
+        if let groceryData = userDefaults.data(forKey: groceryStorageKey) {
+            guard PersistencePayloadValidator.matchesExpectedTopLevel(groceryData, shape: .array) else {
+                groceryItems = []
+                AppLogger.action(
+                    "persistence_decode_failed",
+                    screen: "InventoryStore",
+                    metadata: ["key": groceryStorageKey, "entity": "grocery", "error": "Unexpected top-level JSON shape"]
+                )
+                return
+            }
+            do {
+                groceryItems = try decoder.decode([GroceryItem].self, from: groceryData)
+            } catch {
+                groceryItems = []
+                AppLogger.action(
+                    "persistence_decode_failed",
+                    screen: "InventoryStore",
+                    metadata: ["key": groceryStorageKey, "entity": "grocery", "error": String(describing: error)]
+                )
+            }
         }
     }
 
     private func persistCache() {
-        if let pantryData = try? encoder.encode(pantryItems) {
+        do {
+            let pantryData = try encoder.encode(pantryItems)
             userDefaults.set(pantryData, forKey: pantryStorageKey)
+        } catch {
+            AppLogger.action(
+                "persistence_encode_failed",
+                screen: "InventoryStore",
+                metadata: ["key": pantryStorageKey, "entity": "pantry", "error": String(describing: error)]
+            )
+            assertionFailure("Failed to persist pantry items: \(error)")
         }
-        if let groceryData = try? encoder.encode(groceryItems) {
+
+        do {
+            let groceryData = try encoder.encode(groceryItems)
             userDefaults.set(groceryData, forKey: groceryStorageKey)
+        } catch {
+            AppLogger.action(
+                "persistence_encode_failed",
+                screen: "InventoryStore",
+                metadata: ["key": groceryStorageKey, "entity": "grocery", "error": String(describing: error)]
+            )
+            assertionFailure("Failed to persist grocery items: \(error)")
         }
     }
 

@@ -94,6 +94,7 @@ struct AppLogSession: Identifiable, Hashable {
 actor AppLogger {
     static let shared = AppLogger()
     nonisolated static let logsDirectoryName = "cookya-debug-sessions"
+    nonisolated private static let disableEnvironmentKey = "COOKYA_DISABLE_LOGGER"
 
     nonisolated static var logsDirectoryURL: URL {
         let baseURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
@@ -105,19 +106,26 @@ actor AppLogger {
         logsDirectoryURL.path
     }
 
+    nonisolated private static var isDisabled: Bool {
+        ProcessInfo.processInfo.environment[disableEnvironmentKey] == "1"
+    }
+
     nonisolated static func log(_ message: String, metadata: [String: String] = [:]) {
+        guard !isDisabled else { return }
         Task {
             await shared.write(event: message, screen: nil, metadata: metadata)
         }
     }
 
     nonisolated static func screen(_ screen: String, metadata: [String: String] = [:]) {
+        guard !isDisabled else { return }
         Task {
             await shared.write(event: "screen_view", screen: screen, metadata: metadata)
         }
     }
 
     nonisolated static func action(_ event: String, screen: String? = nil, metadata: [String: String] = [:]) {
+        guard !isDisabled else { return }
         Task {
             await shared.write(event: event, screen: screen, metadata: metadata)
         }

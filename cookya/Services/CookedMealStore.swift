@@ -110,7 +110,25 @@ final class CookedMealStore: ObservableObject {
 
     private func loadRecords() {
         guard let data = userDefaults.data(forKey: storageKey) else { return }
-        records = (try? decoder.decode([CookedMealRecord].self, from: data)) ?? []
+        guard PersistencePayloadValidator.matchesExpectedTopLevel(data, shape: .array) else {
+            records = []
+            AppLogger.action(
+                "persistence_decode_failed",
+                screen: "CookedMealStore",
+                metadata: ["key": storageKey, "entity": "cookedMealRecords", "error": "Unexpected top-level JSON shape"]
+            )
+            return
+        }
+        do {
+            records = try decoder.decode([CookedMealRecord].self, from: data)
+        } catch {
+            records = []
+            AppLogger.action(
+                "persistence_decode_failed",
+                screen: "CookedMealStore",
+                metadata: ["key": storageKey, "entity": "cookedMealRecords", "error": String(describing: error)]
+            )
+        }
     }
 
     private func insertRecord(
@@ -137,7 +155,16 @@ final class CookedMealStore: ObservableObject {
     }
 
     private func persist() {
-        guard let data = try? encoder.encode(records) else { return }
-        userDefaults.set(data, forKey: storageKey)
+        do {
+            let data = try encoder.encode(records)
+            userDefaults.set(data, forKey: storageKey)
+        } catch {
+            AppLogger.action(
+                "persistence_encode_failed",
+                screen: "CookedMealStore",
+                metadata: ["key": storageKey, "entity": "cookedMealRecords", "error": String(describing: error)]
+            )
+            assertionFailure("Failed to persist cooked meal records: \(error)")
+        }
     }
 }

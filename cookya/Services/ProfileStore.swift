@@ -118,18 +118,45 @@ final class ProfileStore: ObservableObject {
     }
 
     private func loadProfile() {
-        if let data = userDefaults.data(forKey: primaryStorageKey),
-           let profile = try? decoder.decode(UserProfile.self, from: data) {
-            primaryProfile = profile
+        if let data = userDefaults.data(forKey: primaryStorageKey) {
+            guard PersistencePayloadValidator.matchesExpectedTopLevel(data, shape: .object) else {
+                primaryProfile = nil
+                AppLogger.action(
+                    "persistence_decode_failed",
+                    screen: "ProfileStore",
+                    metadata: ["key": primaryStorageKey, "entity": "primaryProfile", "error": "Unexpected top-level JSON shape"]
+                )
+                isGuestModeActive = userDefaults.bool(forKey: guestModeStorageKey)
+                return
+            }
+            do {
+                primaryProfile = try decoder.decode(UserProfile.self, from: data)
+            } catch {
+                primaryProfile = nil
+                AppLogger.action(
+                    "persistence_decode_failed",
+                    screen: "ProfileStore",
+                    metadata: ["key": primaryStorageKey, "entity": "primaryProfile", "error": String(describing: error)]
+                )
+            }
         }
 
         isGuestModeActive = userDefaults.bool(forKey: guestModeStorageKey)
     }
 
     private func persistState() {
-        if let profile = primaryProfile,
-           let data = try? encoder.encode(profile) {
-            userDefaults.set(data, forKey: primaryStorageKey)
+        if let profile = primaryProfile {
+            do {
+                let data = try encoder.encode(profile)
+                userDefaults.set(data, forKey: primaryStorageKey)
+            } catch {
+                AppLogger.action(
+                    "persistence_encode_failed",
+                    screen: "ProfileStore",
+                    metadata: ["key": primaryStorageKey, "entity": "primaryProfile", "error": String(describing: error)]
+                )
+                assertionFailure("Failed to persist primary profile: \(error)")
+            }
         }
         userDefaults.set(isGuestModeActive, forKey: guestModeStorageKey)
     }

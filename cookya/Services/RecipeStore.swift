@@ -86,11 +86,25 @@ final class RecipeStore: ObservableObject {
 
     private func loadSavedRecipes() {
         guard let data = userDefaults.data(forKey: storageKey) else { return }
+        guard PersistencePayloadValidator.matchesExpectedTopLevel(data, shape: .array) else {
+            savedRecipes = []
+            AppLogger.action(
+                "persistence_decode_failed",
+                screen: "RecipeStore",
+                metadata: ["key": storageKey, "entity": "savedRecipes", "error": "Unexpected top-level JSON shape"]
+            )
+            return
+        }
 
         do {
             savedRecipes = try decoder.decode([SavedRecipe].self, from: data)
         } catch {
             savedRecipes = []
+            AppLogger.action(
+                "persistence_decode_failed",
+                screen: "RecipeStore",
+                metadata: ["key": storageKey, "entity": "savedRecipes", "error": String(describing: error)]
+            )
         }
     }
 
@@ -99,17 +113,36 @@ final class RecipeStore: ObservableObject {
             let data = try encoder.encode(savedRecipes)
             userDefaults.set(data, forKey: storageKey)
         } catch {
+            AppLogger.action(
+                "persistence_encode_failed",
+                screen: "RecipeStore",
+                metadata: ["key": storageKey, "entity": "savedRecipes", "error": String(describing: error)]
+            )
             assertionFailure("Failed to persist saved recipes: \(error)")
         }
     }
 
     private func loadGeneratedRecipeCache() {
         guard let data = userDefaults.data(forKey: generatedRecipeCacheKey) else { return }
+        guard PersistencePayloadValidator.matchesExpectedTopLevel(data, shape: .object) else {
+            generatedRecipeCache = [:]
+            AppLogger.action(
+                "persistence_decode_failed",
+                screen: "RecipeStore",
+                metadata: ["key": generatedRecipeCacheKey, "entity": "generatedRecipeCache", "error": "Unexpected top-level JSON shape"]
+            )
+            return
+        }
 
         do {
             generatedRecipeCache = try decoder.decode([String: Recipe].self, from: data)
         } catch {
             generatedRecipeCache = [:]
+            AppLogger.action(
+                "persistence_decode_failed",
+                screen: "RecipeStore",
+                metadata: ["key": generatedRecipeCacheKey, "entity": "generatedRecipeCache", "error": String(describing: error)]
+            )
         }
     }
 
@@ -118,17 +151,36 @@ final class RecipeStore: ObservableObject {
             let data = try encoder.encode(generatedRecipeCache)
             userDefaults.set(data, forKey: generatedRecipeCacheKey)
         } catch {
+            AppLogger.action(
+                "persistence_encode_failed",
+                screen: "RecipeStore",
+                metadata: ["key": generatedRecipeCacheKey, "entity": "generatedRecipeCache", "error": String(describing: error)]
+            )
             assertionFailure("Failed to persist generated recipe cache: \(error)")
         }
     }
 
     private func loadGeneratedRecipeTimestamps() {
         guard let data = userDefaults.data(forKey: generatedRecipeTimestampsKey) else { return }
+        guard PersistencePayloadValidator.matchesExpectedTopLevel(data, shape: .object) else {
+            generatedRecipeTimestamps = [:]
+            AppLogger.action(
+                "persistence_decode_failed",
+                screen: "RecipeStore",
+                metadata: ["key": generatedRecipeTimestampsKey, "entity": "generatedRecipeTimestamps", "error": "Unexpected top-level JSON shape"]
+            )
+            return
+        }
 
         do {
             generatedRecipeTimestamps = try decoder.decode([String: Date].self, from: data)
         } catch {
             generatedRecipeTimestamps = [:]
+            AppLogger.action(
+                "persistence_decode_failed",
+                screen: "RecipeStore",
+                metadata: ["key": generatedRecipeTimestampsKey, "entity": "generatedRecipeTimestamps", "error": String(describing: error)]
+            )
         }
     }
 
@@ -137,7 +189,13 @@ final class RecipeStore: ObservableObject {
             let data = try encoder.encode(generatedRecipeTimestamps)
             userDefaults.set(data, forKey: generatedRecipeTimestampsKey)
         } catch {
+            AppLogger.action(
+                "persistence_encode_failed",
+                screen: "RecipeStore",
+                metadata: ["key": generatedRecipeTimestampsKey, "entity": "generatedRecipeTimestamps", "error": String(describing: error)]
+            )
             assertionFailure("Failed to persist generated recipe timestamps: \(error)")
         }
     }
+
 }

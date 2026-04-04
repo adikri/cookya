@@ -96,11 +96,25 @@ final class KnownItemStore: ObservableObject {
 
     private func load() {
         guard let data = userDefaults.data(forKey: storageKey) else { return }
+        guard PersistencePayloadValidator.matchesExpectedTopLevel(data, shape: .array) else {
+            knownItems = []
+            AppLogger.action(
+                "persistence_decode_failed",
+                screen: "KnownItemStore",
+                metadata: ["key": storageKey, "entity": "knownInventoryItems", "error": "Unexpected top-level JSON shape"]
+            )
+            return
+        }
 
         do {
             knownItems = try decoder.decode([KnownInventoryItem].self, from: data)
         } catch {
             knownItems = []
+            AppLogger.action(
+                "persistence_decode_failed",
+                screen: "KnownItemStore",
+                metadata: ["key": storageKey, "entity": "knownInventoryItems", "error": String(describing: error)]
+            )
         }
     }
 
@@ -109,6 +123,11 @@ final class KnownItemStore: ObservableObject {
             let data = try encoder.encode(knownItems)
             userDefaults.set(data, forKey: storageKey)
         } catch {
+            AppLogger.action(
+                "persistence_encode_failed",
+                screen: "KnownItemStore",
+                metadata: ["key": storageKey, "entity": "knownInventoryItems", "error": String(describing: error)]
+            )
             assertionFailure("Failed to persist known inventory items: \(error)")
         }
     }
