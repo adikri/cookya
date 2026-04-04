@@ -25,15 +25,18 @@ Use this file to keep daily planning and end-of-day progress visible.
 ### Must Do
 - Finish the saved recipe planning hub
 - Rewrite `PLANNING.md` around the current product reality
-- Keep git history clean while doing both
+- Land lightweight app-state backup with validation
+- Start Phase A persistence hardening after backup
 
 ### Nice to Have
 - Clean up stray Xcode signing churn if it appears again
 - Clarify the next recipe-first planning step after the hub lands
+- If time permits, start recipe cache bounds work
 
 ### Watch
 - Do not mix `project.pbxproj` signing-only noise into feature commits
 - Keep the planning-doc rewrite separate from feature work
+- Always target an explicit iOS simulator in CLI builds/tests
 
 ### Done
 - Turned `Saved` into a planning hub with:
@@ -48,20 +51,32 @@ Use this file to keep daily planning and end-of-day progress visible.
   - restores missing local state on launch
   - refreshes backup data automatically after local persistence changes
 - Cleaned up profile persistence to use injected `UserDefaults` instead of hardcoded globals
+- Hardened store persistence behavior by:
+  - logging decode fallbacks explicitly
+  - asserting on unexpected encode failures in DEBUG
+  - validating persisted payload shape before decode
+- Added regression coverage for persisted payload shape validation
 - Verified the backup slice with:
   - unrestricted iOS simulator build
   - targeted backup regression tests
 - Created a stable `iPhone 16 (26.4)` simulator so future CLI build/test runs can target a consistent destination
+- Added `SKILLS.md` as a repo foundation document for:
+  - data-safety rules
+  - destructive-step guardrails
+  - Xcode/build/test rules
+  - git/workflow rules
 
 ### Commits
 - `13687f6` `Turn saved recipes into a planning hub for ready and nearly-ready meals`
 - `cb3d405` `Rewrite planning document around current product reality`
 - `182d893` `Add daily worklog for planning and end-of-day wrapups`
+- `e0af09a` `Add lightweight app-state backup and restore with regression tests`
 
 ### EOD status
 - Branch: `codex/mvp-recipe-flow`
 - Push status: pending for end of day
 
 ### Carry Forward
-- Next likely product slice: deeper data-durability UX or broader recipe-first entry point
+- Next likely hardening slice: recipe cache bounds / eviction
+- Next likely product-safety slice: export/import backup before any reinstall-risk debugging
 - Keep using this file at the start and end of each work session
