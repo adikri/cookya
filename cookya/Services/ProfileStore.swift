@@ -6,8 +6,11 @@ final class ProfileStore: ObservableObject {
     @Published private(set) var primaryProfile: UserProfile?
     @Published private(set) var isGuestModeActive = false
 
-    private let primaryStorageKey = "primary_profile_v1"
-    private let guestModeStorageKey = "guest_mode_active_v1"
+    private let primaryStorageKey = AppPersistenceKey.primaryProfile
+    private let guestModeStorageKey = AppPersistenceKey.guestModeActive
+    private let userDefaults: UserDefaults
+    private let encoder: JSONEncoder
+    private let decoder: JSONDecoder
 
     var hasCompletedOnboarding: Bool {
         primaryProfile != nil || isGuestModeActive
@@ -27,7 +30,14 @@ final class ProfileStore: ObservableObject {
         )
     }
 
-    init() {
+    init(
+        userDefaults: UserDefaults = .standard,
+        encoder: JSONEncoder = JSONEncoder(),
+        decoder: JSONDecoder = JSONDecoder()
+    ) {
+        self.userDefaults = userDefaults
+        self.encoder = encoder
+        self.decoder = decoder
         loadProfile()
     }
 
@@ -108,19 +118,19 @@ final class ProfileStore: ObservableObject {
     }
 
     private func loadProfile() {
-        if let data = UserDefaults.standard.data(forKey: primaryStorageKey),
-           let profile = try? JSONDecoder().decode(UserProfile.self, from: data) {
+        if let data = userDefaults.data(forKey: primaryStorageKey),
+           let profile = try? decoder.decode(UserProfile.self, from: data) {
             primaryProfile = profile
         }
 
-        isGuestModeActive = UserDefaults.standard.bool(forKey: guestModeStorageKey)
+        isGuestModeActive = userDefaults.bool(forKey: guestModeStorageKey)
     }
 
     private func persistState() {
         if let profile = primaryProfile,
-           let data = try? JSONEncoder().encode(profile) {
-            UserDefaults.standard.set(data, forKey: primaryStorageKey)
+           let data = try? encoder.encode(profile) {
+            userDefaults.set(data, forKey: primaryStorageKey)
         }
-        UserDefaults.standard.set(isGuestModeActive, forKey: guestModeStorageKey)
+        userDefaults.set(isGuestModeActive, forKey: guestModeStorageKey)
     }
 }

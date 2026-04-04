@@ -20,7 +20,7 @@ final class CookedMealStore: ObservableObject {
     @Published private(set) var records: [CookedMealRecord] = []
 
     private let guestProfileId = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
-    private let storageKey = "cooked_meal_records_v1"
+    private let storageKey = AppPersistenceKey.cookedMealRecords
     private let userDefaults: UserDefaults
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder

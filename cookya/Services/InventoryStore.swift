@@ -37,8 +37,8 @@ final class InventoryStore: ObservableObject {
     private let userDefaults: UserDefaults
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
-    private let pantryStorageKey = "pantry_items_v1"
-    private let groceryStorageKey = "grocery_items_v1"
+    private let pantryStorageKey = AppPersistenceKey.pantryItems
+    private let groceryStorageKey = AppPersistenceKey.groceryItems
     private var hasAttemptedInitialSync = false
 
     init(

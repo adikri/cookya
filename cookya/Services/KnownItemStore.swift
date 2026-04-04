@@ -5,7 +5,7 @@ import Combine
 final class KnownItemStore: ObservableObject {
     @Published private(set) var knownItems: [KnownInventoryItem] = []
 
-    private let storageKey = "known_inventory_items_v1"
+    private let storageKey = AppPersistenceKey.knownInventoryItems
     private let userDefaults: UserDefaults
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder

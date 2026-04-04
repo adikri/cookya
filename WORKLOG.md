@@ -43,15 +43,25 @@ Use this file to keep daily planning and end-of-day progress visible.
   - `Browse All Saved Recipes`
 - Kept the full saved-library flow available underneath the hub
 - Rewrote `PLANNING.md` as a reality-based roadmap for the current app
+- Added a lightweight app-state backup layer that:
+  - snapshots pantry, grocery, saved recipes, cooked history, profile, and known items
+  - restores missing local state on launch
+  - refreshes backup data automatically after local persistence changes
+- Cleaned up profile persistence to use injected `UserDefaults` instead of hardcoded globals
+- Verified the backup slice with:
+  - unrestricted iOS simulator build
+  - targeted backup regression tests
+- Created a stable `iPhone 16 (26.4)` simulator so future CLI build/test runs can target a consistent destination
 
 ### Commits
 - `13687f6` `Turn saved recipes into a planning hub for ready and nearly-ready meals`
 - `cb3d405` `Rewrite planning document around current product reality`
+- `182d893` `Add daily worklog for planning and end-of-day wrapups`
 
 ### EOD status
 - Branch: `codex/mvp-recipe-flow`
 - Push status: pending for end of day
 
 ### Carry Forward
-- Next likely product slice: recipe-first entry point beyond Saved/Home
+- Next likely product slice: deeper data-durability UX or broader recipe-first entry point
 - Keep using this file at the start and end of each work session

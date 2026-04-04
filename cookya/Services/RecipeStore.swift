@@ -8,9 +8,9 @@ final class RecipeStore: ObservableObject {
     @Published private(set) var savedRecipes: [SavedRecipe] = []
 
     private let guestProfileId = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
-    private let storageKey = "saved_recipes_v1"
-    private let generatedRecipeCacheKey = "generated_recipe_cache_v1"
-    private let generatedRecipeTimestampsKey = "generated_recipe_cache_timestamps_v1"
+    private let storageKey = AppPersistenceKey.savedRecipes
+    private let generatedRecipeCacheKey = AppPersistenceKey.generatedRecipeCache
+    private let generatedRecipeTimestampsKey = AppPersistenceKey.generatedRecipeTimestamps
     private let userDefaults: UserDefaults
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder

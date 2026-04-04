@@ -56,6 +56,8 @@
 		40A100542F5D300000D3C60A /* KnownItemPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100552F5D300000D3C60A /* KnownItemPickerView.swift */; };
 		40A100562F5D300000D3C60A /* StructuredQuantity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100572F5D300000D3C60A /* StructuredQuantity.swift */; };
 		40A100582F5D300000D3C60A /* QuantityInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100592F5D300000D3C60A /* QuantityInputView.swift */; };
+		40A1005A2F5D300000D3C60A /* AppPersistenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1005B2F5D300000D3C60A /* AppPersistenceKey.swift */; };
+		40A1005C2F5D300000D3C60A /* AppBackupCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1005D2F5D300000D3C60A /* AppBackupCoordinator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,6 +132,8 @@
 		40A100552F5D300000D3C60A /* KnownItemPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnownItemPickerView.swift; sourceTree = "<group>"; };
 		40A100572F5D300000D3C60A /* StructuredQuantity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructuredQuantity.swift; sourceTree = "<group>"; };
 		40A100592F5D300000D3C60A /* QuantityInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuantityInputView.swift; sourceTree = "<group>"; };
+		40A1005B2F5D300000D3C60A /* AppPersistenceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPersistenceKey.swift; sourceTree = "<group>"; };
+		40A1005D2F5D300000D3C60A /* AppBackupCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBackupCoordinator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -277,6 +281,7 @@
 				40A100342F5C000000D3C60A /* BackendInventoryService.swift */,
 				40A100322F5C000000D3C60A /* BackendRecipeService.swift */,
 				40A100472F5D000000D3C60A /* CookedMealStore.swift */,
+				40A1005D2F5D300000D3C60A /* AppBackupCoordinator.swift */,
 				40A100352F5C000000D3C60A /* InventoryStore.swift */,
 				40A100332F5C000000D3C60A /* InventorySyncingService.swift */,
 				40A100532F5D300000D3C60A /* KnownItemStore.swift */,
@@ -299,6 +304,7 @@
 			isa = PBXGroup;
 			children = (
 				40A100102F5A060000D3C60A /* AppConfig.swift */,
+				40A1005B2F5D300000D3C60A /* AppPersistenceKey.swift */,
 				40A1003F2F5C200000D3C60A /* AppLogger.swift */,
 			);
 			path = Utilities;
@@ -507,9 +513,11 @@
 				40A1002A2F5C000000D3C60A /* InventoryStore.swift in Sources */,
 				40A100282F5C000000D3C60A /* InventorySyncingService.swift in Sources */,
 				40A100522F5D300000D3C60A /* KnownItemStore.swift in Sources */,
+				40A1005A2F5D300000D3C60A /* AppPersistenceKey.swift in Sources */,
 				40A100502F5D300000D3C60A /* KnownInventoryItem.swift in Sources */,
 				40A100542F5D300000D3C60A /* KnownItemPickerView.swift in Sources */,
 				40A1000F2F5A060000D3C60A /* OpenAIRecipeService.swift in Sources */,
+				40A1005C2F5D300000D3C60A /* AppBackupCoordinator.swift in Sources */,
 				402655582F59A83600D3C60A /* cookyaApp.swift in Sources */,
 				40A1003A2F5C100000D3C60A /* PantryConsumption.swift in Sources */,
 				40A100242F5C000000D3C60A /* PantryItem.swift in Sources */,
