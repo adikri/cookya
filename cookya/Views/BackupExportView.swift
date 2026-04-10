@@ -83,9 +83,11 @@ private struct ShareSheet: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
-#Preview {
-    NavigationStack {
-        BackupExportView()
+struct BackupExportView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationStack {
+            BackupExportView()
+        }
     }
 }
 

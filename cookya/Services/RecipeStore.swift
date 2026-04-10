@@ -218,4 +218,11 @@ final class RecipeStore: ObservableObject {
         generatedRecipeTimestamps = generatedRecipeTimestamps.filter { generatedRecipeCache[$0.key] != nil }
     }
 
+    func reloadFromDisk() {
+        loadSavedRecipes()
+        loadGeneratedRecipeCache()
+        loadGeneratedRecipeTimestamps()
+        trimGeneratedRecipeCacheIfNeeded()
+    }
+
 }

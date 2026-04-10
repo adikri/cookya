@@ -109,7 +109,9 @@ struct ProfileOnboardingView: View {
     }
 }
 
-#Preview {
-    ProfileOnboardingView()
-        .environmentObject(ProfileStore())
+struct ProfileOnboardingView_Previews: PreviewProvider {
+    static var previews: some View {
+        ProfileOnboardingView()
+            .environmentObject(ProfileStore())
+    }
 }

@@ -398,9 +398,11 @@ struct PantryBatchExpiryReviewSheet: View {
     }
 }
 
-#Preview {
-    PurchaseExpirySheet(
-        item: GroceryItem(name: "Milk", quantityText: "1 L", category: .dairy),
-        onConfirm: { _, _, _ in }
-    )
+struct PurchaseExpirySheet_Previews: PreviewProvider {
+    static var previews: some View {
+        PurchaseExpirySheet(
+            item: GroceryItem(name: "Milk", quantityText: "1 L", category: .dairy),
+            onConfirm: { _, _, _ in }
+        )
+    }
 }

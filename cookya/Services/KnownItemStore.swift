@@ -131,4 +131,8 @@ final class KnownItemStore: ObservableObject {
             assertionFailure("Failed to persist known inventory items: \(error)")
         }
     }
+
+    func reloadFromDisk() {
+        load()
+    }
 }

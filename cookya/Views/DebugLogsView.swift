@@ -207,8 +207,10 @@ private struct DebugLogSessionDetailView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        DebugLogsView()
+struct DebugLogsView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationStack {
+            DebugLogsView()
+        }
     }
 }

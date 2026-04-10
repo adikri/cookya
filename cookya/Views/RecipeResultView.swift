@@ -355,30 +355,32 @@ struct RecipeResultView: View {
     }
 }
 
-#Preview {
-    let sampleIngredients = [
-        Ingredient(name: "Eggs"),
-        Ingredient(name: "Spinach"),
-        Ingredient(name: "Tomato")
-    ]
+struct RecipeResultView_Previews: PreviewProvider {
+    static var previews: some View {
+        let sampleIngredients = [
+            Ingredient(name: "Eggs"),
+            Ingredient(name: "Spinach"),
+            Ingredient(name: "Tomato")
+        ]
 
-    let sampleRecipe = Recipe(
-        title: "Eggs & Spinach Easy Bowl",
-        ingredients: sampleIngredients,
-        instructions: [
-            "Prep ingredients.",
-            "Saute and cook for 12 minutes.",
-            "Serve warm."
-        ],
-        calories: 320,
-        difficulty: .easy
-    )
+        let sampleRecipe = Recipe(
+            title: "Eggs & Spinach Easy Bowl",
+            ingredients: sampleIngredients,
+            instructions: [
+                "Prep ingredients.",
+                "Saute and cook for 12 minutes.",
+                "Serve warm."
+            ],
+            calories: 320,
+            difficulty: .easy
+        )
 
-    NavigationStack {
-        RecipeResultView(recipe: sampleRecipe)
-            .environmentObject(RecipeStore())
-            .environmentObject(ProfileStore())
-            .environmentObject(InventoryStore())
-            .environmentObject(CookedMealStore())
+        return NavigationStack {
+            RecipeResultView(recipe: sampleRecipe)
+                .environmentObject(RecipeStore())
+                .environmentObject(ProfileStore())
+                .environmentObject(InventoryStore())
+                .environmentObject(CookedMealStore())
+        }
     }
 }

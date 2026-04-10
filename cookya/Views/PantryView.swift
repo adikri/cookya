@@ -411,10 +411,12 @@ private struct PantryQuickAdjustSheet: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        PantryView()
-            .environmentObject(InventoryStore())
+struct PantryView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationStack {
+            PantryView()
+                .environmentObject(InventoryStore())
+        }
     }
 }
 

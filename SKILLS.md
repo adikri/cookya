@@ -265,6 +265,52 @@ When there are multiple viable paths:
 
 ## 8. Current Foundational Learnings
 
+## 9. Skill Buildup (how to get better while shipping)
+
+These are intentional habits to build. They pay off in speed, quality, and confidence.
+
+### Triage muscle: classify failures fast
+- **Code error**: compiler points to a file/line with a concrete type/symbol issue.
+- **Tooling / environment**: simulator/CoreSimulator, codesign, sandbox, DerivedData permissions, plugin/macro server failures.
+
+Rule: spend **< 2 minutes** classifying before “trying random fixes”.
+
+### Repro muscle: smallest failing command
+Keep a minimal command that proves the bug exists, and use it to verify the fix.
+
+Examples:
+- **Build (workspace-local DerivedData)**:
+```bash
+xcodebuild clean build -scheme cookya \
+  -destination 'generic/platform=iOS Simulator' \
+  -derivedDataPath "./.derivedData"
+```
+- **Tests (focused)**:
+```bash
+xcodebuild test -scheme cookya \
+  -destination 'platform=iOS Simulator,name=iPhone 17,OS=latest' \
+  -derivedDataPath "./.derivedData" \
+  -only-testing:cookyaTests/SomeTestClass
+```
+
+### Xcode project hygiene
+- Treat `cookya.xcodeproj/project.pbxproj` as a **generated config database**, not “source code”.
+- When a new Swift type is “missing”, suspect **target membership / Sources build phase** before suspecting Swift itself.
+- Prefer tight, reviewable project-file edits; expect context drift and re-read before patching.
+
+### Secrets muscle: assume the client is hostile
+- Do not ship API keys in the iOS client (not even “just in Debug” unless you fully understand the blast radius).
+- Prefer a backend relay with server-side keys and a revocable app token stored in Keychain.
+
+### Persistence UX muscle: “apply” is not the feature
+For backup/import/export flows:
+- The feature isn’t complete until the app **reacts** (stores reload + UI refresh) without requiring a relaunch.
+- Prefer one coordination primitive (e.g. a single notification) over ad-hoc refresh calls spread across views.
+
+### Git muscle: commit in reversible slices
+- Each commit should tell one story and be safe to revert.
+- Don’t mix “Xcode churn” + feature logic unless unavoidable; if unavoidable, explain why in the commit message.
+
 ### Learning: data-loss implications must be surfaced before troubleshooting
 - deleting the app removes local app state
 - local backup inside the app sandbox is not reinstall-safe

@@ -67,6 +67,7 @@
 		40B0000A2F60200000D3C60A /* BackupExportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000092F60200000D3C60A /* BackupExportView.swift */; };
 		40B0000D2F60300000D3C60A /* BackupImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B0000B2F60300000D3C60A /* BackupImportView.swift */; };
 		40B0000E2F60300000D3C60A /* BackupImportApplier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B0000C2F60300000D3C60A /* BackupImportApplier.swift */; };
+		40B000102F60A00000D3C60A /* AppNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B0000F2F60A00000D3C60A /* AppNotifications.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -152,6 +153,7 @@
 		40B000092F60200000D3C60A /* BackupExportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupExportView.swift; sourceTree = "<group>"; };
 		40B0000B2F60300000D3C60A /* BackupImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupImportView.swift; sourceTree = "<group>"; };
 		40B0000C2F60300000D3C60A /* BackupImportApplier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupImportApplier.swift; sourceTree = "<group>"; };
+		40B0000F2F60A00000D3C60A /* AppNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNotifications.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -328,6 +330,7 @@
 			isa = PBXGroup;
 			children = (
 				40A100102F5A060000D3C60A /* AppConfig.swift */,
+				40B0000F2F60A00000D3C60A /* AppNotifications.swift */,
 				40A1005B2F5D300000D3C60A /* AppPersistenceKey.swift */,
 				40A1003F2F5C200000D3C60A /* AppLogger.swift */,
 				40A100612F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift */,
@@ -521,6 +524,7 @@
 			files = (
 				40A100032F5A010000D3C60A /* Difficulty.swift in Sources */,
 				40A100112F5A060000D3C60A /* AppConfig.swift in Sources */,
+				40B000102F60A00000D3C60A /* AppNotifications.swift in Sources */,
 				40A1003E2F5C200000D3C60A /* AppLogger.swift in Sources */,
 				40B000042F60000000D3C60A /* KeychainStore.swift in Sources */,
 				40A100292F5C000000D3C60A /* BackendInventoryService.swift in Sources */,
@@ -650,7 +654,7 @@
 				DEVELOPMENT_TEAM = "$(COOKYA_DEVELOPMENT_TEAM)";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -714,7 +718,7 @@
 				DEVELOPMENT_TEAM = "$(COOKYA_DEVELOPMENT_TEAM)";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -738,6 +742,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]" = NO;
+				"CODE_SIGNING_REQUIRED[sdk=iphonesimulator*]" = NO;
 				COOKYA_BACKEND_BASE_URL = "$(inherited)";
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_APP_SANDBOX = YES;
@@ -788,6 +794,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]" = NO;
+				"CODE_SIGNING_REQUIRED[sdk=iphonesimulator*]" = NO;
 				COOKYA_BACKEND_BASE_URL = "$(inherited)";
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_APP_SANDBOX = YES;

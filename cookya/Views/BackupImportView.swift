@@ -117,7 +117,8 @@ struct BackupImportView: View {
     private func applyReplaceAll() {
         guard let decodedBackup else { return }
         let result = BackupImportApplier.applyReplaceAll(decodedBackup)
-        statusMessage = "Imported. Please force-quit and relaunch the app."
+        NotificationCenter.default.post(name: .cookyaBackupImported, object: nil)
+        statusMessage = "Imported."
         AppLogger.action(
             "backup_import_applied",
             metadata: ["version": String(decodedBackup.version), "keys": result.restoredKeys.joined(separator: ",")]
@@ -125,9 +126,11 @@ struct BackupImportView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        BackupImportView()
+struct BackupImportView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationStack {
+            BackupImportView()
+        }
     }
 }
 

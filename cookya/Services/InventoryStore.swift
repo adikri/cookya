@@ -607,6 +607,11 @@ final class InventoryStore: ObservableObject {
         }
     }
 
+    func reloadFromDisk() {
+        loadCache()
+        lastSyncError = nil
+    }
+
     private func handleSyncError(_ error: InventorySyncError) {
         if case .missingBackendURL = error {
             lastSyncError = nil

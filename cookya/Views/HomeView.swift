@@ -757,10 +757,12 @@ private struct CookAgainView: View {
     }
 }
 
-#Preview {
-    HomeView()
-        .environmentObject(InventoryStore())
-        .environmentObject(ProfileStore())
-        .environmentObject(CookedMealStore())
-        .environmentObject(RecipeStore())
+struct HomeView_Previews: PreviewProvider {
+    static var previews: some View {
+        HomeView()
+            .environmentObject(InventoryStore())
+            .environmentObject(ProfileStore())
+            .environmentObject(CookedMealStore())
+            .environmentObject(RecipeStore())
+    }
 }

@@ -167,4 +167,8 @@ final class CookedMealStore: ObservableObject {
             assertionFailure("Failed to persist cooked meal records: \(error)")
         }
     }
+
+    func reloadFromDisk() {
+        loadRecords()
+    }
 }

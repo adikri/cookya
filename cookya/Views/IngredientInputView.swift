@@ -267,8 +267,10 @@ struct IngredientInputView: View {
     }
 }
 
-#Preview {
-    IngredientInputView()
-        .environmentObject(ProfileStore())
-        .environmentObject(InventoryStore())
+struct IngredientInputView_Previews: PreviewProvider {
+    static var previews: some View {
+        IngredientInputView()
+            .environmentObject(ProfileStore())
+            .environmentObject(InventoryStore())
+    }
 }

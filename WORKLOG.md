@@ -45,6 +45,37 @@ Files changed (currently uncommitted):
 ### Commit checkpoint
 - Create a commit **now** for the secret-hardening slice (after one last `Cmd+B` / simulator build verification), before starting backend relay work.
 
+### Learnings / Troubleshooting notes (keep for future agents)
+
+#### Build + test (CLI / `xcodebuild`) gotchas
+- **DerivedData permission errors in sandboxed environments**: if you see “Unable to write … `DerivedData/.../info.plist`” or log removal “Operation not permitted”, set a workspace-local derived data path.
+  - Example: `xcodebuild ... -derivedDataPath "./.derivedData"`
+- **SwiftUI `#Preview {}` macro failures**: if you see errors like “`PreviewsMacros.SwiftUIView` could not be found … swift-plugin-server produced malformed response”, replace `#Preview { ... }` blocks with classic `PreviewProvider` previews.
+- **User script sandboxing can break build phases**: if your build fails in a script phase with `sandbox-exec: sandbox_apply: Operation not permitted`, disable user-script sandboxing in build settings.
+  - Setting: `ENABLE_USER_SCRIPT_SANDBOXING = NO`
+- **Codesign failures due to xattrs / Finder detritus**: if codesign fails with “resource fork, Finder information, or similar detritus not allowed”, it’s usually extended attributes on the built `.app`.
+  - Quick fix: `xattr -cr <path-to-app-or-deriveddata>`
+  - In restricted environments, also disabling simulator codesigning may be required:
+    - `CODE_SIGNING_ALLOWED[sdk=iphonesimulator*] = NO`
+    - `CODE_SIGNING_REQUIRED[sdk=iphonesimulator*] = NO`
+- **`xcodebuild test` needs a concrete simulator**: “Any iOS Simulator Device” cannot run tests; `xcodebuild test` must target a specific device. If CoreSimulator is unhealthy or no runtimes are available, tests won’t run even if the project builds.
+
+#### Xcode project file changes (`project.pbxproj`)
+- **Patch context drifts easily**: `project.pbxproj` edits often fail because the file changes ordering/UUID blocks. Re-read the exact section you’re patching (PBXBuildFile/PBXFileReference/PBXGroup/PBXSourcesBuildPhase) and re-apply with fresh context.
+- **New Swift file not found at compile time**: if a new file compiles in the editor but tests/build can’t see it, confirm it’s included in the `cookya` target “Sources” phase (and the file reference exists).
+
+#### Node / backend local dev gotchas
+- **`npm install` ran in wrong directory** (observed in this environment): if `npm` looks for `package.json` at repo root even when you tried to set a working directory, run with an explicit `cd`:
+  - `cd backend && npm install`
+- **Stray `package-lock.json` in repo root**: verify `npm` didn’t write lockfiles outside the intended folder; delete if created accidentally.
+
+#### Cloudflare Workers / wrangler deployment gotchas
+- **First deploy prompts**: `wrangler` may prompt to create the Worker and to pick a unique `workers.dev` subdomain. This is expected on first-time setup.
+- **Transient TLS / DNS issues**: if `curl` hits TLS handshake failures right after deploy, it can be propagation/transient. Retrying after a short wait and verifying DNS/TLS usually resolves it.
+
+#### Product/architecture note (why we did it this way)
+- **Don’t ship an OpenAI key in the iOS client**: even Debug bundling is risky. Prefer a backend relay with server-side key; the app authenticates via a long random app token stored in Keychain.
+
 ## 2026-04-04
 
 ### Must Do

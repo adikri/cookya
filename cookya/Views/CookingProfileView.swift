@@ -34,9 +34,11 @@ struct CookingProfileView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        CookingProfileView()
-            .environmentObject(ProfileStore())
+struct CookingProfileView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationStack {
+            CookingProfileView()
+                .environmentObject(ProfileStore())
+        }
     }
 }

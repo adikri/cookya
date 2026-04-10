@@ -145,9 +145,11 @@ struct ProfileView: View {
     }
 }
 
-#Preview {
-    ProfileView()
-        .environmentObject(ProfileStore())
-        .environmentObject(RecipeStore())
-        .environmentObject(CookedMealStore())
+struct ProfileView_Previews: PreviewProvider {
+    static var previews: some View {
+        ProfileView()
+            .environmentObject(ProfileStore())
+            .environmentObject(RecipeStore())
+            .environmentObject(CookedMealStore())
+    }
 }

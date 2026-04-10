@@ -173,13 +173,15 @@ struct GroceryListView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        GroceryListView()
-            .environmentObject(InventoryStore())
-            .environmentObject(RecipeStore())
-            .environmentObject(ProfileStore())
-            .environmentObject(CookedMealStore())
+struct GroceryListView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationStack {
+            GroceryListView()
+                .environmentObject(InventoryStore())
+                .environmentObject(RecipeStore())
+                .environmentObject(ProfileStore())
+                .environmentObject(CookedMealStore())
+        }
     }
 }
 

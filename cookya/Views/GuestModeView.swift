@@ -33,9 +33,11 @@ struct GuestModeView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        GuestModeView()
-            .environmentObject(ProfileStore())
+struct GuestModeView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationStack {
+            GuestModeView()
+                .environmentObject(ProfileStore())
+        }
     }
 }

@@ -726,10 +726,12 @@ private struct RecipePlanningState {
     }
 }
 
-#Preview {
+struct SavedRecipesView_Previews: PreviewProvider {
+    static var previews: some View {
         SavedRecipesView()
-        .environmentObject(RecipeStore())
-        .environmentObject(ProfileStore())
-        .environmentObject(InventoryStore())
-        .environmentObject(CookedMealStore())
+            .environmentObject(RecipeStore())
+            .environmentObject(ProfileStore())
+            .environmentObject(InventoryStore())
+            .environmentObject(CookedMealStore())
+    }
 }

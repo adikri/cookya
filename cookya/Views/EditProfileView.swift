@@ -85,9 +85,11 @@ struct EditProfileView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        EditProfileView()
-            .environmentObject(ProfileStore())
+struct EditProfileView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationStack {
+            EditProfileView()
+                .environmentObject(ProfileStore())
+        }
     }
 }

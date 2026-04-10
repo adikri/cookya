@@ -160,4 +160,8 @@ final class ProfileStore: ObservableObject {
         }
         userDefaults.set(isGuestModeActive, forKey: guestModeStorageKey)
     }
+
+    func reloadFromDisk() {
+        loadProfile()
+    }
 }

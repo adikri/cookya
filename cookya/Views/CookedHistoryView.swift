@@ -217,10 +217,12 @@ private struct CookedMealDetailView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        CookedHistoryView()
-            .environmentObject(CookedMealStore())
-            .environmentObject(ProfileStore())
+struct CookedHistoryView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationStack {
+            CookedHistoryView()
+                .environmentObject(CookedMealStore())
+                .environmentObject(ProfileStore())
+        }
     }
 }

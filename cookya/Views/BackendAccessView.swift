@@ -46,9 +46,11 @@ struct BackendAccessView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        BackendAccessView()
+struct BackendAccessView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationStack {
+            BackendAccessView()
+        }
     }
 }
 

@@ -105,9 +105,11 @@ struct DietaryPreferencesView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        DietaryPreferencesView()
-            .environmentObject(ProfileStore())
+struct DietaryPreferencesView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationStack {
+            DietaryPreferencesView()
+                .environmentObject(ProfileStore())
+        }
     }
 }
