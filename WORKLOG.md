@@ -20,6 +20,31 @@ Use this file to keep daily planning and end-of-day progress visible.
 
 ---
 
+## 2026-04-10
+
+### Must Do
+- Phase A / product-safety: **Standalone recipe generation without client OpenAI key**
+  - Land backend relay plan (Phase 1, Option A: static token auth) and map it into `PLANNING.md` as a Phase A **Next** item.
+  - Define the backend contract to match iOS today (`POST /v1/recipes/generate` request + `Recipe` response).
+
+### In Progress
+- Hardened local secret handling (high severity risk mitigation):
+  - Removed a hardcoded `OPENAI_API_KEY` from local scheme env config (and disabled it).
+  - Updated the `Bundle Local Secrets` build phase so **Release/Archive builds do not embed `LocalSecrets.plist`**.
+  - Updated local setup doc to reflect that `OPENAI_API_KEY` should be provided at runtime (Xcode scheme env var / CLI env), not bundled.
+
+Files changed (currently uncommitted):
+- `OPENAI_SETUP.md`
+- `cookya.xcodeproj/project.pbxproj`
+
+### Watch
+- Git hygiene: keep the API-key hardening changes as a single focused commit; do not mix with backend work.
+- Avoid `project.pbxproj` churn unrelated to the secret-hardening slice.
+- Data safety: do not delete the app or erase simulators as “cleanup” steps (local data loss).
+
+### Commit checkpoint
+- Create a commit **now** for the secret-hardening slice (after one last `Cmd+B` / simulator build verification), before starting backend relay work.
+
 ## 2026-04-04
 
 ### Must Do

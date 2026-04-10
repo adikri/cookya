@@ -8,12 +8,15 @@ cp cookya/Config/Secrets.xcconfig.example cookya/Config/Secrets.xcconfig
 
 2. Open `cookya/Config/Secrets.xcconfig` and set:
 
-- `OPENAI_API_KEY`
 - `OPENAI_BASE_URL` (default: `https://api.openai.com`)
 - `OPENAI_MODEL` (default: `gpt-4.1-mini`)
 - `COOKYA_BACKEND_BASE_URL` (for backend-powered recipe generation and inventory sync)
 
-3. Cookya now reads local build config values automatically if you create the secrets file above. That means the app can run on your phone away from Xcode after one rebuild.
+3. Cookya reads non-secret local build config values (base URL/model/backend URL) from the secrets file above.
+
+**Do not embed `OPENAI_API_KEY` into the app bundle.** Provide it at runtime via:
+- Scheme -> Edit Scheme -> Run -> Environment Variables: `OPENAI_API_KEY`
+- or by running from CLI with `OPENAI_API_KEY=...` in the environment
 
 4. Optional fallback for local debugging:
 
