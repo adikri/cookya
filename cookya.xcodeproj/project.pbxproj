@@ -65,6 +65,8 @@
 		40B000062F60000000D3C60A /* BackendAccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000032F60000000D3C60A /* BackendAccessView.swift */; };
 		40B000082F60100000D3C60A /* CookyaExportBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000072F60100000D3C60A /* CookyaExportBackup.swift */; };
 		40B0000A2F60200000D3C60A /* BackupExportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000092F60200000D3C60A /* BackupExportView.swift */; };
+		40B0000D2F60300000D3C60A /* BackupImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B0000B2F60300000D3C60A /* BackupImportView.swift */; };
+		40B0000E2F60300000D3C60A /* BackupImportApplier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B0000C2F60300000D3C60A /* BackupImportApplier.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -148,6 +150,8 @@
 		40B000032F60000000D3C60A /* BackendAccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendAccessView.swift; sourceTree = "<group>"; };
 		40B000072F60100000D3C60A /* CookyaExportBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookyaExportBackup.swift; sourceTree = "<group>"; };
 		40B000092F60200000D3C60A /* BackupExportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupExportView.swift; sourceTree = "<group>"; };
+		40B0000B2F60300000D3C60A /* BackupImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupImportView.swift; sourceTree = "<group>"; };
+		40B0000C2F60300000D3C60A /* BackupImportApplier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupImportApplier.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -237,6 +241,7 @@
 			isa = PBXGroup;
 			children = (
 				40B000092F60200000D3C60A /* BackupExportView.swift */,
+				40B0000B2F60300000D3C60A /* BackupImportView.swift */,
 				40B000032F60000000D3C60A /* BackendAccessView.swift */,
 				40A100212F5B100000D3C60A /* CookingProfileView.swift */,
 				40A100492F5D000000D3C60A /* CookedHistoryView.swift */,
@@ -300,6 +305,7 @@
 				40A100472F5D000000D3C60A /* CookedMealStore.swift */,
 				40A1005D2F5D300000D3C60A /* AppBackupCoordinator.swift */,
 				40B000072F60100000D3C60A /* CookyaExportBackup.swift */,
+				40B0000C2F60300000D3C60A /* BackupImportApplier.swift */,
 				40A100352F5C000000D3C60A /* InventoryStore.swift */,
 				40A100332F5C000000D3C60A /* InventorySyncingService.swift */,
 				40A100532F5D300000D3C60A /* KnownItemStore.swift */,
@@ -544,6 +550,7 @@
 				40A100542F5D300000D3C60A /* KnownItemPickerView.swift in Sources */,
 				40A1000F2F5A060000D3C60A /* OpenAIRecipeService.swift in Sources */,
 				40A1005C2F5D300000D3C60A /* AppBackupCoordinator.swift in Sources */,
+				40B0000E2F60300000D3C60A /* BackupImportApplier.swift in Sources */,
 				402655582F59A83600D3C60A /* cookyaApp.swift in Sources */,
 				40A1003A2F5C100000D3C60A /* PantryConsumption.swift in Sources */,
 				40A100242F5C000000D3C60A /* PantryItem.swift in Sources */,
@@ -555,6 +562,7 @@
 				402655672F59ABCC00D3C60A /* ProfileView.swift in Sources */,
 				40B000062F60000000D3C60A /* BackendAccessView.swift in Sources */,
 				40B0000A2F60200000D3C60A /* BackupExportView.swift in Sources */,
+				40B0000D2F60300000D3C60A /* BackupImportView.swift in Sources */,
 				40A100182F5B000000D3C60A /* ProfileStore.swift in Sources */,
 				40A1004A2F5D000000D3C60A /* PurchaseExpirySheet.swift in Sources */,
 				40A100582F5D300000D3C60A /* QuantityInputView.swift in Sources */,

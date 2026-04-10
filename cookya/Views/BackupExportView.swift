@@ -17,6 +17,18 @@ struct BackupExportView: View {
                 Text("Exports your pantry, grocery list, saved recipes, cooked history, profile, and known items into a file you can save in Files or iCloud Drive.")
             }
 
+            Section {
+                NavigationLink {
+                    BackupImportView()
+                } label: {
+                    Text("Import backup")
+                }
+            } header: {
+                Text("Import")
+            } footer: {
+                Text("Import replaces local Cookya data on this device with the selected backup file.")
+            }
+
             if let lastErrorMessage {
                 Section("Status") {
                     Text(lastErrorMessage)
