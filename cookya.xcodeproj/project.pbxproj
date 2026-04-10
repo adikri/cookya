@@ -59,6 +59,7 @@
 		40A1005A2F5D300000D3C60A /* AppPersistenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1005B2F5D300000D3C60A /* AppPersistenceKey.swift */; };
 		40A1005C2F5D300000D3C60A /* AppBackupCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1005D2F5D300000D3C60A /* AppBackupCoordinator.swift */; };
 		40A1005E2F5D300000D3C60A /* PersistencePayloadValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1005F2F5D300000D3C60A /* PersistencePayloadValidator.swift */; };
+		40A100602F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100612F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -136,6 +137,7 @@
 		40A1005B2F5D300000D3C60A /* AppPersistenceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPersistenceKey.swift; sourceTree = "<group>"; };
 		40A1005D2F5D300000D3C60A /* AppBackupCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBackupCoordinator.swift; sourceTree = "<group>"; };
 		40A1005F2F5D300000D3C60A /* PersistencePayloadValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistencePayloadValidator.swift; sourceTree = "<group>"; };
+		40A100612F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneratedRecipeCachePolicy.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -308,6 +310,7 @@
 				40A100102F5A060000D3C60A /* AppConfig.swift */,
 				40A1005B2F5D300000D3C60A /* AppPersistenceKey.swift */,
 				40A1003F2F5C200000D3C60A /* AppLogger.swift */,
+				40A100612F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift */,
 				40A1005F2F5D300000D3C60A /* PersistencePayloadValidator.swift */,
 			);
 			path = Utilities;
@@ -517,6 +520,7 @@
 				40A100282F5C000000D3C60A /* InventorySyncingService.swift in Sources */,
 				40A100522F5D300000D3C60A /* KnownItemStore.swift in Sources */,
 				40A1005A2F5D300000D3C60A /* AppPersistenceKey.swift in Sources */,
+				40A100602F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift in Sources */,
 				40A1005E2F5D300000D3C60A /* PersistencePayloadValidator.swift in Sources */,
 				40A100502F5D300000D3C60A /* KnownInventoryItem.swift in Sources */,
 				40A100542F5D300000D3C60A /* KnownItemPickerView.swift in Sources */,

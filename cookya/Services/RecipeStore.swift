@@ -14,20 +14,24 @@ final class RecipeStore: ObservableObject {
     private let userDefaults: UserDefaults
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
+    private let generatedRecipeCacheLimit: Int
     private var generatedRecipeCache: [String: Recipe] = [:]
     private var generatedRecipeTimestamps: [String: Date] = [:]
 
     init(
         userDefaults: UserDefaults = .standard,
         encoder: JSONEncoder = JSONEncoder(),
-        decoder: JSONDecoder = JSONDecoder()
+        decoder: JSONDecoder = JSONDecoder(),
+        generatedRecipeCacheLimit: Int = 50
     ) {
         self.userDefaults = userDefaults
         self.encoder = encoder
         self.decoder = decoder
+        self.generatedRecipeCacheLimit = generatedRecipeCacheLimit
         loadSavedRecipes()
         loadGeneratedRecipeCache()
         loadGeneratedRecipeTimestamps()
+        trimGeneratedRecipeCacheIfNeeded()
     }
 
     func saveRecipe(_ recipe: Recipe, for profile: UserProfile?) {
@@ -79,7 +83,8 @@ final class RecipeStore: ObservableObject {
     func cacheGeneratedRecipe(_ recipe: Recipe, for request: RecipeGenerationRequest) {
         let fingerprint = request.normalizedFingerprint
         generatedRecipeCache[fingerprint] = recipe
-        generatedRecipeTimestamps[fingerprint] = generatedRecipeTimestamps[fingerprint] ?? .now
+        generatedRecipeTimestamps[fingerprint] = .now
+        trimGeneratedRecipeCacheIfNeeded()
         persistGeneratedRecipeCache()
         persistGeneratedRecipeTimestamps()
     }
@@ -196,6 +201,21 @@ final class RecipeStore: ObservableObject {
             )
             assertionFailure("Failed to persist generated recipe timestamps: \(error)")
         }
+    }
+
+    private func trimGeneratedRecipeCacheIfNeeded() {
+        let fingerprintsToEvict = GeneratedRecipeCachePolicy.fingerprintsToEvict(
+            cacheKeys: Set(generatedRecipeCache.keys),
+            timestamps: generatedRecipeTimestamps,
+            limit: generatedRecipeCacheLimit
+        )
+
+        for fingerprint in fingerprintsToEvict {
+            generatedRecipeCache.removeValue(forKey: fingerprint)
+            generatedRecipeTimestamps.removeValue(forKey: fingerprint)
+        }
+
+        generatedRecipeTimestamps = generatedRecipeTimestamps.filter { generatedRecipeCache[$0.key] != nil }
     }
 
 }
