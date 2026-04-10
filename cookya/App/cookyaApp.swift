@@ -15,6 +15,7 @@ struct cookyaApp: App {
     @StateObject private var inventoryStore: InventoryStore
     @StateObject private var cookedMealStore: CookedMealStore
     @StateObject private var knownItemStore: KnownItemStore
+    @StateObject private var backendSyncStatusStore: BackendSyncStatusStore
     private let backupCoordinator: AppBackupCoordinator
 
     init() {
@@ -28,6 +29,7 @@ struct cookyaApp: App {
         _inventoryStore = StateObject(wrappedValue: InventoryStore(userDefaults: userDefaults))
         _cookedMealStore = StateObject(wrappedValue: CookedMealStore(userDefaults: userDefaults))
         _knownItemStore = StateObject(wrappedValue: KnownItemStore(userDefaults: userDefaults))
+        _backendSyncStatusStore = StateObject(wrappedValue: BackendSyncStatusStore(userDefaults: userDefaults))
 
         backupCoordinator.startObserving()
         AppLogger.log("App launched", metadata: ["logsDirectory": AppLogger.logsDirectoryPath])
@@ -46,6 +48,7 @@ struct cookyaApp: App {
                     .environmentObject(profileStore)
                     .environmentObject(cookedMealStore)
                     .environmentObject(knownItemStore)
+                    .environmentObject(backendSyncStatusStore)
             } else {
                 ProfileOnboardingView()
                     .environmentObject(profileStore)

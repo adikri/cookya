@@ -11,6 +11,8 @@ struct ProfileView: View {
     @EnvironmentObject private var profileStore: ProfileStore
     @EnvironmentObject private var recipeStore: RecipeStore
     @EnvironmentObject private var cookedMealStore: CookedMealStore
+    @EnvironmentObject private var backendSync: BackendSyncStatusStore
+    @State private var showConfirmRestore = false
 
     var body: some View {
         NavigationStack {
@@ -110,6 +112,59 @@ struct ProfileView: View {
                     }
                 }
 
+                Section {
+                    VStack(alignment: .leading, spacing: 6) {
+                        if let lastUploadAt = backendSync.lastUploadAt {
+                            Text("Last upload: \(lastUploadAt.formatted(date: .abbreviated, time: .shortened))")
+                                .foregroundStyle(.secondary)
+                        } else {
+                            Text("Last upload: never")
+                                .foregroundStyle(.secondary)
+                        }
+
+                        if let lastRestoreAt = backendSync.lastRestoreAt {
+                            Text("Last restore: \(lastRestoreAt.formatted(date: .abbreviated, time: .shortened))")
+                                .foregroundStyle(.secondary)
+                        } else {
+                            Text("Last restore: never")
+                                .foregroundStyle(.secondary)
+                        }
+
+                        if let lastError = backendSync.lastError, !lastError.isEmpty {
+                            Text("Last error: \(lastError)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(3)
+                        }
+                    }
+
+                    Button(backendSync.isSyncing ? "Syncing…" : "Sync now") {
+                        Task { await backendSync.syncNow() }
+                    }
+                    .disabled(backendSync.isSyncing)
+
+                    Button("Restore from backend (replace all)", role: .destructive) {
+                        showConfirmRestore = true
+                    }
+                    .disabled(backendSync.isSyncing)
+                } header: {
+                    Text("Sync")
+                } footer: {
+                    Text("Sync uploads a backup to your backend. Restore replaces local data with the backend backup.")
+                }
+                .confirmationDialog(
+                    "Replace all local data with the backend backup?",
+                    isPresented: $showConfirmRestore,
+                    titleVisibility: .visible
+                ) {
+                    Button("Replace all data", role: .destructive) {
+                        Task { await backendSync.restoreNowReplaceAll() }
+                    }
+                    Button("Cancel", role: .cancel) {}
+                } message: {
+                    Text("This will overwrite pantry, grocery, saved recipes, cooked history, profile, and known items on this device.")
+                }
+
                 #if DEBUG
                 Section("Debug") {
                     NavigationLink {
@@ -151,5 +206,6 @@ struct ProfileView_Previews: PreviewProvider {
             .environmentObject(ProfileStore())
             .environmentObject(RecipeStore())
             .environmentObject(CookedMealStore())
+            .environmentObject(BackendSyncStatusStore())
     }
 }
