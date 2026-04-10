@@ -1,0 +1,11 @@
+name = "cookya-recipe-relay"
+main = "src/index.ts"
+compatibility_date = "2026-04-10"
+
+[vars]
+OPENAI_BASE_URL = "https://api.openai.com"
+OPENAI_MODEL = "gpt-4.1-mini"
+
+[secrets]
+required = ["OPENAI_API_KEY", "COOKYA_APP_TOKEN"]
+

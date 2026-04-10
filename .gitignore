@@ -23,6 +23,7 @@ node_modules/
 **/node_modules/
 backend/dist/
 backend/.env
+worker/.dev.vars
 
 # Local secrets
 cookya/Config/Secrets.xcconfig

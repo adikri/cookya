@@ -1,0 +1,15 @@
+{
+  "name": "cookya-recipe-relay-worker",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.12.0",
+    "typescript": "^5.8.3"
+  }
+}
+
