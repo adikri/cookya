@@ -18,6 +18,12 @@ DerivedData/
 *.crash
 *.ips
 
+# Node (backend)
+node_modules/
+**/node_modules/
+backend/dist/
+backend/.env
+
 # Local secrets
 cookya/Config/Secrets.xcconfig
 .env
