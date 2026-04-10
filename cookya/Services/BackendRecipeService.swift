@@ -26,6 +26,9 @@ struct BackendRecipeService: RecipeGeneratingService {
         var urlRequest = URLRequest(url: endpoint)
         urlRequest.httpMethod = "POST"
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let token = BackendAuthToken.load(), !token.isEmpty {
+            urlRequest.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
         urlRequest.httpBody = try JSONEncoder().encode(BackendRecipeRequest(from: request))
 
         do {

@@ -94,6 +94,14 @@ struct ProfileView: View {
                     }
                 }
 
+                Section("Access") {
+                    NavigationLink {
+                        BackendAccessView()
+                    } label: {
+                        settingsRow("Backend access")
+                    }
+                }
+
                 #if DEBUG
                 Section("Debug") {
                     NavigationLink {

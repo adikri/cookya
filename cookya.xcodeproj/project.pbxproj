@@ -60,6 +60,9 @@
 		40A1005C2F5D300000D3C60A /* AppBackupCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1005D2F5D300000D3C60A /* AppBackupCoordinator.swift */; };
 		40A1005E2F5D300000D3C60A /* PersistencePayloadValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1005F2F5D300000D3C60A /* PersistencePayloadValidator.swift */; };
 		40A100602F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100612F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift */; };
+		40B000042F60000000D3C60A /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000012F60000000D3C60A /* KeychainStore.swift */; };
+		40B000052F60000000D3C60A /* BackendAuthToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000022F60000000D3C60A /* BackendAuthToken.swift */; };
+		40B000062F60000000D3C60A /* BackendAccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000032F60000000D3C60A /* BackendAccessView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -138,6 +141,9 @@
 		40A1005D2F5D300000D3C60A /* AppBackupCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBackupCoordinator.swift; sourceTree = "<group>"; };
 		40A1005F2F5D300000D3C60A /* PersistencePayloadValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistencePayloadValidator.swift; sourceTree = "<group>"; };
 		40A100612F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneratedRecipeCachePolicy.swift; sourceTree = "<group>"; };
+		40B000012F60000000D3C60A /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
+		40B000022F60000000D3C60A /* BackendAuthToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendAuthToken.swift; sourceTree = "<group>"; };
+		40B000032F60000000D3C60A /* BackendAccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendAccessView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -226,6 +232,7 @@
 		4026555B2F59A8D100D3C60A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				40B000032F60000000D3C60A /* BackendAccessView.swift */,
 				40A100212F5B100000D3C60A /* CookingProfileView.swift */,
 				40A100492F5D000000D3C60A /* CookedHistoryView.swift */,
 				40A100412F5C300000D3C60A /* DebugLogsView.swift */,
@@ -282,6 +289,7 @@
 		4026555E2F59A90000D3C60A /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				40B000022F60000000D3C60A /* BackendAuthToken.swift */,
 				40A100342F5C000000D3C60A /* BackendInventoryService.swift */,
 				40A100322F5C000000D3C60A /* BackendRecipeService.swift */,
 				40A100472F5D000000D3C60A /* CookedMealStore.swift */,
@@ -311,6 +319,7 @@
 				40A1005B2F5D300000D3C60A /* AppPersistenceKey.swift */,
 				40A1003F2F5C200000D3C60A /* AppLogger.swift */,
 				40A100612F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift */,
+				40B000012F60000000D3C60A /* KeychainStore.swift */,
 				40A1005F2F5D300000D3C60A /* PersistencePayloadValidator.swift */,
 			);
 			path = Utilities;
@@ -501,8 +510,10 @@
 				40A100032F5A010000D3C60A /* Difficulty.swift in Sources */,
 				40A100112F5A060000D3C60A /* AppConfig.swift in Sources */,
 				40A1003E2F5C200000D3C60A /* AppLogger.swift in Sources */,
+				40B000042F60000000D3C60A /* KeychainStore.swift in Sources */,
 				40A100292F5C000000D3C60A /* BackendInventoryService.swift in Sources */,
 				40A100272F5C000000D3C60A /* BackendRecipeService.swift in Sources */,
+				40B000052F60000000D3C60A /* BackendAuthToken.swift in Sources */,
 				40A100222F5B100000D3C60A /* CookingProfileView.swift in Sources */,
 				40A100482F5D000000D3C60A /* CookedHistoryView.swift in Sources */,
 				40A100442F5D000000D3C60A /* CookedMealRecord.swift in Sources */,
@@ -535,6 +546,7 @@
 				40A100402F5C300000D3C60A /* DebugLogsView.swift in Sources */,
 				40A1001A2F5B000000D3C60A /* ProfileOnboardingView.swift in Sources */,
 				402655672F59ABCC00D3C60A /* ProfileView.swift in Sources */,
+				40B000062F60000000D3C60A /* BackendAccessView.swift in Sources */,
 				40A100182F5B000000D3C60A /* ProfileStore.swift in Sources */,
 				40A1004A2F5D000000D3C60A /* PurchaseExpirySheet.swift in Sources */,
 				40A100582F5D300000D3C60A /* QuantityInputView.swift in Sources */,
