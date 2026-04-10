@@ -131,6 +131,7 @@ Use these markers consistently:
 | Item | Status | Notes |
 |------|--------|-------|
 | Lightweight cloud/data backup | **Next** | Highest strategic gap now that the app is useful daily. |
+| Backend recipe generation relay (no client OpenAI key) | **Next** | Required for standalone phone usage and the future Android/family roadmap; start with static token auth and add real auth later. |
 | Store decode/persist hardening | **Next** | Log silent fallbacks; assert on impossible encode failures in DEBUG. |
 | Recipe cache eviction policy | **Next** | Cap generated recipe cache if still unbounded. |
 | Home recommendation extraction | **Next** | Move core recommendation ranking out of `HomeView`. |
