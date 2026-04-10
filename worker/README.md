@@ -16,6 +16,10 @@ Free-tier friendly deployment for Phase 1 Option A (static token).
   - `DELETE /v1/grocery/:id`
   - `POST /v1/grocery/:id/purchase`
   - Requires header: `Authorization: Bearer <COOKYA_APP_TOKEN>`
+- Snapshot backup (reinstall-safe restore):
+  - `GET /v1/snapshot`
+  - `PUT /v1/snapshot`
+  - Requires header: `Authorization: Bearer <COOKYA_APP_TOKEN>`
 
 ## Setup
 

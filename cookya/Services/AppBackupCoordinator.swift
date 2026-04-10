@@ -52,6 +52,7 @@ final class AppBackupCoordinator {
     private let backupFileURL: URL
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
+    private let snapshotService: BackendSnapshotService
     private var defaultsObserver: NSObjectProtocol?
     private var isApplyingRestore = false
 
@@ -59,12 +60,14 @@ final class AppBackupCoordinator {
         userDefaults: UserDefaults = .standard,
         fileManager: FileManager = .default,
         notificationCenter: NotificationCenter = .default,
-        backupFileURL: URL? = nil
+        backupFileURL: URL? = nil,
+        snapshotService: BackendSnapshotService? = nil
     ) {
         self.userDefaults = userDefaults
         self.fileManager = fileManager
         self.notificationCenter = notificationCenter
         self.backupFileURL = backupFileURL ?? Self.defaultBackupFileURL(fileManager: fileManager)
+        self.snapshotService = snapshotService ?? BackendSnapshotService()
 
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
@@ -146,6 +149,19 @@ final class AppBackupCoordinator {
             let existing = try? Data(contentsOf: backupFileURL)
             guard existing != data else { return }
             try data.write(to: backupFileURL, options: .atomic)
+
+            let export = CookyaExportBackup(snapshot: snapshot)
+            Task { @MainActor in
+                do {
+                    try await snapshotService.upsertLatest(export)
+                    AppLogger.action("backend_snapshot_upsert_succeeded", metadata: ["version": String(export.version)])
+                } catch {
+                    AppLogger.action(
+                        "backend_snapshot_upsert_failed",
+                        metadata: ["error": String(describing: error)]
+                    )
+                }
+            }
         } catch {
             AppLogger.action(
                 "backup_refresh_failed",
@@ -153,6 +169,35 @@ final class AppBackupCoordinator {
                     "path": backupFileURL.path,
                     "error": String(describing: error)
                 ]
+            )
+        }
+    }
+
+    func restoreFromBackendIfNeeded() async {
+        // Only restore from backend when local app state is empty (fresh install / first launch).
+        let localSnapshot = CookyaBackupCodec.makeSnapshot(userDefaults: userDefaults)
+        if localSnapshot.isEmpty == false { return }
+
+        do {
+            let backup = try await snapshotService.fetchLatest()
+            _ = BackupImportApplier.applyReplaceAll(backup, to: userDefaults)
+            notificationCenter.post(name: .cookyaBackupImported, object: nil)
+            AppLogger.action(
+                "backend_snapshot_restore_succeeded",
+                metadata: ["version": String(backup.version), "createdAt": backup.createdAt.ISO8601Format()]
+            )
+        } catch let error as BackendSnapshotService.SnapshotError {
+            if case .notFound = error { return }
+            if case .missingBackendURL = error { return }
+            if case .missingAuthToken = error { return }
+            AppLogger.action(
+                "backend_snapshot_restore_failed",
+                metadata: ["error": String(describing: error), "message": error.errorDescription ?? ""]
+            )
+        } catch {
+            AppLogger.action(
+                "backend_snapshot_restore_failed",
+                metadata: ["error": String(describing: error)]
             )
         }
     }

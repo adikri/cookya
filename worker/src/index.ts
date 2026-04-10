@@ -1,3 +1,5 @@
+/// <reference types="@cloudflare/workers-types" />
+
 type InventoryCategory =
   | "produce"
   | "dairy"
@@ -126,7 +128,7 @@ function nowIso(): string {
   return new Date().toISOString();
 }
 
-function kvKey(scope: "pantry" | "grocery"): string {
+function kvKey(scope: "pantry" | "grocery" | "snapshot"): string {
   // v1: single household scope per Worker token.
   return `v1:${scope}`;
 }
@@ -314,6 +316,30 @@ export default {
       const kvOrResponse = requireKV(env);
       if (kvOrResponse instanceof Response) return kvOrResponse;
       const kv = kvOrResponse;
+
+      // Snapshot (full app state backup)
+      if (url.pathname === "/v1/snapshot") {
+        const key = kvKey("snapshot" as any);
+        if (request.method === "GET") {
+          const raw = await kv.get(key);
+          if (!raw) return notFound();
+          return new Response(raw, {
+            status: 200,
+            headers: { "content-type": "application/json; charset=utf-8" },
+          });
+        }
+        if (request.method === "PUT") {
+          const raw = await request.text();
+          try {
+            JSON.parse(raw);
+          } catch {
+            return jsonError("Invalid JSON body", 400);
+          }
+          await kv.put(key, raw);
+          return json({ ok: true }, { status: 200 });
+        }
+        return notFound();
+      }
 
       // Pantry
       if (request.method === "GET" && url.pathname === "/v1/pantry") {

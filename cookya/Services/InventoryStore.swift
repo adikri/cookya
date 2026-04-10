@@ -822,7 +822,7 @@ final class InventoryStore: ObservableObject {
         return PantryDedupResult(items: ordered, removedIDs: removed)
     }
 
-    nonisolated private static func mergePantryForDedup(existing: PantryItem, incoming: PantryItem) -> PantryItem {
+    private static func mergePantryForDedup(existing: PantryItem, incoming: PantryItem) -> PantryItem {
         PantryItem(
             id: existing.id,
             name: incoming.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? existing.name : incoming.name,

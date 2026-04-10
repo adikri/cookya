@@ -31,6 +31,10 @@ struct cookyaApp: App {
 
         backupCoordinator.startObserving()
         AppLogger.log("App launched", metadata: ["logsDirectory": AppLogger.logsDirectoryPath])
+
+        Task { @MainActor in
+            await backupCoordinator.restoreFromBackendIfNeeded()
+        }
     }
 
     var body: some Scene {

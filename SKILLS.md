@@ -112,6 +112,40 @@ xcodebuild -project cookya.xcodeproj \
   build
 ```
 
+### Canonical repo scripts (CLI ↔ Xcode parity)
+
+Use these scripts instead of re-typing `xcodebuild` flags:
+
+- `./scripts/build-device.sh`
+  - **When**: you want a CLI build that matches Xcode running on your physical iPhone.
+  - **Why**: device CLI builds can fail codesign if DerivedData is inside the repo (File Provider xattrs). This script uses `/tmp`.
+  - **How**: set `COOKYA_DEVICE_ID` from `xcodebuild -scheme cookya -showdestinations` before running:
+```bash
+COOKYA_DEVICE_ID="<your-device-id>" ./scripts/build-device.sh
+```
+- `./scripts/build-sim.sh`
+  - **When**: you want a deterministic simulator build (good for debugging/CI-style checks).
+- `./scripts/test-sim.sh`
+  - **When**: you want to run tests from CLI on a concrete simulator destination.
+
+If you change your primary device/simulator, update the IDs in these scripts using:
+`xcodebuild -scheme cookya -showdestinations`.
+
+### Prevent committing PII/secrets (pre-commit hook)
+
+This repo includes a **versioned** pre-commit hook that scans **staged diffs** for common secret/PII patterns (bearer tokens, OpenAI keys, device IDs, emails).
+
+- Hook file: `.githooks/pre-commit`
+- Scanner: `scripts/pii-scan-staged.sh`
+
+Enable it locally (one-time):
+
+```bash
+git config core.hooksPath .githooks
+```
+
+After enabling, any commit that contains matches will be blocked with the matching lines printed.
+
 ### Stable simulator note
 
 We created:
