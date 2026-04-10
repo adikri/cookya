@@ -65,18 +65,31 @@ Use this file to keep daily planning and end-of-day progress visible.
   - destructive-step guardrails
   - Xcode/build/test rules
   - git/workflow rules
+- Started and completed the recipe cache bounds slice by:
+  - adding a deterministic generated-recipe cache eviction policy
+  - wiring `RecipeStore` to enforce a generated-recipe cache limit
+  - replacing flaky timestamp/simulator store tests with pure policy tests
+  - adding the policy file to the app target
+- Fixed recurring Xcode build/signing friction by:
+  - restricting Cookya targets to iOS/iPadOS instead of advertising Mac and visionOS support
+  - setting the development team on `cookyaTests` and `cookyaUITests`
+  - verifying `Cmd+B` / Xcode test success after the project configuration fix
+- Captured the testing lesson that pure business logic should be extracted and tested directly instead of repeatedly driving simulator-hosted `ObservableObject` tests
 
 ### Commits
 - `13687f6` `Turn saved recipes into a planning hub for ready and nearly-ready meals`
 - `cb3d405` `Rewrite planning document around current product reality`
 - `182d893` `Add daily worklog for planning and end-of-day wrapups`
 - `e0af09a` `Add lightweight app-state backup and restore with regression tests`
+- `1da3f68` `Harden store persistence failures and validate persisted payload shapes`
+- `3d918be` `Add repo foundation guide for data safety and development workflow`
+- `00375fb` `Bound generated recipe cache with deterministic eviction`
+- `510f5bb` `Restrict Cookya targets to iOS and configure test signing`
 
 ### EOD status
 - Branch: `codex/mvp-recipe-flow`
 - Push status: pending for end of day
 
 ### Carry Forward
-- Next likely hardening slice: recipe cache bounds / eviction
 - Next likely product-safety slice: export/import backup before any reinstall-risk debugging
 - Keep using this file at the start and end of each work session

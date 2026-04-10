@@ -198,6 +198,24 @@ If `xcodebuild test` stalls:
 - inspect simulator state
 - retry on another explicit iOS simulator destination
 - do not assume app-code failure until runtime behavior is separated from compile behavior
+- do not stack repeated CLI test runs; stop or inspect the existing runner first
+
+### Prefer deterministic unit seams
+
+When testing pure business rules, avoid driving them through heavy app-runtime objects if the logic can be extracted.
+
+Prefer:
+- pure helpers / policy objects
+- explicit inputs
+- deterministic timestamps or injected values
+
+Avoid when possible:
+- tests that depend on real clock timing
+- tests that require `@MainActor ObservableObject` lifecycle just to verify pure logic
+- repeated simulator-hosted XCTest retries for logic that can be tested without UI/runtime state
+
+Learning:
+- recipe cache eviction should be validated through a deterministic cache policy, not by sleeping between `RecipeStore` calls and hoping timestamps order correctly
 
 ---
 
