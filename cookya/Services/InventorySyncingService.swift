@@ -12,6 +12,7 @@ protocol InventorySyncingService {
 
 enum InventorySyncError: LocalizedError, Equatable {
     case missingBackendURL
+    case cancelled
     case networkError
     case invalidResponse
     case decodingFailed
@@ -20,6 +21,8 @@ enum InventorySyncError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .missingBackendURL:
+            return nil
+        case .cancelled:
             return nil
         case .networkError:
             return "Inventory sync failed. You can keep using the local cache and try syncing again later."

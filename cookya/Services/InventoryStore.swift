@@ -40,13 +40,16 @@ final class InventoryStore: ObservableObject {
     private let pantryStorageKey = AppPersistenceKey.pantryItems
     private let groceryStorageKey = AppPersistenceKey.groceryItems
     private var hasAttemptedInitialSync = false
+    private let config: AppConfig
 
     init(
-        inventoryService: InventorySyncingService = BackendInventoryService(),
-        userDefaults: UserDefaults = .standard
+        inventoryService: InventorySyncingService? = nil,
+        userDefaults: UserDefaults = .standard,
+        config: AppConfig = .live
     ) {
-        self.inventoryService = inventoryService
+        self.inventoryService = inventoryService ?? BackendInventoryService()
         self.userDefaults = userDefaults
+        self.config = config
 
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
@@ -152,18 +155,91 @@ final class InventoryStore: ObservableObject {
         isSyncing = true
         defer { isSyncing = false }
 
-        do {
+        AppLogger.action(
+            "inventory_sync_started",
+            screen: "InventoryStore",
+            metadata: ["hasBackendURL": config.backendBaseURL == nil ? "false" : "true"]
+        )
+
+        func attemptSync() async throws {
             async let pantry = inventoryService.fetchPantry()
             async let grocery = inventoryService.fetchGrocery()
 
-            pantryItems = try await pantry
-            groceryItems = try await grocery
+            let remotePantry = try await pantry
+            let remoteGrocery = try await grocery
+
+            let mergedPantry = Self.mergedPantry(local: pantryItems, remote: remotePantry)
+            let dedupedPantry = Self.dedupedPantry(mergedPantry)
+            pantryItems = dedupedPantry.items
+
+            if !dedupedPantry.removedIDs.isEmpty {
+                AppLogger.action(
+                    "inventory_sync_deduped_pantry",
+                    screen: "InventoryStore",
+                    metadata: ["removedCount": String(dedupedPantry.removedIDs.count)]
+                )
+                let toDelete = dedupedPantry.removedIDs
+                Task {
+                    for id in toDelete {
+                        try? await inventoryService.deletePantryItem(id: id)
+                    }
+                }
+            }
+            groceryItems = Self.mergedGrocery(local: groceryItems, remote: remoteGrocery)
             persistCache()
             lastSyncError = nil
+            AppLogger.action(
+                "inventory_sync_succeeded",
+                screen: "InventoryStore",
+                metadata: ["pantryCount": String(pantryItems.count), "groceryCount": String(groceryItems.count)]
+            )
+        }
+
+        do {
+            try await attemptSync()
         } catch let error as InventorySyncError {
+            if case .cancelled = error {
+                handleSyncError(error)
+                AppLogger.action("inventory_sync_cancelled", screen: "InventoryStore")
+                return
+            }
+            if case .networkError = error {
+                AppLogger.action("inventory_sync_retrying", screen: "InventoryStore")
+                try? await Task.sleep(nanoseconds: 350_000_000)
+                do {
+                    try await attemptSync()
+                    return
+                } catch let retryError as InventorySyncError {
+                    handleSyncError(retryError)
+                    AppLogger.action(
+                        "inventory_sync_failed",
+                        screen: "InventoryStore",
+                        metadata: ["error": String(describing: retryError), "message": retryError.errorDescription ?? ""]
+                    )
+                } catch {
+                    lastSyncError = "Inventory sync failed. Using the last saved data on this device."
+                    AppLogger.action(
+                        "inventory_sync_failed",
+                        screen: "InventoryStore",
+                        metadata: ["error": String(describing: error)]
+                    )
+                }
+                return
+            }
+
             handleSyncError(error)
+            AppLogger.action(
+                "inventory_sync_failed",
+                screen: "InventoryStore",
+                metadata: ["error": String(describing: error), "message": error.errorDescription ?? ""]
+            )
         } catch {
             lastSyncError = "Inventory sync failed. Using the last saved data on this device."
+            AppLogger.action(
+                "inventory_sync_failed",
+                screen: "InventoryStore",
+                metadata: ["error": String(describing: error)]
+            )
         }
     }
 
@@ -617,7 +693,144 @@ final class InventoryStore: ObservableObject {
             lastSyncError = nil
             return
         }
+        if case .cancelled = error {
+            lastSyncError = nil
+            return
+        }
         lastSyncError = error.errorDescription
+    }
+
+    private static func mergedPantry(local: [PantryItem], remote: [PantryItem]) -> [PantryItem] {
+        var byId: [UUID: PantryItem] = [:]
+        byId.reserveCapacity(max(local.count, remote.count))
+
+        for item in remote {
+            byId[item.id] = item
+        }
+        for item in local {
+            guard let existing = byId[item.id] else {
+                byId[item.id] = item
+                continue
+            }
+            // If both sides have the same item id, prefer the newer update.
+            if item.updatedAt > existing.updatedAt {
+                byId[item.id] = item
+            }
+        }
+
+        // Prefer remote ordering for visible stability; append local-only items at end.
+        var result: [PantryItem] = []
+        result.reserveCapacity(byId.count)
+
+        var seen = Set<UUID>()
+        seen.reserveCapacity(byId.count)
+
+        for item in remote {
+            if let resolved = byId[item.id] {
+                result.append(resolved)
+                seen.insert(item.id)
+            }
+        }
+        for item in local where !seen.contains(item.id) {
+            if let resolved = byId[item.id] {
+                result.append(resolved)
+            }
+        }
+        return result
+    }
+
+    private static func mergedGrocery(local: [GroceryItem], remote: [GroceryItem]) -> [GroceryItem] {
+        var byId: [UUID: GroceryItem] = [:]
+        byId.reserveCapacity(max(local.count, remote.count))
+
+        for item in remote {
+            byId[item.id] = item
+        }
+        for item in local {
+            // GroceryItem doesn't have updatedAt; keep remote if it exists, otherwise keep local.
+            if byId[item.id] == nil {
+                byId[item.id] = item
+            }
+        }
+
+        var result: [GroceryItem] = []
+        result.reserveCapacity(byId.count)
+
+        var seen = Set<UUID>()
+        seen.reserveCapacity(byId.count)
+
+        for item in remote {
+            if let resolved = byId[item.id] {
+                result.append(resolved)
+                seen.insert(item.id)
+            }
+        }
+        for item in local where !seen.contains(item.id) {
+            if let resolved = byId[item.id] {
+                result.append(resolved)
+            }
+        }
+        return result
+    }
+
+    private struct PantryDedupResult {
+        let items: [PantryItem]
+        let removedIDs: [UUID]
+    }
+
+    private static func dedupedPantry(_ items: [PantryItem]) -> PantryDedupResult {
+        guard items.count > 1 else { return PantryDedupResult(items: items, removedIDs: []) }
+
+        let grouped = Dictionary(grouping: items, by: { normalizeItemName($0.name) })
+        var kept: [PantryItem] = []
+        kept.reserveCapacity(items.count)
+        var removed: [UUID] = []
+
+        for (_, group) in grouped {
+            if group.count == 1, let only = group.first {
+                kept.append(only)
+                continue
+            }
+
+            guard let canonical = group.max(by: { $0.updatedAt < $1.updatedAt }) else { continue }
+            var merged = canonical
+
+            for item in group where item.id != canonical.id {
+                merged = mergePantryForDedup(existing: merged, incoming: item)
+                removed.append(item.id)
+            }
+
+            kept.append(merged)
+        }
+
+        // Keep stable ordering similar to original `items`.
+        let keptById = Dictionary(uniqueKeysWithValues: kept.map { ($0.id, $0) })
+        var ordered: [PantryItem] = []
+        ordered.reserveCapacity(keptById.count)
+        var seen = Set<UUID>()
+        seen.reserveCapacity(keptById.count)
+        for item in items {
+            if let resolved = keptById[item.id], !seen.contains(resolved.id) {
+                ordered.append(resolved)
+                seen.insert(resolved.id)
+            }
+        }
+        for item in kept where !seen.contains(item.id) {
+            ordered.append(item)
+        }
+
+        return PantryDedupResult(items: ordered, removedIDs: removed)
+    }
+
+    nonisolated private static func mergePantryForDedup(existing: PantryItem, incoming: PantryItem) -> PantryItem {
+        PantryItem(
+            id: existing.id,
+            name: incoming.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? existing.name : incoming.name,
+            quantityText: mergeQuantityText(existing.quantityText, incoming.quantityText),
+            category: incoming.category,
+            expiryDate: incoming.expiryDate ?? existing.expiryDate,
+            updatedAt: max(existing.updatedAt, incoming.updatedAt)
+        )
     }
 
     private func consumptionWarnings(for consumptions: [PantryConsumption]) -> [String] {

@@ -9,3 +9,17 @@ OPENAI_MODEL = "gpt-4.1-mini"
 [secrets]
 required = ["OPENAI_API_KEY", "COOKYA_APP_TOKEN"]
 
+# Backend sync storage:
+# Create a KV namespace and bind it as COOKYA_KV.
+#
+# Example:
+#   npx wrangler kv namespace create COOKYA_KV
+#   npx wrangler kv namespace create COOKYA_KV --preview
+#
+# Then paste the IDs below.
+#
+[[kv_namespaces]]
+binding = "COOKYA_KV"
+id = "665f866b6f174ac48f5e2d7e77202a48"
+preview_id = "64d7773ab1604dd38076969741dbc0ee"
+

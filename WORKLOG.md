@@ -76,6 +76,28 @@ Files changed (currently uncommitted):
 #### Product/architecture note (why we did it this way)
 - **Don’t ship an OpenAI key in the iOS client**: even Debug bundling is risky. Prefer a backend relay with server-side key; the app authenticates via a long random app token stored in Keychain.
 
+### Done
+- Backup import UX hardening:
+  - Import now posts a single “backup imported” notification after applying the snapshot.
+  - Stores reload from `UserDefaults` on notification so the UI refreshes immediately (no relaunch).
+- Backend sync (inventory MVP):
+  - Worker now supports pantry/grocery endpoints backed by KV.
+  - iOS inventory sync authenticates with the Keychain token (Authorization bearer).
+  - Sync refresh now merges remote + local and dedupes by normalized item name to avoid duplicates and prevent dropping local-only items during bootstrap.
+  - Inventory sync cancellation is treated as non-failure (no error banner).
+- Build stability hardening (to keep CLI builds usable):
+  - Replaced SwiftUI `#Preview {}` macros with `PreviewProvider` where needed.
+  - Adjusted project build settings to avoid script-sandbox and simulator codesign failures in restricted environments.
+- Documentation:
+  - Added skill-buildup guidance to `SKILLS.md`.
+  - Added troubleshooting notes here for future sessions.
+
+### Commits
+- `11fa540` `Refresh app state after backup import`
+
+### Carry Forward
+- Phase A: start true durable backup (cloud or backend sync) so reinstall/device-loss is safe.
+
 ## 2026-04-04
 
 ### Must Do

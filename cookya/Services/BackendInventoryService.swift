@@ -6,7 +6,7 @@ struct BackendInventoryService: InventorySyncingService {
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
 
-    nonisolated init(session: URLSession = .shared, config: AppConfig = .live) {
+    init(session: URLSession = .shared, config: AppConfig = .live) {
         self.session = session
         self.config = config
 
@@ -62,6 +62,9 @@ struct BackendInventoryService: InventorySyncingService {
         var request = URLRequest(url: url)
         request.httpMethod = method
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let token = BackendAuthToken.load() {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
         request.httpBody = body
 
         do {
@@ -87,6 +90,25 @@ struct BackendInventoryService: InventorySyncingService {
         } catch let error as InventorySyncError {
             throw error
         } catch {
+            let meta: [String: String]
+            if let urlError = error as? URLError {
+                if urlError.code == .cancelled {
+                    throw InventorySyncError.cancelled
+                }
+                meta = [
+                    "urlErrorCode": String(urlError.errorCode),
+                    "urlError": urlError.localizedDescription,
+                    "method": method,
+                    "path": path
+                ]
+            } else {
+                meta = [
+                    "error": String(describing: error),
+                    "method": method,
+                    "path": path
+                ]
+            }
+            AppLogger.action("inventory_sync_network_error", screen: "BackendInventoryService", metadata: meta)
             throw InventorySyncError.networkError
         }
     }

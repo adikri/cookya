@@ -1,15 +1,15 @@
 type InventoryCategory =
   | "produce"
   | "dairy"
-  | "meat"
-  | "seafood"
-  | "pantry"
-  | "bakery"
-  | "frozen"
-  | "snacks"
-  | "beverages"
-  | "condiments"
+  | "protein"
+  | "grains"
   | "spices"
+  | "beverages"
+  | "frozen"
+  | "canned"
+  | "bakery"
+  | "pantry"
+  | "snacks"
   | "other";
 
 type Difficulty = "easy" | "medium" | "hard";
@@ -52,6 +52,7 @@ type Recipe = {
 type Env = {
   OPENAI_API_KEY: string;
   COOKYA_APP_TOKEN: string;
+  COOKYA_KV?: KVNamespace;
   OPENAI_BASE_URL?: string;
   OPENAI_MODEL?: string;
 };
@@ -75,6 +76,73 @@ function getBearerToken(request: Request): string | null {
   if (!header) return null;
   const m = header.match(/^Bearer\s+(.+)$/i);
   return m?.[1]?.trim() ?? null;
+}
+
+function notFound(): Response {
+  return jsonError("Not found", 404);
+}
+
+function requireAuth(request: Request, env: Env): Response | null {
+  const provided = getBearerToken(request);
+  if (!provided || provided !== env.COOKYA_APP_TOKEN) {
+    return jsonError("Unauthorized", 401);
+  }
+  return null;
+}
+
+function requireKV(env: Env): KVNamespace | Response {
+  if (!env.COOKYA_KV) {
+    return jsonError(
+      "Sync storage not configured. Bind a KV namespace as COOKYA_KV in wrangler.toml.",
+      503,
+    );
+  }
+  return env.COOKYA_KV;
+}
+
+type PantryItem = {
+  id: string;
+  name: string;
+  quantityText: string;
+  category: InventoryCategory;
+  expiryDate: string | null;
+  updatedAt: string;
+};
+
+type GroceryItemSource = "manual" | "savedRecipe" | "cookedRecipe" | "extraIngredient";
+
+type GroceryItem = {
+  id: string;
+  name: string;
+  quantityText: string;
+  category: InventoryCategory;
+  note: string | null;
+  source: GroceryItemSource;
+  reasonRecipes: string[];
+  createdAt: string;
+};
+
+function nowIso(): string {
+  return new Date().toISOString();
+}
+
+function kvKey(scope: "pantry" | "grocery"): string {
+  // v1: single household scope per Worker token.
+  return `v1:${scope}`;
+}
+
+async function kvGetJson<T>(kv: KVNamespace, key: string, fallback: T): Promise<T> {
+  const raw = await kv.get(key);
+  if (!raw) return fallback;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
+  }
+}
+
+async function kvPutJson(kv: KVNamespace, key: string, value: unknown): Promise<void> {
+  await kv.put(key, JSON.stringify(value));
 }
 
 function buildUserPrompt(body: BackendRecipeGenerateRequest): string {
@@ -220,10 +288,8 @@ export default {
     }
 
     if (request.method === "POST" && url.pathname === "/v1/recipes/generate") {
-      const provided = getBearerToken(request);
-      if (!provided || provided !== env.COOKYA_APP_TOKEN) {
-        return jsonError("Unauthorized", 401);
-      }
+      const authError = requireAuth(request, env);
+      if (authError) return authError;
 
       let body: BackendRecipeGenerateRequest;
       try {
@@ -238,6 +304,113 @@ export default {
       } catch (e) {
         const message = e instanceof Error ? e.message : "Unknown server error";
         return jsonError(message, 502);
+      }
+    }
+
+    if (url.pathname.startsWith("/v1/")) {
+      const authError = requireAuth(request, env);
+      if (authError) return authError;
+
+      const kvOrResponse = requireKV(env);
+      if (kvOrResponse instanceof Response) return kvOrResponse;
+      const kv = kvOrResponse;
+
+      // Pantry
+      if (request.method === "GET" && url.pathname === "/v1/pantry") {
+        const pantry = await kvGetJson<PantryItem[]>(kv, kvKey("pantry"), []);
+        return json(pantry, { status: 200 });
+      }
+
+      const pantryMatch = url.pathname.match(/^\/v1\/pantry\/([^/]+)$/);
+      if (pantryMatch) {
+        const id = pantryMatch[1];
+        if (request.method === "PUT") {
+          let body: PantryItem;
+          try {
+            body = (await request.json()) as PantryItem;
+          } catch {
+            return jsonError("Invalid JSON body", 400);
+          }
+          const pantry = await kvGetJson<PantryItem[]>(kv, kvKey("pantry"), []);
+          const updated: PantryItem = {
+            ...body,
+            id,
+            updatedAt: body.updatedAt?.trim() ? body.updatedAt : nowIso(),
+          };
+          const idx = pantry.findIndex((p) => p.id === id);
+          if (idx >= 0) pantry[idx] = updated;
+          else pantry.push(updated);
+          await kvPutJson(kv, kvKey("pantry"), pantry);
+          return json(updated, { status: 200 });
+        }
+        if (request.method === "DELETE") {
+          const pantry = await kvGetJson<PantryItem[]>(kv, kvKey("pantry"), []);
+          const next = pantry.filter((p) => p.id !== id);
+          await kvPutJson(kv, kvKey("pantry"), next);
+          return json({}, { status: 200 });
+        }
+        return notFound();
+      }
+
+      // Grocery
+      if (request.method === "GET" && url.pathname === "/v1/grocery") {
+        const grocery = await kvGetJson<GroceryItem[]>(kv, kvKey("grocery"), []);
+        return json(grocery, { status: 200 });
+      }
+
+      const groceryMatch = url.pathname.match(/^\/v1\/grocery\/([^/]+)$/);
+      if (groceryMatch) {
+        const id = groceryMatch[1];
+        if (request.method === "PUT") {
+          let body: GroceryItem;
+          try {
+            body = (await request.json()) as GroceryItem;
+          } catch {
+            return jsonError("Invalid JSON body", 400);
+          }
+          const grocery = await kvGetJson<GroceryItem[]>(kv, kvKey("grocery"), []);
+          const updated: GroceryItem = { ...body, id };
+          const idx = grocery.findIndex((g) => g.id === id);
+          if (idx >= 0) grocery[idx] = updated;
+          else grocery.push(updated);
+          await kvPutJson(kv, kvKey("grocery"), grocery);
+          return json(updated, { status: 200 });
+        }
+        if (request.method === "DELETE") {
+          const grocery = await kvGetJson<GroceryItem[]>(kv, kvKey("grocery"), []);
+          const next = grocery.filter((g) => g.id !== id);
+          await kvPutJson(kv, kvKey("grocery"), next);
+          return json({}, { status: 200 });
+        }
+        return notFound();
+      }
+
+      const purchaseMatch = url.pathname.match(/^\/v1\/grocery\/([^/]+)\/purchase$/);
+      if (purchaseMatch && request.method === "POST") {
+        const id = purchaseMatch[1];
+        let body: GroceryItem;
+        try {
+          body = (await request.json()) as GroceryItem;
+        } catch {
+          return jsonError("Invalid JSON body", 400);
+        }
+
+        const grocery = await kvGetJson<GroceryItem[]>(kv, kvKey("grocery"), []);
+        const nextGrocery = grocery.filter((g) => g.id !== id);
+        await kvPutJson(kv, kvKey("grocery"), nextGrocery);
+
+        const pantry = await kvGetJson<PantryItem[]>(kv, kvKey("pantry"), []);
+        const pantryItem: PantryItem = {
+          id: crypto.randomUUID(),
+          name: body.name,
+          quantityText: body.quantityText ?? "",
+          category: body.category ?? "pantry",
+          expiryDate: null,
+          updatedAt: nowIso(),
+        };
+        pantry.push(pantryItem);
+        await kvPutJson(kv, kvKey("pantry"), pantry);
+        return json(pantryItem, { status: 200 });
       }
     }
 
