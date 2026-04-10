@@ -22,7 +22,7 @@ It exists to capture learnings that should not be relearned the hard way.
 - push to GitHub at end of day after the worklog is updated
 
 ### Daily workflow
-- start from [WORKLOG.md](/Users/adi/Documents/iosProjects/cookya/WORKLOG.md)
+- start from `WORKLOG.md`
 - define `Must Do`, `Nice to Have`, and `Watch`
 - end the day with:
   - `Done`
@@ -105,7 +105,7 @@ Reason:
 
 Preferred pattern:
 ```bash
-xcodebuild -project /Users/adi/Documents/iosProjects/cookya/cookya.xcodeproj \
+xcodebuild -project cookya.xcodeproj \
   -scheme cookya \
   -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.4' \
   CODE_SIGNING_ALLOWED=NO \

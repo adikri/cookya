@@ -13,9 +13,18 @@ xcuserdata/
 build/
 DerivedData/
 .deriveddata/
+*.xcresult
+*.log
+*.crash
+*.ips
 
 # Local secrets
 cookya/Config/Secrets.xcconfig
+.env
+.env.*
+*.pem
+*.p8
+*.mobileprovision
 
 # Local scheme with env secrets
 cookya.xcodeproj/xcshareddata/xcschemes/cookya.xcscheme
