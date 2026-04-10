@@ -102,6 +102,14 @@ struct ProfileView: View {
                     }
                 }
 
+                Section("Backup") {
+                    NavigationLink {
+                        BackupExportView()
+                    } label: {
+                        settingsRow("Export / import backup")
+                    }
+                }
+
                 #if DEBUG
                 Section("Debug") {
                     NavigationLink {
