@@ -21,6 +21,15 @@ Free-tier friendly deployment for Phase 1 Option A (static token).
   - `PUT /v1/snapshot`
   - Requires header: `Authorization: Bearer <COOKYA_APP_TOKEN>`
 
+## Storage / scoping
+
+- Inventory + snapshot data is stored in KV and **partitioned by the caller’s bearer token** (the Worker stores a short SHA-256 based scope, not the raw token).
+- Back-compat: existing `v1:*` keys are still readable if no `v2:*` data exists yet for that token.
+
+## Rate limiting
+
+- Writes (`PUT`/`POST`/`DELETE`) under `/v1/*` are **best-effort rate limited** per token to protect KV (currently 120 writes per minute).
+
 ## Setup
 
 1. Install:

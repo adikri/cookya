@@ -92,6 +92,28 @@ function requireAuth(request: Request, env: Env): Response | null {
   return null;
 }
 
+async function tokenScope(request: Request): Promise<string | null> {
+  const token = getBearerToken(request);
+  if (!token) return null;
+  const data = new TextEncoder().encode(token);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  const bytes = new Uint8Array(digest);
+  // Short, non-reversible identifier for KV partitioning.
+  return Array.from(bytes.slice(0, 16))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+type AuthContext = { tokenScope: string };
+
+async function requireAuthContext(request: Request, env: Env): Promise<AuthContext | Response> {
+  const authError = requireAuth(request, env);
+  if (authError) return authError;
+  const scope = await tokenScope(request);
+  if (!scope) return jsonError("Unauthorized", 401);
+  return { tokenScope: scope };
+}
+
 function requireKV(env: Env): KVNamespace | Response {
   if (!env.COOKYA_KV) {
     return jsonError(
@@ -128,8 +150,15 @@ function nowIso(): string {
   return new Date().toISOString();
 }
 
-function kvKey(scope: "pantry" | "grocery" | "snapshot"): string {
-  // v1: single household scope per Worker token.
+function kvKey(
+  partition: { tokenScope: string },
+  scope: "pantry" | "grocery" | "snapshot",
+): string {
+  // v2: partition by token scope (enables multiple households/users on one Worker).
+  return `v2:${partition.tokenScope}:${scope}`;
+}
+
+function legacyKvKey(scope: "pantry" | "grocery" | "snapshot"): string {
   return `v1:${scope}`;
 }
 
@@ -145,6 +174,36 @@ async function kvGetJson<T>(kv: KVNamespace, key: string, fallback: T): Promise<
 
 async function kvPutJson(kv: KVNamespace, key: string, value: unknown): Promise<void> {
   await kv.put(key, JSON.stringify(value));
+}
+
+type RateLimitConfig = {
+  maxWritesPerMinute: number;
+};
+
+const rateMemory = new Map<string, { windowStartMs: number; writes: number }>();
+
+function enforceWriteRateLimit(
+  partition: { tokenScope: string },
+  request: Request,
+  config: RateLimitConfig = { maxWritesPerMinute: 120 },
+): Response | null {
+  const method = request.method.toUpperCase();
+  if (!(method === "PUT" || method === "POST" || method === "DELETE")) return null;
+
+  const now = Date.now();
+  const windowMs = 60_000;
+  const key = `${partition.tokenScope}`;
+  const current = rateMemory.get(key);
+  if (!current || now - current.windowStartMs >= windowMs) {
+    rateMemory.set(key, { windowStartMs: now, writes: 1 });
+    return null;
+  }
+
+  current.writes += 1;
+  if (current.writes > config.maxWritesPerMinute) {
+    return jsonError("Rate limited", 429);
+  }
+  return null;
 }
 
 function buildUserPrompt(body: BackendRecipeGenerateRequest): string {
@@ -310,19 +369,31 @@ export default {
     }
 
     if (url.pathname.startsWith("/v1/")) {
-      const authError = requireAuth(request, env);
-      if (authError) return authError;
+      const authCtxOrResponse = await requireAuthContext(request, env);
+      if (authCtxOrResponse instanceof Response) return authCtxOrResponse;
+      const authCtx = authCtxOrResponse;
 
       const kvOrResponse = requireKV(env);
       if (kvOrResponse instanceof Response) return kvOrResponse;
       const kv = kvOrResponse;
 
+      const rateLimited = enforceWriteRateLimit(authCtx, request);
+      if (rateLimited) return rateLimited;
+
       // Snapshot (full app state backup)
       if (url.pathname === "/v1/snapshot") {
-        const key = kvKey("snapshot" as any);
+        const key = kvKey(authCtx, "snapshot");
         if (request.method === "GET") {
           const raw = await kv.get(key);
-          if (!raw) return notFound();
+          if (!raw) {
+            // Back-compat: if no v2 snapshot exists yet, allow reading v1.
+            const legacy = await kv.get(legacyKvKey("snapshot"));
+            if (!legacy) return notFound();
+            return new Response(legacy, {
+              status: 200,
+              headers: { "content-type": "application/json; charset=utf-8" },
+            });
+          }
           return new Response(raw, {
             status: 200,
             headers: { "content-type": "application/json; charset=utf-8" },
@@ -343,7 +414,11 @@ export default {
 
       // Pantry
       if (request.method === "GET" && url.pathname === "/v1/pantry") {
-        const pantry = await kvGetJson<PantryItem[]>(kv, kvKey("pantry"), []);
+        const pantry = await kvGetJson<PantryItem[]>(kv, kvKey(authCtx, "pantry"), []);
+        if (pantry.length === 0) {
+          const legacy = await kvGetJson<PantryItem[]>(kv, legacyKvKey("pantry"), []);
+          if (legacy.length) return json(legacy, { status: 200 });
+        }
         return json(pantry, { status: 200 });
       }
 
@@ -357,7 +432,7 @@ export default {
           } catch {
             return jsonError("Invalid JSON body", 400);
           }
-          const pantry = await kvGetJson<PantryItem[]>(kv, kvKey("pantry"), []);
+          const pantry = await kvGetJson<PantryItem[]>(kv, kvKey(authCtx, "pantry"), []);
           const updated: PantryItem = {
             ...body,
             id,
@@ -366,13 +441,13 @@ export default {
           const idx = pantry.findIndex((p) => p.id === id);
           if (idx >= 0) pantry[idx] = updated;
           else pantry.push(updated);
-          await kvPutJson(kv, kvKey("pantry"), pantry);
+          await kvPutJson(kv, kvKey(authCtx, "pantry"), pantry);
           return json(updated, { status: 200 });
         }
         if (request.method === "DELETE") {
-          const pantry = await kvGetJson<PantryItem[]>(kv, kvKey("pantry"), []);
+          const pantry = await kvGetJson<PantryItem[]>(kv, kvKey(authCtx, "pantry"), []);
           const next = pantry.filter((p) => p.id !== id);
-          await kvPutJson(kv, kvKey("pantry"), next);
+          await kvPutJson(kv, kvKey(authCtx, "pantry"), next);
           return json({}, { status: 200 });
         }
         return notFound();
@@ -380,7 +455,11 @@ export default {
 
       // Grocery
       if (request.method === "GET" && url.pathname === "/v1/grocery") {
-        const grocery = await kvGetJson<GroceryItem[]>(kv, kvKey("grocery"), []);
+        const grocery = await kvGetJson<GroceryItem[]>(kv, kvKey(authCtx, "grocery"), []);
+        if (grocery.length === 0) {
+          const legacy = await kvGetJson<GroceryItem[]>(kv, legacyKvKey("grocery"), []);
+          if (legacy.length) return json(legacy, { status: 200 });
+        }
         return json(grocery, { status: 200 });
       }
 
@@ -394,18 +473,18 @@ export default {
           } catch {
             return jsonError("Invalid JSON body", 400);
           }
-          const grocery = await kvGetJson<GroceryItem[]>(kv, kvKey("grocery"), []);
+          const grocery = await kvGetJson<GroceryItem[]>(kv, kvKey(authCtx, "grocery"), []);
           const updated: GroceryItem = { ...body, id };
           const idx = grocery.findIndex((g) => g.id === id);
           if (idx >= 0) grocery[idx] = updated;
           else grocery.push(updated);
-          await kvPutJson(kv, kvKey("grocery"), grocery);
+          await kvPutJson(kv, kvKey(authCtx, "grocery"), grocery);
           return json(updated, { status: 200 });
         }
         if (request.method === "DELETE") {
-          const grocery = await kvGetJson<GroceryItem[]>(kv, kvKey("grocery"), []);
+          const grocery = await kvGetJson<GroceryItem[]>(kv, kvKey(authCtx, "grocery"), []);
           const next = grocery.filter((g) => g.id !== id);
-          await kvPutJson(kv, kvKey("grocery"), next);
+          await kvPutJson(kv, kvKey(authCtx, "grocery"), next);
           return json({}, { status: 200 });
         }
         return notFound();
@@ -421,11 +500,11 @@ export default {
           return jsonError("Invalid JSON body", 400);
         }
 
-        const grocery = await kvGetJson<GroceryItem[]>(kv, kvKey("grocery"), []);
+        const grocery = await kvGetJson<GroceryItem[]>(kv, kvKey(authCtx, "grocery"), []);
         const nextGrocery = grocery.filter((g) => g.id !== id);
-        await kvPutJson(kv, kvKey("grocery"), nextGrocery);
+        await kvPutJson(kv, kvKey(authCtx, "grocery"), nextGrocery);
 
-        const pantry = await kvGetJson<PantryItem[]>(kv, kvKey("pantry"), []);
+        const pantry = await kvGetJson<PantryItem[]>(kv, kvKey(authCtx, "pantry"), []);
         const pantryItem: PantryItem = {
           id: crypto.randomUUID(),
           name: body.name,
@@ -435,7 +514,7 @@ export default {
           updatedAt: nowIso(),
         };
         pantry.push(pantryItem);
-        await kvPutJson(kv, kvKey("pantry"), pantry);
+        await kvPutJson(kv, kvKey(authCtx, "pantry"), pantry);
         return json(pantryItem, { status: 200 });
       }
     }
