@@ -32,6 +32,3 @@ cookya/Config/Secrets.xcconfig
 *.pem
 *.p8
 *.mobileprovision
-
-# Local scheme with env secrets
-cookya.xcodeproj/xcshareddata/xcschemes/cookya.xcscheme
