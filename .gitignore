@@ -12,3 +12,23 @@ xcuserdata/
 # Build artifacts
 build/
 DerivedData/
+.deriveddata/
+*.xcresult
+*.log
+*.crash
+*.ips
+
+# Node (backend)
+node_modules/
+**/node_modules/
+backend/dist/
+backend/.env
+worker/.dev.vars
+
+# Local secrets
+cookya/Config/Secrets.xcconfig
+.env
+.env.*
+*.pem
+*.p8
+*.mobileprovision

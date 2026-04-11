@@ -14,6 +14,62 @@
 		402655652F59ABA300D3C60A /* SavedRecipesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402655642F59AB9900D3C60A /* SavedRecipesView.swift */; };
 		402655672F59ABCC00D3C60A /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402655662F59ABC600D3C60A /* ProfileView.swift */; };
 		402655692F59ABDB00D3C60A /* IngredientInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402655682F59ABD600D3C60A /* IngredientInputView.swift */; };
+		40A100012F5A010000D3C60A /* Ingredient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100002F5A010000D3C60A /* Ingredient.swift */; };
+		40A100032F5A010000D3C60A /* Difficulty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100022F5A010000D3C60A /* Difficulty.swift */; };
+		40A100052F5A010000D3C60A /* Recipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100042F5A010000D3C60A /* Recipe.swift */; };
+		40A100072F5A010000D3C60A /* RecipeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100062F5A010000D3C60A /* RecipeViewModel.swift */; };
+		40A100092F5A020000D3C60A /* RecipeResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100082F5A020000D3C60A /* RecipeResultView.swift */; };
+		40A1000B2F5A030000D3C60A /* RecipeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1000A2F5A030000D3C60A /* RecipeStore.swift */; };
+		40A1000D2F5A060000D3C60A /* RecipeGeneratingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1000C2F5A060000D3C60A /* RecipeGeneratingService.swift */; };
+		40A1000F2F5A060000D3C60A /* OpenAIRecipeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1000E2F5A060000D3C60A /* OpenAIRecipeService.swift */; };
+		40A100112F5A060000D3C60A /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100102F5A060000D3C60A /* AppConfig.swift */; };
+		40A100142F5B000000D3C60A /* SavedRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100132F5B000000D3C60A /* SavedRecipe.swift */; };
+		40A100162F5B000000D3C60A /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100152F5B000000D3C60A /* UserProfile.swift */; };
+		40A100182F5B000000D3C60A /* ProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100172F5B000000D3C60A /* ProfileStore.swift */; };
+		40A1001A2F5B000000D3C60A /* ProfileOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100192F5B000000D3C60A /* ProfileOnboardingView.swift */; };
+		40A1001C2F5B100000D3C60A /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1001B2F5B100000D3C60A /* EditProfileView.swift */; };
+		40A1001E2F5B100000D3C60A /* DietaryPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1001D2F5B100000D3C60A /* DietaryPreferencesView.swift */; };
+		40A100202F5B100000D3C60A /* GuestModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1001F2F5B100000D3C60A /* GuestModeView.swift */; };
+		40A100222F5B100000D3C60A /* CookingProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100212F5B100000D3C60A /* CookingProfileView.swift */; };
+		40A100242F5C000000D3C60A /* PantryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1002F2F5C000000D3C60A /* PantryItem.swift */; };
+		40A100252F5C000000D3C60A /* GroceryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100302F5C000000D3C60A /* GroceryItem.swift */; };
+		40A100262F5C000000D3C60A /* RecipeGenerationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100312F5C000000D3C60A /* RecipeGenerationRequest.swift */; };
+		40A100272F5C000000D3C60A /* BackendRecipeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100322F5C000000D3C60A /* BackendRecipeService.swift */; };
+		40A100282F5C000000D3C60A /* InventorySyncingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100332F5C000000D3C60A /* InventorySyncingService.swift */; };
+		40A100292F5C000000D3C60A /* BackendInventoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100342F5C000000D3C60A /* BackendInventoryService.swift */; };
+		40A1002A2F5C000000D3C60A /* InventoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100352F5C000000D3C60A /* InventoryStore.swift */; };
+		40C000032F70000000D3C60A /* BackendSnapshotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C000022F70000000D3C60A /* BackendSnapshotService.swift */; };
+		40C000042F80000000D3C60A /* BackendSyncStatusStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C000052F80000000D3C60A /* BackendSyncStatusStore.swift */; };
+		40A1002B2F5C000000D3C60A /* PantryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100362F5C000000D3C60A /* PantryView.swift */; };
+		40A1002C2F5C000000D3C60A /* PantryItemEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100372F5C000000D3C60A /* PantryItemEditorView.swift */; };
+		40A1002D2F5C000000D3C60A /* GroceryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100382F5C000000D3C60A /* GroceryListView.swift */; };
+		40A1002E2F5C000000D3C60A /* GroceryItemEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100392F5C000000D3C60A /* GroceryItemEditorView.swift */; };
+		40A1003A2F5C100000D3C60A /* PantryConsumption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1003B2F5C100000D3C60A /* PantryConsumption.swift */; };
+		40A1003C2F5C100000D3C60A /* RecipeCompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1003D2F5C100000D3C60A /* RecipeCompletionView.swift */; };
+		40A1003E2F5C200000D3C60A /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1003F2F5C200000D3C60A /* AppLogger.swift */; };
+		40A100402F5C300000D3C60A /* DebugLogsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100412F5C300000D3C60A /* DebugLogsView.swift */; };
+		40A100422F5C400000D3C60A /* PantryRecipeSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100432F5C400000D3C60A /* PantryRecipeSelection.swift */; };
+		40A100442F5D000000D3C60A /* CookedMealRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100452F5D000000D3C60A /* CookedMealRecord.swift */; };
+		40A100462F5D000000D3C60A /* CookedMealStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100472F5D000000D3C60A /* CookedMealStore.swift */; };
+		40A100482F5D000000D3C60A /* CookedHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100492F5D000000D3C60A /* CookedHistoryView.swift */; };
+		40A1004A2F5D000000D3C60A /* PurchaseExpirySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1004B2F5D000000D3C60A /* PurchaseExpirySheet.swift */; };
+		40A100502F5D300000D3C60A /* KnownInventoryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100512F5D300000D3C60A /* KnownInventoryItem.swift */; };
+		40A100522F5D300000D3C60A /* KnownItemStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100532F5D300000D3C60A /* KnownItemStore.swift */; };
+		40A100542F5D300000D3C60A /* KnownItemPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100552F5D300000D3C60A /* KnownItemPickerView.swift */; };
+		40A100562F5D300000D3C60A /* StructuredQuantity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100572F5D300000D3C60A /* StructuredQuantity.swift */; };
+		40A100582F5D300000D3C60A /* QuantityInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100592F5D300000D3C60A /* QuantityInputView.swift */; };
+		40A1005A2F5D300000D3C60A /* AppPersistenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1005B2F5D300000D3C60A /* AppPersistenceKey.swift */; };
+		40A1005C2F5D300000D3C60A /* AppBackupCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1005D2F5D300000D3C60A /* AppBackupCoordinator.swift */; };
+		40A1005E2F5D300000D3C60A /* PersistencePayloadValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1005F2F5D300000D3C60A /* PersistencePayloadValidator.swift */; };
+		40A100602F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100612F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift */; };
+		40B000042F60000000D3C60A /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000012F60000000D3C60A /* KeychainStore.swift */; };
+		40B000052F60000000D3C60A /* BackendAuthToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000022F60000000D3C60A /* BackendAuthToken.swift */; };
+		40B000062F60000000D3C60A /* BackendAccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000032F60000000D3C60A /* BackendAccessView.swift */; };
+		40B000082F60100000D3C60A /* CookyaExportBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000072F60100000D3C60A /* CookyaExportBackup.swift */; };
+		40B0000A2F60200000D3C60A /* BackupExportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000092F60200000D3C60A /* BackupExportView.swift */; };
+		40B0000D2F60300000D3C60A /* BackupImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B0000B2F60300000D3C60A /* BackupImportView.swift */; };
+		40B0000E2F60300000D3C60A /* BackupImportApplier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B0000C2F60300000D3C60A /* BackupImportApplier.swift */; };
+		40B000102F60A00000D3C60A /* AppNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B0000F2F60A00000D3C60A /* AppNotifications.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +100,64 @@
 		402655642F59AB9900D3C60A /* SavedRecipesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedRecipesView.swift; sourceTree = "<group>"; };
 		402655662F59ABC600D3C60A /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		402655682F59ABD600D3C60A /* IngredientInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientInputView.swift; sourceTree = "<group>"; };
+		40A100002F5A010000D3C60A /* Ingredient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ingredient.swift; sourceTree = "<group>"; };
+		40A100022F5A010000D3C60A /* Difficulty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Difficulty.swift; sourceTree = "<group>"; };
+		40A100042F5A010000D3C60A /* Recipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recipe.swift; sourceTree = "<group>"; };
+		40A100062F5A010000D3C60A /* RecipeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeViewModel.swift; sourceTree = "<group>"; };
+		40A100082F5A020000D3C60A /* RecipeResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeResultView.swift; sourceTree = "<group>"; };
+		40A1000A2F5A030000D3C60A /* RecipeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeStore.swift; sourceTree = "<group>"; };
+		40A1000C2F5A060000D3C60A /* RecipeGeneratingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeGeneratingService.swift; sourceTree = "<group>"; };
+		40A1000E2F5A060000D3C60A /* OpenAIRecipeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAIRecipeService.swift; sourceTree = "<group>"; };
+		40A100102F5A060000D3C60A /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
+		40A100132F5B000000D3C60A /* SavedRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedRecipe.swift; sourceTree = "<group>"; };
+		40A100152F5B000000D3C60A /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		40A100172F5B000000D3C60A /* ProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStore.swift; sourceTree = "<group>"; };
+		40A100192F5B000000D3C60A /* ProfileOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileOnboardingView.swift; sourceTree = "<group>"; };
+		40A1001B2F5B100000D3C60A /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
+		40A1001D2F5B100000D3C60A /* DietaryPreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DietaryPreferencesView.swift; sourceTree = "<group>"; };
+		40A1001F2F5B100000D3C60A /* GuestModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestModeView.swift; sourceTree = "<group>"; };
+		40A100212F5B100000D3C60A /* CookingProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookingProfileView.swift; sourceTree = "<group>"; };
+		40A1002F2F5C000000D3C60A /* PantryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryItem.swift; sourceTree = "<group>"; };
+		40A100302F5C000000D3C60A /* GroceryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryItem.swift; sourceTree = "<group>"; };
+		40A100312F5C000000D3C60A /* RecipeGenerationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeGenerationRequest.swift; sourceTree = "<group>"; };
+		40A100322F5C000000D3C60A /* BackendRecipeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendRecipeService.swift; sourceTree = "<group>"; };
+		40A100332F5C000000D3C60A /* InventorySyncingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventorySyncingService.swift; sourceTree = "<group>"; };
+		40A100342F5C000000D3C60A /* BackendInventoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendInventoryService.swift; sourceTree = "<group>"; };
+		40C000022F70000000D3C60A /* BackendSnapshotService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendSnapshotService.swift; sourceTree = "<group>"; };
+		40A100352F5C000000D3C60A /* InventoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryStore.swift; sourceTree = "<group>"; };
+		40C000052F80000000D3C60A /* BackendSyncStatusStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendSyncStatusStore.swift; sourceTree = "<group>"; };
+		40A100362F5C000000D3C60A /* PantryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryView.swift; sourceTree = "<group>"; };
+		40A100372F5C000000D3C60A /* PantryItemEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryItemEditorView.swift; sourceTree = "<group>"; };
+		40A100382F5C000000D3C60A /* GroceryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryListView.swift; sourceTree = "<group>"; };
+		40A100392F5C000000D3C60A /* GroceryItemEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryItemEditorView.swift; sourceTree = "<group>"; };
+		40A1003B2F5C100000D3C60A /* PantryConsumption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryConsumption.swift; sourceTree = "<group>"; };
+		40A1003D2F5C100000D3C60A /* RecipeCompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeCompletionView.swift; sourceTree = "<group>"; };
+		40A1003F2F5C200000D3C60A /* AppLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogger.swift; sourceTree = "<group>"; };
+		40A100412F5C300000D3C60A /* DebugLogsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLogsView.swift; sourceTree = "<group>"; };
+		40A100432F5C400000D3C60A /* PantryRecipeSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryRecipeSelection.swift; sourceTree = "<group>"; };
+		40A100452F5D000000D3C60A /* CookedMealRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookedMealRecord.swift; sourceTree = "<group>"; };
+		40A100472F5D000000D3C60A /* CookedMealStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookedMealStore.swift; sourceTree = "<group>"; };
+		40A100492F5D000000D3C60A /* CookedHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookedHistoryView.swift; sourceTree = "<group>"; };
+		40A1004B2F5D000000D3C60A /* PurchaseExpirySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseExpirySheet.swift; sourceTree = "<group>"; };
+		40A1004C2F5D100000D3C60A /* AppDefaults.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppDefaults.xcconfig; sourceTree = "<group>"; };
+		40A1004D2F5D100000D3C60A /* Secrets.xcconfig.example */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig.example; sourceTree = "<group>"; };
+		40A100512F5D300000D3C60A /* KnownInventoryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnownInventoryItem.swift; sourceTree = "<group>"; };
+		40A100532F5D300000D3C60A /* KnownItemStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnownItemStore.swift; sourceTree = "<group>"; };
+		40A100552F5D300000D3C60A /* KnownItemPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnownItemPickerView.swift; sourceTree = "<group>"; };
+		40A100572F5D300000D3C60A /* StructuredQuantity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructuredQuantity.swift; sourceTree = "<group>"; };
+		40A100592F5D300000D3C60A /* QuantityInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuantityInputView.swift; sourceTree = "<group>"; };
+		40A1005B2F5D300000D3C60A /* AppPersistenceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPersistenceKey.swift; sourceTree = "<group>"; };
+		40A1005D2F5D300000D3C60A /* AppBackupCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBackupCoordinator.swift; sourceTree = "<group>"; };
+		40A1005F2F5D300000D3C60A /* PersistencePayloadValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistencePayloadValidator.swift; sourceTree = "<group>"; };
+		40A100612F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneratedRecipeCachePolicy.swift; sourceTree = "<group>"; };
+		40B000012F60000000D3C60A /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
+		40B000022F60000000D3C60A /* BackendAuthToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendAuthToken.swift; sourceTree = "<group>"; };
+		40B000032F60000000D3C60A /* BackendAccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendAccessView.swift; sourceTree = "<group>"; };
+		40B000072F60100000D3C60A /* CookyaExportBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookyaExportBackup.swift; sourceTree = "<group>"; };
+		40B000092F60200000D3C60A /* BackupExportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupExportView.swift; sourceTree = "<group>"; };
+		40B0000B2F60300000D3C60A /* BackupImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupImportView.swift; sourceTree = "<group>"; };
+		40B0000C2F60300000D3C60A /* BackupImportApplier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupImportApplier.swift; sourceTree = "<group>"; };
+		40B0000F2F60A00000D3C60A /* AppNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNotifications.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -108,6 +222,7 @@
 			isa = PBXGroup;
 			children = (
 				402655612F59A94E00D3C60A /* Resources */,
+				40A1004E2F5D100000D3C60A /* Config */,
 				402655602F59A91500D3C60A /* Utilities */,
 				4026555F2F59A90900D3C60A /* Networking */,
 				4026555E2F59A90000D3C60A /* Services */,
@@ -131,8 +246,27 @@
 		4026555B2F59A8D100D3C60A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				40B000092F60200000D3C60A /* BackupExportView.swift */,
+				40B0000B2F60300000D3C60A /* BackupImportView.swift */,
+				40B000032F60000000D3C60A /* BackendAccessView.swift */,
+				40A100212F5B100000D3C60A /* CookingProfileView.swift */,
+				40A100492F5D000000D3C60A /* CookedHistoryView.swift */,
+				40A100412F5C300000D3C60A /* DebugLogsView.swift */,
+				40A1001D2F5B100000D3C60A /* DietaryPreferencesView.swift */,
+				40A1001B2F5B100000D3C60A /* EditProfileView.swift */,
+				40A100392F5C000000D3C60A /* GroceryItemEditorView.swift */,
+				40A100382F5C000000D3C60A /* GroceryListView.swift */,
+				40A1001F2F5B100000D3C60A /* GuestModeView.swift */,
 				402655682F59ABD600D3C60A /* IngredientInputView.swift */,
+				40A100552F5D300000D3C60A /* KnownItemPickerView.swift */,
+				40A100372F5C000000D3C60A /* PantryItemEditorView.swift */,
+				40A100362F5C000000D3C60A /* PantryView.swift */,
 				402655662F59ABC600D3C60A /* ProfileView.swift */,
+				40A100192F5B000000D3C60A /* ProfileOnboardingView.swift */,
+				40A1004B2F5D000000D3C60A /* PurchaseExpirySheet.swift */,
+				40A100592F5D300000D3C60A /* QuantityInputView.swift */,
+				40A1003D2F5C100000D3C60A /* RecipeCompletionView.swift */,
+				40A100082F5A020000D3C60A /* RecipeResultView.swift */,
 				402655642F59AB9900D3C60A /* SavedRecipesView.swift */,
 				402655542F59A83600D3C60A /* HomeView.swift */,
 				402655622F59AB7E00D3C60A /* MainTabView.swift */,
@@ -143,6 +277,7 @@
 		4026555C2F59A8E900D3C60A /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				40A100062F5A010000D3C60A /* RecipeViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -150,6 +285,19 @@
 		4026555D2F59A8F400D3C60A /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				40A100022F5A010000D3C60A /* Difficulty.swift */,
+				40A100452F5D000000D3C60A /* CookedMealRecord.swift */,
+				40A100302F5C000000D3C60A /* GroceryItem.swift */,
+				40A100002F5A010000D3C60A /* Ingredient.swift */,
+				40A1003B2F5C100000D3C60A /* PantryConsumption.swift */,
+				40A1002F2F5C000000D3C60A /* PantryItem.swift */,
+				40A100432F5C400000D3C60A /* PantryRecipeSelection.swift */,
+				40A100042F5A010000D3C60A /* Recipe.swift */,
+				40A100312F5C000000D3C60A /* RecipeGenerationRequest.swift */,
+				40A100132F5B000000D3C60A /* SavedRecipe.swift */,
+				40A100572F5D300000D3C60A /* StructuredQuantity.swift */,
+				40A100152F5B000000D3C60A /* UserProfile.swift */,
+				40A100512F5D300000D3C60A /* KnownInventoryItem.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -157,6 +305,22 @@
 		4026555E2F59A90000D3C60A /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				40B000022F60000000D3C60A /* BackendAuthToken.swift */,
+				40A100342F5C000000D3C60A /* BackendInventoryService.swift */,
+				40C000022F70000000D3C60A /* BackendSnapshotService.swift */,
+				40C000052F80000000D3C60A /* BackendSyncStatusStore.swift */,
+				40A100322F5C000000D3C60A /* BackendRecipeService.swift */,
+				40A100472F5D000000D3C60A /* CookedMealStore.swift */,
+				40A1005D2F5D300000D3C60A /* AppBackupCoordinator.swift */,
+				40B000072F60100000D3C60A /* CookyaExportBackup.swift */,
+				40B0000C2F60300000D3C60A /* BackupImportApplier.swift */,
+				40A100352F5C000000D3C60A /* InventoryStore.swift */,
+				40A100332F5C000000D3C60A /* InventorySyncingService.swift */,
+				40A100532F5D300000D3C60A /* KnownItemStore.swift */,
+				40A1000E2F5A060000D3C60A /* OpenAIRecipeService.swift */,
+				40A100172F5B000000D3C60A /* ProfileStore.swift */,
+				40A1000C2F5A060000D3C60A /* RecipeGeneratingService.swift */,
+				40A1000A2F5A030000D3C60A /* RecipeStore.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -171,6 +335,13 @@
 		402655602F59A91500D3C60A /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				40A100102F5A060000D3C60A /* AppConfig.swift */,
+				40B0000F2F60A00000D3C60A /* AppNotifications.swift */,
+				40A1005B2F5D300000D3C60A /* AppPersistenceKey.swift */,
+				40A1003F2F5C200000D3C60A /* AppLogger.swift */,
+				40A100612F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift */,
+				40B000012F60000000D3C60A /* KeychainStore.swift */,
+				40A1005F2F5D300000D3C60A /* PersistencePayloadValidator.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -182,6 +353,15 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		40A1004E2F5D100000D3C60A /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				40A1004C2F5D100000D3C60A /* AppDefaults.xcconfig */,
+				40A1004D2F5D100000D3C60A /* Secrets.xcconfig.example */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -191,6 +371,7 @@
 			buildPhases = (
 				402655242F599F4B00D3C60A /* Sources */,
 				402655252F599F4B00D3C60A /* Frameworks */,
+				40A1004F2F5D200000D3C60A /* Bundle Local Secrets */,
 				402655262F599F4B00D3C60A /* Resources */,
 			);
 			buildRules = (
@@ -258,7 +439,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2630;
-				LastUpgradeCheck = 2630;
+				LastUpgradeCheck = 2640;
 				TargetAttributes = {
 					402655272F599F4B00D3C60A = {
 						CreatedOnToolsVersion = 26.3;
@@ -319,15 +500,94 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		40A1004F2F5D200000D3C60A /* Bundle Local Secrets */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(PROJECT_DIR)/cookya/Config/Secrets.xcconfig",
+			);
+			name = "Bundle Local Secrets";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/LocalSecrets.plist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nSECRETS_FILE=\"${PROJECT_DIR}/cookya/Config/Secrets.xcconfig\"\n\n# Never embed an API key into non-Debug (Release/Archive) builds.\n# Also: do not bundle OPENAI_API_KEY even in Debug builds.\n# Keys must be provided at runtime (e.g. scheme env var) and should not live in app resources.\nif [ \"${CONFIGURATION}\" != \"Debug\" ]; then\n  if [ -n \"${TARGET_BUILD_DIR}\" ] && [ -n \"${UNLOCALIZED_RESOURCES_FOLDER_PATH}\" ]; then\n    rm -f \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/LocalSecrets.plist\"\n  fi\n  exit 0\nfi\n\nif [ -z \"${TARGET_BUILD_DIR}\" ] || [ -z \"${UNLOCALIZED_RESOURCES_FOLDER_PATH}\" ]; then\n  exit 0\nfi\nOUTPUT_DIR=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"\nOUTPUT_PLIST=\"${OUTPUT_DIR}/LocalSecrets.plist\"\nmkdir -p \"${OUTPUT_DIR}\"\n\nif [ -f \"${SECRETS_FILE}\" ]; then\n  extract_value() {\n    key=\"$1\"\n    grep -E \"^[[:space:]]*${key}[[:space:]]*=\" \"${SECRETS_FILE}\" | tail -n 1 | sed -E 's/^[^=]*=[[:space:]]*//'\n  }\n\n  OPENAI_BASE_URL_VALUE=\"$(extract_value OPENAI_BASE_URL)\"\n  OPENAI_MODEL_VALUE=\"$(extract_value OPENAI_MODEL)\"\n  COOKYA_BACKEND_BASE_URL_VALUE=\"$(extract_value COOKYA_BACKEND_BASE_URL)\"\n\n  cat > \"${OUTPUT_PLIST}\" <<EOF\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n  <key>OPENAI_BASE_URL</key>\n  <string>${OPENAI_BASE_URL_VALUE}</string>\n  <key>OPENAI_MODEL</key>\n  <string>${OPENAI_MODEL_VALUE}</string>\n  <key>COOKYA_BACKEND_BASE_URL</key>\n  <string>${COOKYA_BACKEND_BASE_URL_VALUE}</string>\n</dict>\n</plist>\nEOF\nelse\n  rm -f \"${OUTPUT_PLIST}\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		402655242F599F4B00D3C60A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				40A100032F5A010000D3C60A /* Difficulty.swift in Sources */,
+				40A100112F5A060000D3C60A /* AppConfig.swift in Sources */,
+				40B000102F60A00000D3C60A /* AppNotifications.swift in Sources */,
+				40A1003E2F5C200000D3C60A /* AppLogger.swift in Sources */,
+				40B000042F60000000D3C60A /* KeychainStore.swift in Sources */,
+				40A100292F5C000000D3C60A /* BackendInventoryService.swift in Sources */,
+				40C000032F70000000D3C60A /* BackendSnapshotService.swift in Sources */,
+				40C000042F80000000D3C60A /* BackendSyncStatusStore.swift in Sources */,
+				40A100272F5C000000D3C60A /* BackendRecipeService.swift in Sources */,
+				40B000052F60000000D3C60A /* BackendAuthToken.swift in Sources */,
+				40A100222F5B100000D3C60A /* CookingProfileView.swift in Sources */,
+				40B000082F60100000D3C60A /* CookyaExportBackup.swift in Sources */,
+				40A100482F5D000000D3C60A /* CookedHistoryView.swift in Sources */,
+				40A100442F5D000000D3C60A /* CookedMealRecord.swift in Sources */,
+				40A100462F5D000000D3C60A /* CookedMealStore.swift in Sources */,
+				40A1001E2F5B100000D3C60A /* DietaryPreferencesView.swift in Sources */,
+				40A1001C2F5B100000D3C60A /* EditProfileView.swift in Sources */,
+				40A1002E2F5C000000D3C60A /* GroceryItemEditorView.swift in Sources */,
+				40A1002D2F5C000000D3C60A /* GroceryListView.swift in Sources */,
+				40A100252F5C000000D3C60A /* GroceryItem.swift in Sources */,
+				40A100202F5B100000D3C60A /* GuestModeView.swift in Sources */,
+				40A100012F5A010000D3C60A /* Ingredient.swift in Sources */,
 				402655692F59ABDB00D3C60A /* IngredientInputView.swift in Sources */,
 				402655572F59A83600D3C60A /* HomeView.swift in Sources */,
+				40A1002A2F5C000000D3C60A /* InventoryStore.swift in Sources */,
+				40A100282F5C000000D3C60A /* InventorySyncingService.swift in Sources */,
+				40A100522F5D300000D3C60A /* KnownItemStore.swift in Sources */,
+				40A1005A2F5D300000D3C60A /* AppPersistenceKey.swift in Sources */,
+				40A100602F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift in Sources */,
+				40A1005E2F5D300000D3C60A /* PersistencePayloadValidator.swift in Sources */,
+				40A100502F5D300000D3C60A /* KnownInventoryItem.swift in Sources */,
+				40A100542F5D300000D3C60A /* KnownItemPickerView.swift in Sources */,
+				40A1000F2F5A060000D3C60A /* OpenAIRecipeService.swift in Sources */,
+				40A1005C2F5D300000D3C60A /* AppBackupCoordinator.swift in Sources */,
+				40B0000E2F60300000D3C60A /* BackupImportApplier.swift in Sources */,
 				402655582F59A83600D3C60A /* cookyaApp.swift in Sources */,
+				40A1003A2F5C100000D3C60A /* PantryConsumption.swift in Sources */,
+				40A100242F5C000000D3C60A /* PantryItem.swift in Sources */,
+				40A1002C2F5C000000D3C60A /* PantryItemEditorView.swift in Sources */,
+				40A100422F5C400000D3C60A /* PantryRecipeSelection.swift in Sources */,
+				40A1002B2F5C000000D3C60A /* PantryView.swift in Sources */,
+				40A100402F5C300000D3C60A /* DebugLogsView.swift in Sources */,
+				40A1001A2F5B000000D3C60A /* ProfileOnboardingView.swift in Sources */,
 				402655672F59ABCC00D3C60A /* ProfileView.swift in Sources */,
+				40B000062F60000000D3C60A /* BackendAccessView.swift in Sources */,
+				40B0000A2F60200000D3C60A /* BackupExportView.swift in Sources */,
+				40B0000D2F60300000D3C60A /* BackupImportView.swift in Sources */,
+				40A100182F5B000000D3C60A /* ProfileStore.swift in Sources */,
+				40A1004A2F5D000000D3C60A /* PurchaseExpirySheet.swift in Sources */,
+				40A100582F5D300000D3C60A /* QuantityInputView.swift in Sources */,
+				40A1000D2F5A060000D3C60A /* RecipeGeneratingService.swift in Sources */,
+				40A1003C2F5C100000D3C60A /* RecipeCompletionView.swift in Sources */,
+				40A100262F5C000000D3C60A /* RecipeGenerationRequest.swift in Sources */,
+				40A100052F5A010000D3C60A /* Recipe.swift in Sources */,
+				40A100142F5B000000D3C60A /* SavedRecipe.swift in Sources */,
+				40A100072F5A010000D3C60A /* RecipeViewModel.swift in Sources */,
+				40A100092F5A020000D3C60A /* RecipeResultView.swift in Sources */,
+				40A1000B2F5A030000D3C60A /* RecipeStore.swift in Sources */,
+				40A100562F5D300000D3C60A /* StructuredQuantity.swift in Sources */,
+				40A100162F5B000000D3C60A /* UserProfile.swift in Sources */,
 				402655652F59ABA300D3C60A /* SavedRecipesView.swift in Sources */,
 				402655632F59AB7E00D3C60A /* MainTabView.swift in Sources */,
 			);
@@ -397,10 +657,12 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "$(COOKYA_DEVELOPMENT_TEAM)";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -419,6 +681,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -458,10 +721,12 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "$(COOKYA_DEVELOPMENT_TEAM)";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -473,21 +738,30 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 			};
 			name = Release;
 		};
 		4026554A2F599F4D00D3C60A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 40A1004C2F5D100000D3C60A /* AppDefaults.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]" = NO;
+				"CODE_SIGNING_REQUIRED[sdk=iphonesimulator*]" = NO;
+				COOKYA_BACKEND_BASE_URL = "$(inherited)";
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_COOKYA_BACKEND_BASE_URL = "$(COOKYA_BACKEND_BASE_URL)";
+				INFOPLIST_KEY_OPENAI_API_KEY = "$(OPENAI_API_KEY)";
+				INFOPLIST_KEY_OPENAI_BASE_URL = "$(OPENAI_BASE_URL)";
+				INFOPLIST_KEY_OPENAI_MODEL = "$(OPENAI_MODEL)";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -503,33 +777,43 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
+				OPENAI_API_KEY = "$(inherited)";
+				OPENAI_BASE_URL = "$(inherited)";
+				OPENAI_MODEL = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.adityakrishna.cookya;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
-				SDKROOT = auto;
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				XROS_DEPLOYMENT_TARGET = 26.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
 		4026554B2F599F4D00D3C60A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 40A1004C2F5D100000D3C60A /* AppDefaults.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]" = NO;
+				"CODE_SIGNING_REQUIRED[sdk=iphonesimulator*]" = NO;
+				COOKYA_BACKEND_BASE_URL = "$(inherited)";
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_COOKYA_BACKEND_BASE_URL = "$(COOKYA_BACKEND_BASE_URL)";
+				INFOPLIST_KEY_OPENAI_API_KEY = "$(OPENAI_API_KEY)";
+				INFOPLIST_KEY_OPENAI_BASE_URL = "$(OPENAI_BASE_URL)";
+				INFOPLIST_KEY_OPENAI_MODEL = "$(OPENAI_MODEL)";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -545,24 +829,27 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
+				OPENAI_API_KEY = "$(inherited)";
+				OPENAI_BASE_URL = "$(inherited)";
+				OPENAI_MODEL = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.adityakrishna.cookya;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
-				SDKROOT = auto;
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				XROS_DEPLOYMENT_TARGET = 26.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
 		4026554D2F599F4D00D3C60A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 40A1004C2F5D100000D3C60A /* AppDefaults.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -573,21 +860,21 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.adityakrishna.cookyaTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/cookya.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/cookya";
-				XROS_DEPLOYMENT_TARGET = 26.2;
 			};
 			name = Debug;
 		};
 		4026554E2F599F4D00D3C60A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 40A1004C2F5D100000D3C60A /* AppDefaults.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -598,21 +885,21 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.adityakrishna.cookyaTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/cookya.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/cookya";
-				XROS_DEPLOYMENT_TARGET = 26.2;
 			};
 			name = Release;
 		};
 		402655502F599F4D00D3C60A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 40A1004C2F5D100000D3C60A /* AppDefaults.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -622,21 +909,21 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.adityakrishna.cookyaUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = cookya;
-				XROS_DEPLOYMENT_TARGET = 26.2;
 			};
 			name = Debug;
 		};
 		402655512F599F4D00D3C60A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 40A1004C2F5D100000D3C60A /* AppDefaults.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -646,16 +933,15 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.adityakrishna.cookyaUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = cookya;
-				XROS_DEPLOYMENT_TARGET = 26.2;
 			};
 			name = Release;
 		};
