@@ -7,16 +7,72 @@ Use this file to keep daily planning and end-of-day progress visible.
 ### Start of day
 - Fill in `Must Do`, `Nice to Have`, and `Watch`
 - Keep the list short enough that we can realistically finish it
+- Pick one slice only for the day and note the branch that owns it
 
 ### During the day
 - Move items between `In Progress`, `Done`, `Blocked`, and `Carry Forward`
 - Commit validated work at clean checkpoints instead of batching unrelated changes
+- If switching between Codex and Cursor, either:
+  - commit the validated slice first
+  - or write the exact in-progress state here before switching
 
 ### End of day
 - Record what actually got done
 - List commits created that day
 - Note what carries into the next session
 - Push to GitHub after the wrap-up
+
+### Branch rule
+- `main` is the stable integration branch
+- use one short-lived branch per focused slice
+- branch names should describe the actual work being done
+- do not keep extending an old branch once the scope has drifted
+
+### Daily slice template
+- Branch:
+- Slice type: architecture cleanup / hardening-test / UI-product / backend-contract
+- Handoff status: validated / in progress / blocked
+
+---
+
+## 2026-04-17
+
+### Must Do
+- Workflow re-baseline:
+  - refresh `PLANNING.md` so backend relay / backend snapshot sync are represented as built or active instead of future work
+  - formalize branch hygiene and one-slice-per-day rules in repo guidance
+  - make `WORKLOG.md` the default handoff file between Codex and Cursor sessions
+
+### Nice to Have
+- Record the next 3 concrete slice branches in `PLANNING.md` ordering:
+  - backend sync hardening
+  - Home recommendation extraction
+  - saved planning hub polish
+
+### Watch
+- Keep this slice doc/process only
+- Do not mix backend or UI code changes into the workflow re-baseline branch
+- Commit this slice before moving on to reliability work
+
+### Branch
+- `codex/workflow-rebaseline`
+
+### Slice type
+- hardening-test
+
+### Handoff status
+- validated
+
+### Done
+- Re-baselined `PLANNING.md` to match current repo reality:
+  - backend recipe relay is built
+  - backend snapshot backup/restore is active
+  - backend inventory sync hardening is now the next reliability slice
+- Added explicit branch hygiene and one-slice-per-day rules to repo guidance
+- Turned `WORKLOG.md` into the default Codex/Cursor handoff file for uncommitted work
+
+### Commit checkpoint
+- Create one focused commit for the workflow re-baseline slice before moving to backend reliability hardening
 
 ---
 

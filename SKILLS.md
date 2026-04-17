@@ -18,16 +18,38 @@ It exists to capture learnings that should not be relearned the hard way.
 - commit messages must be complete, specific, and honest
 - do not bundle unrelated Xcode or signing churn into feature commits
 
+### Branch hygiene
+- `main` stays the stable integration branch
+- create one short-lived branch per focused slice
+- branch names should match the actual work, for example:
+  - `codex/workflow-rebaseline`
+  - `codex/backend-sync-hardening`
+  - `codex/home-recommendation-extraction`
+  - `codex/saved-planning-hub-polish`
+- do not keep reusing an old branch once its scope has drifted
+- close or merge the slice branch once the slice is validated or intentionally parked
+
 ### Push cadence
 - push to GitHub at end of day after the worklog is updated
 
 ### Daily workflow
 - start from `WORKLOG.md`
+- define only one meaningful slice for the day
 - define `Must Do`, `Nice to Have`, and `Watch`
+- keep the day inside one slice shape:
+  - one architecture cleanup
+  - one hardening/test slice
+  - one UI/product slice
+  - one backend contract slice
 - end the day with:
   - `Done`
   - `Commits`
   - `Carry Forward`
+
+### Tool-switch rule
+- if switching between Codex and Cursor, commit first if the slice is validated
+- if the slice is not validated yet, update `WORKLOG.md` with exact in-progress state before switching
+- do not rely on memory to preserve cross-tool context
 
 ---
 

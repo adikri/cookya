@@ -44,6 +44,10 @@ Current product shape:
 | **Grocery** | Full CRUD, duplicate merging, known-item reuse, meal-aware source/reason tracking, near-miss suggestions, purchase -> pantry confirmation flow, purchase readiness feedback, undo delete. |
 | **Purchase flow** | Purchase now confirms quantity, category, and expiry before pantry entry. Fresh purchases stay separate from expired pantry stock. |
 | **Recipe generation** | OpenAI + backend relay path, normalized request identity, recipe memory, `Generate Another Recipe`, structured logging. |
+| **Backend recipe path** | Cloudflare Worker path exists for server-side OpenAI calls with app-token auth; optional local Node relay also exists for development. |
+| **Backup / restore** | Local export/import UI exists, app-state backup refresh exists, backend snapshot sync + restore exists behind backend token setup. |
+| **Backend auth** | Keychain-backed backend access token flow exists in the app and is used for backend recipe/inventory/snapshot requests. |
+| **Inventory sync** | Backend pantry/grocery sync exists with local merge/dedupe behavior and user-visible sync error states. |
 | **Cooked flow** | `Cooked This`, pantry decrement, blocking on unsafe quantity/unit mismatches, cooked history creation, replay/cook-again support. |
 | **Saved recipes** | Save, favorite, readiness sorting, reusable planning detail, Home deep-links into planning detail. |
 | **Repeat meals** | Favorites, staples, cook again, saved readiness, Home recommendation support. |
@@ -59,7 +63,7 @@ Current product shape:
 | Area | Current status |
 |------|----------------|
 | **Recipe-first planning** | Started. Reusable planning detail exists and Home now routes saved recipe recommendations directly into it. |
-| **Saved planning hub** | In progress locally. The next intended shape is a lighter recipe-planning hub backed by the full saved library. |
+| **Saved planning hub** | Partially complete. Saved already groups planning-oriented sections, but still needs a more intentional final structure. |
 
 ### Strengths of the current app
 
@@ -89,29 +93,26 @@ These are the main technical priorities that still matter.
 
 ### Next
 
-1. **Data durability / backup**
-   - the app is useful enough now that reinstall/device-loss risk matters
-   - add lightweight cloud backup or another durable persistence layer before relying on the app long-term
+1. **Backend sync / backup hardening**
+   - backend snapshot sync and restore now exist, so the priority is to harden failure handling, trust boundaries, and test coverage
+   - clarify exactly what is local-only, what syncs, what restores, and what happens offline
 
 2. **Move high-value logic out of Views incrementally**
    - `HomeView` still contains too much recommendation logic
    - `SavedRecipesView` now has planning-hub shaping logic that should eventually move toward a dedicated ViewModel/service-backed layer
 
-3. **Verify recipe cache bounds**
-   - confirm whether generated recipe cache eviction exists
-   - if not, add a simple capped policy
-
-4. **Harden store decode / persist failures**
+3. **Harden store decode / persist failures**
    - log decode fallbacks explicitly
    - use debug assertions where encode failures should never be silent
+   - make backend auth / sync failures equally intentional and user-visible
 
 ### Later
 
-5. **Expand tests beyond the current regression set**
+4. **Expand tests beyond the current regression set**
    - add broader store/viewmodel coverage
-   - prioritize recommendation ranking, planning state derivation, and persistence failure handling
+   - prioritize backend snapshot/auth failure handling, recommendation ranking, planning state derivation, and persistence failure handling
 
-6. **Reduce local environment churn in project settings**
+5. **Reduce local environment churn in project settings**
    - avoid committing signing noise
    - keep the project file stable and intentional
 
@@ -130,12 +131,13 @@ Use these markers consistently:
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Lightweight cloud/data backup | **Next** | Highest strategic gap now that the app is useful daily. |
-| Backend recipe generation relay (no client OpenAI key) | **Next** | Required for standalone phone usage and the future Android/family roadmap; start with static token auth and add real auth later. |
+| Backend recipe relay (no client OpenAI key) | **Built** | Worker and optional local relay already exist. |
+| Backend snapshot backup / restore | **Active** | Implemented, but still needs stronger hardening and clearer failure behavior. |
+| Backend inventory sync hardening | **Next** | Existing sync path now needs tighter trust/failure handling and broader tests. |
 | Store decode/persist hardening | **Next** | Log silent fallbacks; assert on impossible encode failures in DEBUG. |
-| Recipe cache eviction policy | **Next** | Cap generated recipe cache if still unbounded. |
+| Recipe cache eviction policy | **Built** | Generated recipe cache is now bounded with deterministic eviction tests. |
 | Home recommendation extraction | **Next** | Move core recommendation ranking out of `HomeView`. |
-| Broader test coverage | **Later** | Extend beyond current regression coverage. |
+| Broader test coverage | **Next** | Extend beyond current regression coverage, especially around sync/auth/restore. |
 
 ### Phase B — Complete Recipe-First Planning
 **Goal:** let users start from the meal they want, not only from pantry inventory.
@@ -185,10 +187,10 @@ Use these markers consistently:
 
 ### Recommended near-term order
 
-1. **Cloud/data backup**
-2. **Saved planning hub completion**
-3. **Recipe-first entry point beyond Saved/Home**
-4. **Home recommendation extraction / architecture cleanup**
+1. **Backend sync / snapshot hardening**
+2. **Home recommendation extraction / architecture cleanup**
+3. **Saved planning hub completion**
+4. **Recipe-first entry point beyond Saved/Home**
 5. **Dish-name search**
 
 ---
@@ -259,16 +261,35 @@ Also:
 - read `PLANNING.md`
 - ground in the actual repo state first
 - identify whether the task is a feature, hardening, cleanup, or planning work
+- branch from `main` for the current slice instead of continuing unrelated work on an old branch
+- name the branch after the actual slice, for example:
+  - `codex/workflow-rebaseline`
+  - `codex/backend-sync-hardening`
+  - `codex/home-recommendation-extraction`
+  - `codex/saved-planning-hub-polish`
 
 ### While working
-- work on **one feature at a time**
+- work on **one slice at a time**
+- keep each daily slice small enough to fit one focused session
+- default slice shapes:
+  - one architecture cleanup
+  - one hardening/test slice
+  - one UI/product slice
+  - one backend contract slice
 - keep `Active`, `Pending`, and `Parked` loops explicit when context switches happen
 - avoid bundling unrelated fixes unless they are required for correctness
 
 ### After validation
 - if a feature or fix is validated, **commit before switching contexts**
+- if switching from Codex to Cursor or back, either commit the validated slice or update `WORKLOG.md` with exact in-progress state first
 - propose complete, honest commit messages that describe the actual behavior change
 - keep git history readable enough to show the project to future collaborators
+
+### Branch hygiene
+- `main` is the stable integration branch
+- use one short-lived branch per focused slice
+- do not keep extending an old branch after its original scope has drifted
+- merge or close the slice branch once that slice is validated or explicitly parked
 
 ### Commit hygiene
 - commit only the files that belong to the current task
