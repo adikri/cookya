@@ -20,6 +20,47 @@ Use this file to keep daily planning and end-of-day progress visible.
 
 ---
 
+## 2026-04-17
+
+### Must Do
+- Re-baseline planning/workflow guidance around the current product state
+- Start the first backend sync hardening slice on a dedicated branch
+
+### Watch
+- Keep branch scope tight: docs/process first, then backend reliability
+- Do not mix incidental Xcode project churn into the backend slice
+- Commit validated work before switching tools or topics
+
+### Done
+- Re-baselined planning and workflow guidance:
+  - refreshed `PLANNING.md` to reflect current backend/snapshot reality
+  - documented short-lived branch rules and one-slice-per-day workflow
+  - aligned `WORKLOG.md` and `SKILLS.md` with Codex/Cursor handoff rules
+- Started `codex/backend-sync-hardening` from `main`
+- Hardened backend sync/auth behavior:
+  - backend snapshot fetch/upload now fail fast on missing auth token
+  - backend inventory sync now fails fast on missing auth token instead of silently omitting auth
+  - sync/restore status now stores user-facing localized errors instead of raw debug strings
+  - snapshot store now depends on a protocol-backed service for easier testing
+- Added focused backend reliability tests for:
+  - snapshot sync success/failure status handling
+  - snapshot token/network failure paths
+  - inventory sync missing-token failure
+- Validated the slice with:
+  - CLI `build-for-testing` success
+  - Xcode class runs confirming `BackendSyncStatusStoreTests`, `BackendSnapshotServiceTests`, and `BackendInventoryServiceTests` pass
+
+### Commits
+- `0af31d1` `Rebaseline planning and workflow guidance for focused daily slices`
+
+### Commit checkpoint
+- Next commit should capture the backend sync hardening slice only.
+
+### Carry Forward
+- Next planned slice after this commit: `codex/home-recommendation-extraction`
+
+---
+
 ## 2026-04-10
 
 ### Must Do

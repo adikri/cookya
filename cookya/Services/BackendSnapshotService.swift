@@ -1,6 +1,11 @@
 import Foundation
 
-struct BackendSnapshotService {
+protocol BackendSnapshotServicing {
+    func fetchLatest() async throws -> CookyaExportBackup
+    func upsertLatest(_ backup: CookyaExportBackup) async throws
+}
+
+struct BackendSnapshotService: BackendSnapshotServicing {
     enum SnapshotError: LocalizedError, Equatable {
         case missingBackendURL
         case missingAuthToken
@@ -37,10 +42,16 @@ struct BackendSnapshotService {
     private let config: AppConfig
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
+    private let tokenProvider: () -> String?
 
-    init(session: URLSession = .shared, config: AppConfig = .live) {
+    init(
+        session: URLSession = .shared,
+        config: AppConfig = .live,
+        tokenProvider: @escaping () -> String? = { BackendAuthToken.load() }
+    ) {
         self.session = session
         self.config = config
+        self.tokenProvider = tokenProvider
 
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
@@ -53,7 +64,9 @@ struct BackendSnapshotService {
 
     func fetchLatest() async throws -> CookyaExportBackup {
         guard let baseURL = config.backendBaseURL else { throw SnapshotError.missingBackendURL }
-        guard let token = BackendAuthToken.load(), !token.isEmpty else { throw SnapshotError.missingAuthToken }
+        guard let token = tokenProvider()?.trimmingCharacters(in: .whitespacesAndNewlines), !token.isEmpty else {
+            throw SnapshotError.missingAuthToken
+        }
         guard let url = URL(string: "/v1/snapshot", relativeTo: baseURL)?.absoluteURL else {
             throw SnapshotError.invalidResponse
         }
@@ -90,7 +103,9 @@ struct BackendSnapshotService {
 
     func upsertLatest(_ backup: CookyaExportBackup) async throws {
         guard let baseURL = config.backendBaseURL else { throw SnapshotError.missingBackendURL }
-        guard let token = BackendAuthToken.load(), !token.isEmpty else { throw SnapshotError.missingAuthToken }
+        guard let token = tokenProvider()?.trimmingCharacters(in: .whitespacesAndNewlines), !token.isEmpty else {
+            throw SnapshotError.missingAuthToken
+        }
         guard let url = URL(string: "/v1/snapshot", relativeTo: baseURL)?.absoluteURL else {
             throw SnapshotError.invalidResponse
         }
@@ -125,4 +140,3 @@ private struct APIErrorResponse: Decodable {
         let message: String
     }
 }
-

@@ -9,12 +9,12 @@ final class BackendSyncStatusStore: ObservableObject {
     @Published private(set) var isSyncing = false
 
     private let userDefaults: UserDefaults
-    private let snapshotService: BackendSnapshotService
+    private let snapshotService: BackendSnapshotServicing
     private let notificationCenter: NotificationCenter
 
     init(
         userDefaults: UserDefaults = .standard,
-        snapshotService: BackendSnapshotService? = nil,
+        snapshotService: (any BackendSnapshotServicing)? = nil,
         notificationCenter: NotificationCenter = .default
     ) {
         self.userDefaults = userDefaults
@@ -44,9 +44,9 @@ final class BackendSyncStatusStore: ObservableObject {
             persist()
             AppLogger.action("backend_snapshot_upsert_succeeded", metadata: ["version": String(export.version)])
         } catch {
-            lastError = String(describing: error)
+            lastError = Self.errorMessage(for: error)
             persist()
-            AppLogger.action("backend_snapshot_upsert_failed", metadata: ["error": String(describing: error)])
+            AppLogger.action("backend_snapshot_upsert_failed", metadata: ["error": Self.errorMessage(for: error)])
         }
     }
 
@@ -64,10 +64,17 @@ final class BackendSyncStatusStore: ObservableObject {
             persist()
             AppLogger.action("backend_snapshot_restore_succeeded", metadata: ["version": String(backup.version)])
         } catch {
-            lastError = String(describing: error)
+            lastError = Self.errorMessage(for: error)
             persist()
-            AppLogger.action("backend_snapshot_restore_failed", metadata: ["error": String(describing: error)])
+            AppLogger.action("backend_snapshot_restore_failed", metadata: ["error": Self.errorMessage(for: error)])
         }
+    }
+
+    private static func errorMessage(for error: Error) -> String {
+        if let localized = error as? LocalizedError, let description = localized.errorDescription, !description.isEmpty {
+            return description
+        }
+        return String(describing: error)
     }
 
     private func loadFromDisk() {
@@ -100,4 +107,3 @@ final class BackendSyncStatusStore: ObservableObject {
         }
     }
 }
-

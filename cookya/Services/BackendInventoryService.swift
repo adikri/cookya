@@ -5,10 +5,16 @@ struct BackendInventoryService: InventorySyncingService {
     private let config: AppConfig
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
+    private let tokenProvider: () -> String?
 
-    init(session: URLSession = .shared, config: AppConfig = .live) {
+    init(
+        session: URLSession = .shared,
+        config: AppConfig = .live,
+        tokenProvider: @escaping () -> String? = { BackendAuthToken.load() }
+    ) {
         self.session = session
         self.config = config
+        self.tokenProvider = tokenProvider
 
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
@@ -54,6 +60,9 @@ struct BackendInventoryService: InventorySyncingService {
         guard let baseURL = config.backendBaseURL else {
             throw InventorySyncError.missingBackendURL
         }
+        guard let token = tokenProvider()?.trimmingCharacters(in: .whitespacesAndNewlines), !token.isEmpty else {
+            throw InventorySyncError.missingAuthToken
+        }
 
         guard let url = URL(string: path, relativeTo: baseURL)?.absoluteURL else {
             throw InventorySyncError.invalidResponse
@@ -62,9 +71,7 @@ struct BackendInventoryService: InventorySyncingService {
         var request = URLRequest(url: url)
         request.httpMethod = method
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        if let token = BackendAuthToken.load() {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.httpBody = body
 
         do {
