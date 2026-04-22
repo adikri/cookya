@@ -38,8 +38,6 @@
 		40A100282F5C000000D3C60A /* InventorySyncingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100332F5C000000D3C60A /* InventorySyncingService.swift */; };
 		40A100292F5C000000D3C60A /* BackendInventoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100342F5C000000D3C60A /* BackendInventoryService.swift */; };
 		40A1002A2F5C000000D3C60A /* InventoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100352F5C000000D3C60A /* InventoryStore.swift */; };
-		40C000032F70000000D3C60A /* BackendSnapshotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C000022F70000000D3C60A /* BackendSnapshotService.swift */; };
-		40C000042F80000000D3C60A /* BackendSyncStatusStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C000052F80000000D3C60A /* BackendSyncStatusStore.swift */; };
 		40A1002B2F5C000000D3C60A /* PantryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100362F5C000000D3C60A /* PantryView.swift */; };
 		40A1002C2F5C000000D3C60A /* PantryItemEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100372F5C000000D3C60A /* PantryItemEditorView.swift */; };
 		40A1002D2F5C000000D3C60A /* GroceryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100382F5C000000D3C60A /* GroceryListView.swift */; };
@@ -62,6 +60,7 @@
 		40A1005C2F5D300000D3C60A /* AppBackupCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1005D2F5D300000D3C60A /* AppBackupCoordinator.swift */; };
 		40A1005E2F5D300000D3C60A /* PersistencePayloadValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1005F2F5D300000D3C60A /* PersistencePayloadValidator.swift */; };
 		40A100602F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100612F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift */; };
+		40A100642F5D500000D3C60A /* HomeRecommendationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100632F5D500000D3C60A /* HomeRecommendationEngine.swift */; };
 		40B000042F60000000D3C60A /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000012F60000000D3C60A /* KeychainStore.swift */; };
 		40B000052F60000000D3C60A /* BackendAuthToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000022F60000000D3C60A /* BackendAuthToken.swift */; };
 		40B000062F60000000D3C60A /* BackendAccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000032F60000000D3C60A /* BackendAccessView.swift */; };
@@ -70,6 +69,8 @@
 		40B0000D2F60300000D3C60A /* BackupImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B0000B2F60300000D3C60A /* BackupImportView.swift */; };
 		40B0000E2F60300000D3C60A /* BackupImportApplier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B0000C2F60300000D3C60A /* BackupImportApplier.swift */; };
 		40B000102F60A00000D3C60A /* AppNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B0000F2F60A00000D3C60A /* AppNotifications.swift */; };
+		40C000032F70000000D3C60A /* BackendSnapshotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C000022F70000000D3C60A /* BackendSnapshotService.swift */; };
+		40C000042F80000000D3C60A /* BackendSyncStatusStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C000052F80000000D3C60A /* BackendSyncStatusStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -123,9 +124,7 @@
 		40A100322F5C000000D3C60A /* BackendRecipeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendRecipeService.swift; sourceTree = "<group>"; };
 		40A100332F5C000000D3C60A /* InventorySyncingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventorySyncingService.swift; sourceTree = "<group>"; };
 		40A100342F5C000000D3C60A /* BackendInventoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendInventoryService.swift; sourceTree = "<group>"; };
-		40C000022F70000000D3C60A /* BackendSnapshotService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendSnapshotService.swift; sourceTree = "<group>"; };
 		40A100352F5C000000D3C60A /* InventoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryStore.swift; sourceTree = "<group>"; };
-		40C000052F80000000D3C60A /* BackendSyncStatusStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendSyncStatusStore.swift; sourceTree = "<group>"; };
 		40A100362F5C000000D3C60A /* PantryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryView.swift; sourceTree = "<group>"; };
 		40A100372F5C000000D3C60A /* PantryItemEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryItemEditorView.swift; sourceTree = "<group>"; };
 		40A100382F5C000000D3C60A /* GroceryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryListView.swift; sourceTree = "<group>"; };
@@ -150,6 +149,7 @@
 		40A1005D2F5D300000D3C60A /* AppBackupCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBackupCoordinator.swift; sourceTree = "<group>"; };
 		40A1005F2F5D300000D3C60A /* PersistencePayloadValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistencePayloadValidator.swift; sourceTree = "<group>"; };
 		40A100612F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneratedRecipeCachePolicy.swift; sourceTree = "<group>"; };
+		40A100632F5D500000D3C60A /* HomeRecommendationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeRecommendationEngine.swift; sourceTree = "<group>"; };
 		40B000012F60000000D3C60A /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
 		40B000022F60000000D3C60A /* BackendAuthToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendAuthToken.swift; sourceTree = "<group>"; };
 		40B000032F60000000D3C60A /* BackendAccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendAccessView.swift; sourceTree = "<group>"; };
@@ -158,6 +158,8 @@
 		40B0000B2F60300000D3C60A /* BackupImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupImportView.swift; sourceTree = "<group>"; };
 		40B0000C2F60300000D3C60A /* BackupImportApplier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupImportApplier.swift; sourceTree = "<group>"; };
 		40B0000F2F60A00000D3C60A /* AppNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNotifications.swift; sourceTree = "<group>"; };
+		40C000022F70000000D3C60A /* BackendSnapshotService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendSnapshotService.swift; sourceTree = "<group>"; };
+		40C000052F80000000D3C60A /* BackendSyncStatusStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendSyncStatusStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -340,6 +342,7 @@
 				40A1005B2F5D300000D3C60A /* AppPersistenceKey.swift */,
 				40A1003F2F5C200000D3C60A /* AppLogger.swift */,
 				40A100612F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift */,
+				40A100632F5D500000D3C60A /* HomeRecommendationEngine.swift */,
 				40B000012F60000000D3C60A /* KeychainStore.swift */,
 				40A1005F2F5D300000D3C60A /* PersistencePayloadValidator.swift */,
 			);
@@ -557,6 +560,7 @@
 				40A100522F5D300000D3C60A /* KnownItemStore.swift in Sources */,
 				40A1005A2F5D300000D3C60A /* AppPersistenceKey.swift in Sources */,
 				40A100602F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift in Sources */,
+				40A100642F5D500000D3C60A /* HomeRecommendationEngine.swift in Sources */,
 				40A1005E2F5D300000D3C60A /* PersistencePayloadValidator.swift in Sources */,
 				40A100502F5D300000D3C60A /* KnownInventoryItem.swift in Sources */,
 				40A100542F5D300000D3C60A /* KnownItemPickerView.swift in Sources */,
@@ -749,9 +753,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
 				"CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]" = NO;
 				"CODE_SIGNING_REQUIRED[sdk=iphonesimulator*]" = NO;
+				CODE_SIGN_STYLE = Automatic;
 				COOKYA_BACKEND_BASE_URL = "$(inherited)";
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_APP_SANDBOX = YES;
@@ -801,9 +805,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
 				"CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]" = NO;
 				"CODE_SIGNING_REQUIRED[sdk=iphonesimulator*]" = NO;
+				CODE_SIGN_STYLE = Automatic;
 				COOKYA_BACKEND_BASE_URL = "$(inherited)";
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_APP_SANDBOX = YES;
