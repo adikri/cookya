@@ -47,19 +47,21 @@ Current product shape:
 | **Cooked flow** | `Cooked This`, pantry decrement, blocking on unsafe quantity/unit mismatches, cooked history creation, replay/cook-again support. |
 | **Saved recipes** | Save, favorite, readiness sorting, reusable planning detail, Home deep-links into planning detail. |
 | **Repeat meals** | Favorites, staples, cook again, saved readiness, Home recommendation support. |
-| **Home** | Kitchen command center with best-next-step recommendations, expiry attention, cook-again, saved recipe shortcuts, pantry/grocery management. |
+| **Home** | Kitchen command center with best-next-step recommendations, expiry attention, cook-again, saved recipe shortcuts, pantry/grocery management, today's nutrition progress card, tonight's pick. |
 | **Expiry UX** | Expired items excluded from cooking, quick pantry-date review, update expiry, discard expired, batch expiry review flow. |
 | **Known items** | Pantry/grocery memory with `Choose from memory`, quantity/category restore, reduced typing. |
 | **Logging** | `AppLogger` with session logs, timestamps, in-app debug viewer, export/copy flows. |
 | **Standalone app use** | App works away from Xcode on phone with local bundled config/secrets flow. |
-| **Tests** | Regression coverage exists for recipe memory, force-refresh, duplicate pantry merge, purchase merge, fresh-vs-expired purchase handling, and blocked mismatch consumption. |
+| **Tests** | Regression coverage exists for recipe memory, force-refresh, duplicate pantry merge, purchase merge, fresh-vs-expired purchase handling, blocked mismatch consumption, recommendation engine priority and nutrition-gap logic. |
+| **Nutrition layer** | Macros on recipes + cooked records, NutritionGoals auto-calculated from biometrics, goal-aware generation, daily progress card, tonight's pick recommendation. |
+| **Saved planning hub** | Saved recipes grouped by readiness with macro data and goal-fit context per recipe. |
+| **Weekly meal plan** | Plan tab: pick up to 7 saved recipes, missing ingredients deduplicated across all meals, one-tap grocery generation. |
 
 ### Active
 
 | Area | Current status |
 |------|----------------|
-| **Recipe-first planning** | Started. Reusable planning detail exists and Home now routes saved recipe recommendations directly into it. |
-| **Saved planning hub** | In progress locally. The next intended shape is a lighter recipe-planning hub backed by the full saved library. |
+| **Recipe-first entry points** | Planning detail and saved hub are built. Still needs a clearer recipe-first starting surface beyond Saved/Home. |
 
 ### Strengths of the current app
 
@@ -101,11 +103,11 @@ These are the main technical priorities that still matter.
 
 ### Later
 
-5. **Expand tests beyond the current regression set**
+2. **Expand tests beyond the current regression set**
    - add broader store/viewmodel coverage
-   - prioritize recommendation ranking, planning state derivation, and persistence failure handling
+   - prioritize planning state derivation and persistence failure handling
 
-6. **Reduce local environment churn in project settings**
+3. **Reduce local environment churn in project settings**
    - avoid committing signing noise
    - keep the project file stable and intentional
 
@@ -153,7 +155,7 @@ Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home`
 |------|--------|-------|
 | Reusable planning detail | **Built** | Readiness, grouped ingredients, cook vs grocery CTA. |
 | Home -> planning detail routing | **Built** | Saved-recipe recommendations now deep-link into planning detail. |
-| Saved planning hub | **Next** | Nutrition layer is now in. Richer view of saved recipes with readiness, macros, and goal fit. |
+| Saved planning hub | **Built** | Saved recipes with readiness badges, macros per row, goal-fit context in detail view. |
 | Recipe entry points beyond Saved/Home | **Next** | Add a clearer recipe-first starting surface. |
 | Dish-name search | **Later** | Search for a target meal and compare it against pantry. |
 | Pantry comparison + grocery add everywhere | **Next** | Reuse planning detail for all recipe-first flows. |
@@ -168,7 +170,7 @@ Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home`
 | Weekly meal planning | **Built** | Plan tab: up to 7 saved recipes, missing ingredients deduplicated across all meals, one-tap grocery generation. |
 | Meal prep suggestions | **Next** | "Prep X on Sunday for Monday + Tuesday." Follows weekly planning. |
 | Time-aware recipe generation | **Later** | Constrain recipes by available cooking time. |
-| Grocery generation from meal plans | **Later** | Bulk missing-ingredient generation from planned meals. |
+| Grocery generation from meal plans | **Built** | Part of the weekly meal plan — "Add All to Grocery" covers all planned meals in one tap. |
 | Stronger repeat-meal prioritization | **Active** | Favorites and staples exist; can be pushed further. |
 
 ### Phase D — Production Foundation
