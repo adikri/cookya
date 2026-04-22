@@ -14,6 +14,11 @@ struct HomeView: View {
                         .font(.title2)
                         .fontWeight(.bold)
 
+                    if let goals = profileStore.activeProfile?.effectiveNutritionGoals {
+                        let today = cookedMealStore.todayNutrition(for: profileStore.activeProfile)
+                        nutritionProgressCard(today: today, goals: goals)
+                    }
+
                     if let syncError = inventoryStore.lastSyncError {
                         Label(syncError, systemImage: "wifi.exclamationmark")
                             .font(.footnote)
@@ -268,6 +273,57 @@ struct HomeView: View {
         return chips
     }
 
+    private func nutritionProgressCard(today: NutritionSummary, goals: NutritionGoals) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Today's Nutrition")
+                .font(.headline)
+
+            nutritionRow(
+                label: "Calories",
+                current: today.calories,
+                goal: goals.dailyCalories,
+                unit: "kcal",
+                color: .orange
+            )
+
+            nutritionRow(
+                label: "Protein",
+                current: today.proteinG,
+                goal: goals.dailyProteinG,
+                unit: "g",
+                color: .blue
+            )
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 16))
+    }
+
+    private func nutritionRow(label: String, current: Int, goal: Int, unit: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(label)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text("\(current) / \(goal)\(unit)")
+                    .font(.subheadline.monospacedDigit())
+                    .foregroundStyle(current >= goal ? .green : .primary)
+            }
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(color.opacity(0.15))
+                        .frame(height: 6)
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(current >= goal ? Color.green : color)
+                        .frame(width: geo.size.width * min(1, goal > 0 ? CGFloat(current) / CGFloat(goal) : 0), height: 6)
+                }
+            }
+            .frame(height: 6)
+        }
+    }
+
     private func sectionHeading(_ title: String, subtitle: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
@@ -428,6 +484,7 @@ struct HomeView: View {
             savedRecipes: savedRecipes,
             cookedRecords: cookedMealStore.records(for: profileStore.activeProfile),
             staples: cookedMealStore.staples(for: profileStore.activeProfile),
+            nutritionGap: cookedMealStore.nutritionGap(for: profileStore.activeProfile),
             savedRecipeIssues: { saved in
                 inventoryStore.availabilityIssues(for: saved.recipe.ingredients)
             },
@@ -510,6 +567,19 @@ struct HomeView: View {
                     title: "Cook again: \(record.recipeTitle)",
                     subtitle: "You made this recently and everything needed is available right now.",
                     systemImage: "arrow.clockwise.heart",
+                    tint: .green
+                )
+            }
+            .buttonStyle(.plain)
+
+        case .tonightsPick(let saved, let reason):
+            NavigationLink {
+                SavedRecipeDetailView(saved: saved)
+            } label: {
+                actionCard(
+                    title: "Tonight's pick: \(saved.recipe.title)",
+                    subtitle: reason,
+                    systemImage: "bolt.fill",
                     tint: .green
                 )
             }

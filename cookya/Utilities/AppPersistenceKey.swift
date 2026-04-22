@@ -11,6 +11,8 @@ enum AppPersistenceKey {
     static let guestModeActive = "guest_mode_active_v1"
     static let knownInventoryItems = "known_inventory_items_v1"
 
+    static let weeklyMealPlan = "weekly_meal_plan_v1"
+
     // Backend snapshot sync status (local metadata only)
     static let backendSnapshotLastUploadAt = "backend_snapshot_last_upload_at_v1"
     static let backendSnapshotLastRestoreAt = "backend_snapshot_last_restore_at_v1"

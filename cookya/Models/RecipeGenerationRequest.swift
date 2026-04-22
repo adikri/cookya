@@ -7,6 +7,8 @@ struct RecipeGenerationRequest: Hashable {
     var servings: Int
     var profile: UserProfile?
     var prioritizedIngredients: [PantryItem]
+    // Not included in fingerprint — changes daily and should not bust the recipe cache
+    var nutritionGap: NutritionGap?
 
     var pantryItems: [PantryItem] {
         pantrySelections.map(\.pantryItem)

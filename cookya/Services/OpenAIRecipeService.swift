@@ -86,6 +86,17 @@ struct OpenAIRecipeService: RecipeGeneratingService {
         let location = request.profile?.location ?? "not provided"
         let dietary = request.profile?.isVegetarian == true ? "vegetarian" : "no vegetarian restriction"
 
+        var nutritionContext = ""
+        if let gap = request.nutritionGap {
+            nutritionContext = """
+
+        Nutrition goal context:
+        - Remaining calories today: \(gap.remainingCalories) kcal
+        - Remaining protein today: \(gap.remainingProteinG)g
+        Prioritize a recipe that helps meet these remaining goals.
+        """
+        }
+
         let userPrompt = """
         Create one home-cooking recipe using these ingredients and requested difficulty.
 
@@ -100,7 +111,7 @@ struct OpenAIRecipeService: RecipeGeneratingService {
         Dietary preference: \(dietary)
         Avoid foods/allergens: \(avoidFoods)
         Location context: \(location)
-        Prioritize these ingredients first if possible: \(prioritizedIngredients.isEmpty ? "none" : prioritizedIngredients)
+        Prioritize these ingredients first if possible: \(prioritizedIngredients.isEmpty ? "none" : prioritizedIngredients)\(nutritionContext)
 
         Hard constraints:
         - Never include any avoid foods.
@@ -109,6 +120,7 @@ struct OpenAIRecipeService: RecipeGeneratingService {
         - Prefer expiring pantry items when they fit naturally.
         - Make the recipe suitable for exactly \(request.servings) serving(s).
         - If a selected pantry quantity is provided, treat it as the target amount to use for that ingredient.
+        - Estimate protein, carbs, fat, and fiber accurately for the given servings.
 
         Output only JSON matching the schema exactly.
         """
@@ -133,7 +145,7 @@ struct OpenAIRecipeService: RecipeGeneratingService {
                     "schema": [
                         "type": "object",
                         "additionalProperties": false,
-                        "required": ["title", "ingredients", "instructions", "calories", "difficulty"],
+                        "required": ["title", "ingredients", "instructions", "calories", "protein", "carbs", "fat", "fiber", "difficulty"],
                         "properties": [
                             "title": ["type": "string"],
                             "ingredients": [
@@ -154,6 +166,10 @@ struct OpenAIRecipeService: RecipeGeneratingService {
                                 "minItems": 1
                             ],
                             "calories": ["type": "integer", "minimum": 0],
+                            "protein": ["type": "integer", "minimum": 0],
+                            "carbs": ["type": "integer", "minimum": 0],
+                            "fat": ["type": "integer", "minimum": 0],
+                            "fiber": ["type": "integer", "minimum": 0],
                             "difficulty": ["type": "string", "enum": ["easy", "medium", "hard"]]
                         ]
                     ]

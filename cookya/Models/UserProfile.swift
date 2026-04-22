@@ -28,6 +28,7 @@ struct UserProfile: Identifiable, Codable, Hashable {
         location: String? = nil,
         isVegetarian: Bool = false,
         avoidFoodItems: [String] = [],
+        nutritionGoals: NutritionGoals? = nil,
         createdAt: Date = .now,
         updatedAt: Date = .now
     ) {
@@ -40,14 +41,26 @@ struct UserProfile: Identifiable, Codable, Hashable {
         self.location = location
         self.isVegetarian = isVegetarian
         self.avoidFoodItems = avoidFoodItems
+        self.nutritionGoals = nutritionGoals
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
+
+    var nutritionGoals: NutritionGoals?
 
     var bmi: Double? {
         guard let weightKg, let heightCm, heightCm > 0 else { return nil }
         let meters = heightCm / 100
         let value = weightKg / (meters * meters)
         return (value * 10).rounded() / 10
+    }
+
+    var suggestedNutritionGoals: NutritionGoals? {
+        guard let weightKg, let heightCm, let age else { return nil }
+        return NutritionGoals.suggested(weightKg: weightKg, heightCm: heightCm, age: age)
+    }
+
+    var effectiveNutritionGoals: NutritionGoals? {
+        nutritionGoals ?? suggestedNutritionGoals
     }
 }
