@@ -44,18 +44,16 @@ Use the repo scripts instead of typing raw `xcodebuild` flags:
 # Fast re-run without recompiling (simulator must already be Booted)
 ./scripts/test-quick.sh
 
-# Run a single test class
-xcodebuild test \
-  -scheme cookya \
-  -destination "platform=iOS Simulator,id=90876E3F-96B3-49EC-A5E3-44A12F8DDA1C" \
-  -derivedDataPath /tmp/cookya-deriveddata-tests \
-  -only-testing:cookyaTests/HomeRecommendationEngineTests
-
 # Device build (requires COOKYA_DEVICE_ID)
 COOKYA_DEVICE_ID="<your-device-id>" ./scripts/build-device.sh
 ```
 
 Always use an explicit iOS simulator destination. Bare `xcodebuild build` may resolve to `My Mac` and produce spurious signing errors.
+
+> **CLI test runs stall in this environment.** Do not invoke `xcodebuild test`, `test-sim.sh`, or `test-quick.sh` from the terminal. Instead, after writing tests provide the user with:
+> 1. Which test class(es) to run in Xcode
+> 2. What passing looks like
+> Use `Product → Test` or the diamond gutter icon in Xcode.
 
 Verify Xcode toolchain: `xcode-select -p` must print `/Applications/Xcode.app/Contents/Developer`. Fix with `sudo xcode-select -s /Applications/Xcode.app/Contents/Developer`.
 

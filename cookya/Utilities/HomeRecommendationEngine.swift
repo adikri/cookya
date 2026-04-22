@@ -5,6 +5,7 @@ enum HomeRecommendation: Hashable {
     case favoriteReady(recipe: SavedRecipe)
     case stapleReady(record: CookedMealRecord)
     case cookAgain(record: CookedMealRecord)
+    case tonightsPick(recipe: SavedRecipe, reason: String)
     case savedRecipeReady(recipe: SavedRecipe)
     case savedRecipeNearMiss(recipe: SavedRecipe, missingCount: Int, reason: String)
     case useSoon(items: [PantryItem])
@@ -18,9 +19,34 @@ struct HomeRecommendationEngine {
     let savedRecipes: [SavedRecipe]
     let cookedRecords: [CookedMealRecord]
     let staples: [MealStaple]
+    let nutritionGap: NutritionGap?
     let savedRecipeIssues: (SavedRecipe) -> [String]
     let savedRecipeMissingCount: (SavedRecipe) -> Int
     let replayIssues: (CookedMealRecord) -> [String]
+
+    init(
+        expiredPantryItems: [PantryItem] = [],
+        expiringSoonItems: [PantryItem] = [],
+        usablePantryItems: [PantryItem] = [],
+        savedRecipes: [SavedRecipe] = [],
+        cookedRecords: [CookedMealRecord] = [],
+        staples: [MealStaple] = [],
+        nutritionGap: NutritionGap? = nil,
+        savedRecipeIssues: @escaping (SavedRecipe) -> [String],
+        savedRecipeMissingCount: @escaping (SavedRecipe) -> Int,
+        replayIssues: @escaping (CookedMealRecord) -> [String]
+    ) {
+        self.expiredPantryItems = expiredPantryItems
+        self.expiringSoonItems = expiringSoonItems
+        self.usablePantryItems = usablePantryItems
+        self.savedRecipes = savedRecipes
+        self.cookedRecords = cookedRecords
+        self.staples = staples
+        self.nutritionGap = nutritionGap
+        self.savedRecipeIssues = savedRecipeIssues
+        self.savedRecipeMissingCount = savedRecipeMissingCount
+        self.replayIssues = replayIssues
+    }
 
     func bestNextStep() -> HomeRecommendation? {
         if !expiredPantryItems.isEmpty {
@@ -37,6 +63,10 @@ struct HomeRecommendationEngine {
 
         if let latestCookedRecord, recentCookedCanBeCookedAgain(latestCookedRecord) {
             return .cookAgain(record: latestCookedRecord)
+        }
+
+        if let pick = tonightsPickRecommendation {
+            return pick
         }
 
         if let readySavedRecipe = savedRecipes.first(where: isSavedRecipeReady) {
@@ -69,6 +99,19 @@ struct HomeRecommendationEngine {
         }
 
         return nil
+    }
+
+    private var tonightsPickRecommendation: HomeRecommendation? {
+        guard let gap = nutritionGap, gap.remainingProteinG > 20 else { return nil }
+
+        guard let best = savedRecipes
+            .filter({ isSavedRecipeReady($0) && $0.recipe.protein > 0 })
+            .max(by: { $0.recipe.protein < $1.recipe.protein })
+        else { return nil }
+
+        let pct = min(100, Int(Double(best.recipe.protein) / Double(gap.remainingProteinG) * 100))
+        let reason = "Adds ~\(best.recipe.protein)g protein — \(pct)% of your remaining goal today"
+        return .tonightsPick(recipe: best, reason: reason)
     }
 
     private var latestCookedRecord: CookedMealRecord? {

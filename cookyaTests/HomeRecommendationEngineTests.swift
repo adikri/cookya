@@ -100,6 +100,36 @@ final class HomeRecommendationEngineTests: XCTestCase {
         XCTAssertEqual(engine.bestNextStep(), .cookFromPantry)
     }
 
+    func testTonightsPickSurfacesWhenGapExistsAndReadyHighProteinRecipeAvailable() {
+        let highProtein = makeSavedRecipe(title: "Chicken Bowl", protein: 45)
+        let lowProtein = makeSavedRecipe(title: "Salad", protein: 10)
+        let gap = NutritionGap(remainingCalories: 600, remainingProteinG: 60)
+
+        let engine = makeEngine(
+            savedRecipes: [lowProtein, highProtein],
+            nutritionGap: gap,
+            savedRecipeIssues: [highProtein.id: [], lowProtein.id: []]
+        )
+
+        XCTAssertEqual(
+            engine.bestNextStep(),
+            .tonightsPick(recipe: highProtein, reason: "Adds ~45g protein — 75% of your remaining goal today")
+        )
+    }
+
+    func testTonightsPickDoesNotSurfaceBelowProteinThreshold() {
+        let recipe = makeSavedRecipe(title: "Chicken Bowl", protein: 45)
+        let gap = NutritionGap(remainingCalories: 600, remainingProteinG: 20)
+
+        let engine = makeEngine(
+            savedRecipes: [recipe],
+            nutritionGap: gap,
+            savedRecipeIssues: [recipe.id: []]
+        )
+
+        XCTAssertEqual(engine.bestNextStep(), .savedRecipeReady(recipe: recipe))
+    }
+
     private func makeEngine(
         expiredPantryItems: [PantryItem] = [],
         expiringSoonItems: [PantryItem] = [],
@@ -107,6 +137,7 @@ final class HomeRecommendationEngineTests: XCTestCase {
         savedRecipes: [SavedRecipe] = [],
         cookedRecords: [CookedMealRecord] = [],
         staples: [MealStaple] = [],
+        nutritionGap: NutritionGap? = nil,
         savedRecipeIssues: [UUID: [String]] = [:],
         savedRecipeMissingCounts: [UUID: Int] = [:],
         replayIssues: [UUID: [String]] = [:]
@@ -118,6 +149,7 @@ final class HomeRecommendationEngineTests: XCTestCase {
             savedRecipes: savedRecipes,
             cookedRecords: cookedRecords,
             staples: staples,
+            nutritionGap: nutritionGap,
             savedRecipeIssues: { saved in
                 savedRecipeIssues[saved.id] ?? []
             },
@@ -130,7 +162,7 @@ final class HomeRecommendationEngineTests: XCTestCase {
         )
     }
 
-    private func makeSavedRecipe(title: String, favorite: Bool = false) -> SavedRecipe {
+    private func makeSavedRecipe(title: String, favorite: Bool = false, protein: Int = 0) -> SavedRecipe {
         SavedRecipe(
             id: UUID(),
             recipe: Recipe(
@@ -138,6 +170,7 @@ final class HomeRecommendationEngineTests: XCTestCase {
                 ingredients: [Ingredient(name: "Onion", quantity: "1")],
                 instructions: ["Cook"],
                 calories: 400,
+                protein: protein,
                 difficulty: .easy
             ),
             profileId: UUID(uuidString: "00000000-0000-0000-0000-000000000123")!,

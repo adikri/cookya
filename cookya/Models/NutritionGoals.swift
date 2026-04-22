@@ -24,7 +24,7 @@ struct NutritionSummary {
     static let zero = NutritionSummary(calories: 0, proteinG: 0, carbsG: 0, fatG: 0, fiberG: 0)
 }
 
-struct NutritionGap {
+struct NutritionGap: Hashable {
     let remainingCalories: Int
     let remainingProteinG: Int
 }
