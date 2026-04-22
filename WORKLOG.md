@@ -18,6 +18,68 @@ Use this file to keep daily planning and end-of-day progress visible.
 - Note what carries into the next session
 - Push to GitHub after the wrap-up
 
+### If tokens run out mid-session (interrupt)
+- Claude maintains `RESUME.md` automatically throughout each session — no manual action needed
+- The next session reads `RESUME.md` first and picks up from **Exact next step**
+
+**When resumed work completes**, Claude adds a `### Session Resumed` block to that day's entry:
+```
+### Session Resumed — <date> ~<time>
+*(Carried from interrupted session)*
+- Was working on: <...>
+- Done at resume: <...>
+```
+
+---
+
+## 2026-04-22 (continued)
+
+### Done (session 2)
+- Added `CLAUDE.md` — codebase guidance for future Claude sessions (build commands, architecture, conventions)
+- Added `RESUME.md` — automated interrupt checkpoint system (Claude maintains it throughout sessions)
+- Updated `WORKLOG.md` — documented interrupt/resume pattern
+- Product design review: shifted product direction to nutrition-first (health-conscious use case)
+- Locked roadmap: nutrition layer → nutrition home → saved hub → Supabase → Android
+
+### Carry Forward
+- Commit + PR this branch (`codex/home-recommendation-extraction`) — meta files only
+- Branch `codex/nutrition-layer`: Recipe macros, NutritionGoals in UserProfile, OpenAI schema, Worker schema
+- Branch `codex/nutrition-home`: Home progress card, tonight's pick, HomeRecommendationEngine nutrition awareness
+
+---
+
+## 2026-04-22
+
+### Must Do
+- Extract Home recommendation ranking from `HomeView` into a testable component
+- Validate deterministic ordering with focused tests
+- Commit this slice before starting the next one
+
+### Watch
+- Keep behavior unchanged in the first extraction pass
+- Keep branch scope limited to recommendation selection logic + tests
+- Avoid unrelated Xcode/project churn in this commit
+
+### Done
+- Added `HomeRecommendationEngine` as a pure ranking engine
+- Kept `HomeView` rendering behavior and card copy unchanged while delegating selection to the engine
+- Added `HomeRecommendationEngineTests` to lock ordering for:
+  - expired items
+  - favorite-ready recipes
+  - staple-ready recipes
+  - generic cook-again fallback
+  - ready saved recipes vs near-miss
+  - use-soon vs generic pantry cook
+- Validation:
+  - CLI compile gate passed (`build-for-testing`)
+  - Xcode class run passed (`HomeRecommendationEngineTests`)
+
+### Commit checkpoint
+- Commit this slice now before moving to the next planned item.
+
+### Carry Forward
+- Next slice: `codex/saved-planning-hub-polish`
+
 ---
 
 ## 2026-04-10

@@ -420,63 +420,28 @@ struct HomeView: View {
         savedRecipes.filter(\.isFavorite)
     }
 
-    private var stapleRecommendationRecord: CookedMealRecord? {
-        let records = cookedMealStore.records(for: profileStore.activeProfile)
-        for staple in cookedMealStore.staples(for: profileStore.activeProfile) {
-            if let record = records.first(where: { $0.recipeTitle == staple.recipeTitle && recentCookedCanBeCookedAgain($0) }) {
-                return record
+    private var recommendationEngine: HomeRecommendationEngine {
+        HomeRecommendationEngine(
+            expiredPantryItems: inventoryStore.expiredPantryItems,
+            expiringSoonItems: inventoryStore.expiringSoonItems,
+            usablePantryItems: inventoryStore.usablePantryItems,
+            savedRecipes: savedRecipes,
+            cookedRecords: cookedMealStore.records(for: profileStore.activeProfile),
+            staples: cookedMealStore.staples(for: profileStore.activeProfile),
+            savedRecipeIssues: { saved in
+                inventoryStore.availabilityIssues(for: saved.recipe.ingredients)
+            },
+            savedRecipeMissingCount: { saved in
+                inventoryStore.availabilityChecks(for: saved.recipe.ingredients).filter(\.isMissing).count
+            },
+            replayIssues: { record in
+                inventoryStore.availabilityIssues(for: record.consumptions)
             }
-        }
-        return nil
+        )
     }
 
     private var bestNextStep: HomeRecommendation? {
-        if !inventoryStore.expiredPantryItems.isEmpty {
-            return .expiredReview(count: inventoryStore.expiredPantryItems.count)
-        }
-
-        if let favoriteReadyRecipe = favoriteSavedRecipes.first(where: { inventoryStore.availabilityIssues(for: $0.recipe.ingredients).isEmpty }) {
-            return .favoriteReady(recipe: favoriteReadyRecipe)
-        }
-
-        if let stapleRecommendationRecord {
-            return .stapleReady(record: stapleRecommendationRecord)
-        }
-
-        if let latestCookedRecord, recentCookedCanBeCookedAgain(latestCookedRecord) {
-            return .cookAgain(record: latestCookedRecord)
-        }
-
-        if let readySavedRecipe = savedRecipes.first(where: { inventoryStore.availabilityIssues(for: $0.recipe.ingredients).isEmpty }) {
-            return .savedRecipeReady(recipe: readySavedRecipe)
-        }
-
-        if let almostReadySavedRecipe = savedRecipes
-            .compactMap({ saved -> (SavedRecipe, [String], Int)? in
-                let issues = inventoryStore.availabilityIssues(for: saved.recipe.ingredients)
-                let missingCount = inventoryStore.availabilityChecks(for: saved.recipe.ingredients).filter(\.isMissing).count
-                guard !issues.isEmpty, missingCount > 0, missingCount <= 2 else { return nil }
-                return (saved, issues, missingCount)
-            })
-            .sorted(by: { $0.2 < $1.2 })
-            .first
-        {
-            return .savedRecipeNearMiss(
-                recipe: almostReadySavedRecipe.0,
-                missingCount: almostReadySavedRecipe.2,
-                reason: almostReadySavedRecipe.1.first ?? "A few ingredients are missing."
-            )
-        }
-
-        if !inventoryStore.expiringSoonItems.isEmpty {
-            return .useSoon(items: Array(inventoryStore.expiringSoonItems.prefix(2)))
-        }
-
-        if !inventoryStore.usablePantryItems.isEmpty {
-            return .cookFromPantry
-        }
-
-        return nil
+        recommendationEngine.bestNextStep()
     }
 
     private func recentCookedCanBeCookedAgain(_ record: CookedMealRecord) -> Bool {
@@ -610,17 +575,6 @@ private struct StatusChip: Identifiable {
     let text: String
     let systemImage: String
     let tint: Color
-}
-
-private enum HomeRecommendation {
-    case expiredReview(count: Int)
-    case favoriteReady(recipe: SavedRecipe)
-    case stapleReady(record: CookedMealRecord)
-    case cookAgain(record: CookedMealRecord)
-    case savedRecipeReady(recipe: SavedRecipe)
-    case savedRecipeNearMiss(recipe: SavedRecipe, missingCount: Int, reason: String)
-    case useSoon(items: [PantryItem])
-    case cookFromPantry
 }
 
 private struct CookAgainView: View {

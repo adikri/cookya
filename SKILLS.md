@@ -21,6 +21,27 @@ It exists to capture learnings that should not be relearned the hard way.
 ### Push cadence
 - push to GitHub at end of day after the worklog is updated
 
+### GitHub CLI (gh)
+Installed via Homebrew. Authenticate once with `gh auth login`.
+
+Common commands:
+```bash
+# Create a PR (run after pushing branch)
+gh pr create --title "..." --body "..."
+
+# View open PRs
+gh pr list
+
+# Check PR status / CI
+gh pr status
+
+# Merge a PR
+gh pr merge <number> --squash
+
+# View issues
+gh issue list
+```
+
 ### Daily workflow
 - start from `WORKLOG.md`
 - define `Must Do`, `Nice to Have`, and `Watch`
