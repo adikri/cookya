@@ -24,12 +24,14 @@ The difference now is that Cookya is no longer just trying to generate recipes. 
 
 | User | Device | Current Role in Product |
 |------|--------|-------------------------|
-| Primary (Adi) | iPhone (iOS) | Daily pantry/grocery/cooking operator |
-| Partner | Future Android / shared household device | Shared pantry, grocery, meal decisions |
+| Primary (Adi) | iPhone (iOS SwiftUI) | Personal daily driver + feature test bed. Not on App Store — no paid Apple Developer account. |
+| Android users (public) | Android (React Native) | Play Store target. Real-world feedback. Email + Google Sign In. |
+| Partner | Future Android / shared household | Shared pantry, grocery, meal decisions — enabled by Supabase multi-user. |
 
 Current product shape:
-- shared pantry and grocery conceptually exist in the vision, but the app is still effectively **single-device / single-household-first**
-- repeat meals, expiry management, and grocery decisions are now first-class parts of the experience
+- iOS SwiftUI app is the personal prototype environment — new ideas are validated here first
+- Android React Native app is the public production target — features ship here for real user feedback
+- Supabase is the shared backend that connects both platforms
 - the strongest current product behavior is **trustworthy pantry-driven cooking**
 
 ---
@@ -174,23 +176,27 @@ Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home`
 | Stronger repeat-meal prioritization | **Active** | Favorites and staples exist; can be pushed further. |
 
 ### Phase D — Production Foundation
-**Goal:** multi-device, real auth, durable data. Can begin in parallel with Phase C.
+**Goal:** Supabase backend shared by iOS and Android. Android React Native app on Play Store is the primary public distribution target. iOS SwiftUI stays as personal daily driver and test bed. No paid Apple Developer account — Apple Sign In deferred.
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Move to Supabase | **Next** | PostgreSQL, real auth (Apple Sign In), real-time sync, iOS + Android SDKs. Replaces UserDefaults + KV for user data. Keep Cloudflare Worker as OpenAI relay. |
-| Push notifications | **Next** | Expiring items, "you haven’t planned dinner yet." Requires Supabase auth first. |
-| Household accounts / multi-profile | **Later** | After Supabase is in place. |
-| Android via React Native | **Later** | After iOS experience is solid. |
+| Supabase auth (email + Google) | **Next** | Email/password for all platforms. Google Sign In for Android. Apple Sign In deferred (requires paid Apple Developer). |
+| Supabase database schema | **Next** | PostgreSQL tables for pantry, grocery, saved recipes, cooked records, weekly plan, profile. Replaces UserDefaults + Cloudflare KV for sync. |
+| iOS Supabase integration | **Next** | Replace BackendInventoryService + KV snapshot with Supabase. Keep Cloudflare Worker as OpenAI relay only. |
+| React Native Android app | **Next** | New RN project. Same Supabase backend. Core loop: home, pantry, grocery, recipe generation. Target: Play Store. |
+| Push notifications | **Later** | Expiring items, "haven’t planned dinner yet." Requires Supabase auth first. |
+| Household accounts / shared pantry | **Later** | After Supabase is in place. Key feature for partner sharing. |
+| iOS App Store distribution | **Later** | Requires paid Apple Developer account ($99/yr) — deferred. |
 
 ### Recommended near-term order
 
-1. ~~`codex/nutrition-layer` — Recipe macros + NutritionGoals in UserProfile + OpenAI schema~~ **Done**
-2. ~~`codex/nutrition-home` — Home progress card + tonight’s pick~~ **Done**
-3. ~~Quick cleanup: store decode hardening + recipe cache eviction~~ **Done**
-4. ~~`codex/saved-planning-hub` — saved recipes with readiness, macros, and goal fit~~ **Done**
-5. ~~`codex/weekly-meal-plan` — weekly planning + grocery generation~~ **Done**
-6. `codex/supabase-foundation` — real auth + sync **← current**
+1. ~~`codex/nutrition-layer`~~ **Done**
+2. ~~`codex/nutrition-home`~~ **Done**
+3. ~~`codex/saved-planning-hub`~~ **Done**
+4. ~~`codex/weekly-meal-plan`~~ **Done**
+5. `codex/supabase-foundation` — Supabase project + schema + iOS integration **← current**
+6. `codex/react-native-android` — Android app connecting to same Supabase backend
+7. `codex/android-feature-parity` — nutrition, weekly plan, saved recipes on Android
 
 ---
 
