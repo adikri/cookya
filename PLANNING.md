@@ -130,21 +130,36 @@ Use these markers consistently:
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Lightweight cloud/data backup | **Next** | Highest strategic gap now that the app is useful daily. |
-| Backend recipe generation relay (no client OpenAI key) | **Next** | Required for standalone phone usage and the future Android/family roadmap; start with static token auth and add real auth later. |
+| Lightweight cloud/data backup | **Built** | KV snapshot via Cloudflare Worker. |
+| Backend recipe generation relay (no client OpenAI key) | **Built** | Cloudflare Worker with static token auth. |
 | Store decode/persist hardening | **Next** | Log silent fallbacks; assert on impossible encode failures in DEBUG. |
 | Recipe cache eviction policy | **Next** | Cap generated recipe cache if still unbounded. |
-| Home recommendation extraction | **Next** | Move core recommendation ranking out of `HomeView`. |
+| Home recommendation extraction | **Built** | `HomeRecommendationEngine` extracted with full test coverage. |
 | Broader test coverage | **Later** | Extend beyond current regression coverage. |
 
+### Phase N — Nutrition Layer (current priority)
+**Goal:** shift the product from "recipe generator" to "nutrition goal assistant."
+
+The use case is a health-conscious user who wants nutritionally dense home-cooked food without the mental overhead of planning. The app currently has no nutrition data and no goal layer.
+
+| Item | Status | Notes |
+|------|--------|-------|
+| Macros on Recipe (protein, carbs, fat, fiber) | **Next** | Extend OpenAI structured output schema. `CookedMealRecord` and `SavedRecipe` also need macros. |
+| NutritionGoals in UserProfile | **Next** | Auto-calculated from weight/height/age; user-overridable. |
+| Today’s nutrition progress on Home | **Next** | Derived from `CookedMealStore`. The feedback loop that makes the app sticky. |
+| Goal-aware recipe generation | **Next** | Pass daily nutrition gap to OpenAI prompt. Prompt change, not architecture change. |
+| "Tonight’s pick" — one opinionated answer | **Next** | Extend `HomeRecommendationEngine` to factor in nutrition gap. One card with visible reasoning, not a list. |
+
+Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home` (UI + recommendation engine).
+
 ### Phase B — Complete Recipe-First Planning
-**Goal:** let users start from the meal they want, not only from pantry inventory.
+**Goal:** let users start from the meal they want, not only from pantry inventory. **Deferred until after Phase N.**
 
 | Item | Status | Notes |
 |------|--------|-------|
 | Reusable planning detail | **Built** | Readiness, grouped ingredients, cook vs grocery CTA. |
 | Home -> planning detail routing | **Built** | Saved-recipe recommendations now deep-link into planning detail. |
-| Saved planning hub | **Active** | Shape `Saved` into an intent-driven planning hub while keeping full library access. |
+| Saved planning hub | **Deferred** | Was Active — deferring until nutrition layer is in. Will be richer with nutrition data. |
 | Recipe entry points beyond Saved/Home | **Next** | Add a clearer recipe-first starting surface. |
 | Dish-name search | **Later** | Search for a target meal and compare it against pantry. |
 | Pantry comparison + grocery add everywhere | **Next** | Reuse planning detail for all recipe-first flows. |
@@ -154,42 +169,32 @@ Use these markers consistently:
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Home best-next-step recommendations | **Built** | Core recommendation engine exists today. |
-| Stronger tonight suggestion engine | **Later** | AI-backed or heuristic-backed top suggestion card with richer context. |
+| Home best-next-step recommendations | **Built** | `HomeRecommendationEngine` extracted and tested. |
+| Tonight’s pick (single opinionated answer) | **Next** | Part of Phase N — extends `HomeRecommendationEngine` with nutrition awareness. |
+| Weekly meal planning | **Next** | Pick 5-7 meals for the week, auto-generate grocery list. Follows Phase N. |
+| Meal prep suggestions | **Next** | "Prep X on Sunday for Monday + Tuesday." Follows weekly planning. |
 | Time-aware recipe generation | **Later** | Constrain recipes by available cooking time. |
-| Weekly meal planning | **Later** | Generate and manage a weekly meal plan. |
 | Grocery generation from meal plans | **Later** | Bulk missing-ingredient generation from planned meals. |
 | Stronger repeat-meal prioritization | **Active** | Favorites and staples exist; can be pushed further. |
 
-### Phase D — Shared Household and Multi-Device Sync
-**Goal:** move from single-device usefulness to shared-household reliability.
+### Phase D — Production Foundation
+**Goal:** multi-device, real auth, durable data. Can begin in parallel with Phase C.
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Household accounts / auth | **Later** | Required for true shared pantry/grocery. |
-| Shared pantry + grocery sync | **Later** | Likely Supabase or equivalent. |
-| Multi-profile household logic | **Later** | Current profile logic is local-first. |
-| Android/shared household support | **Later** | Important, but after data durability and planning maturity. |
-
-### Phase E — Health and Launch Polish
-**Goal:** deepen health usefulness and polish the launch surface once the core loop is fully mature.
-
-| Item | Status | Notes |
-|------|--------|-------|
-| Nutrition tracking from cooked meals | **Later** | Valuable, but after planning and durability. |
-| Whole-food scoring | **Later** | Extend recipe quality signals. |
-| Grocery spend / waste reporting | **Later** | Natural extension once data durability improves. |
-| Improved onboarding | **Later** | Redesign once the strongest daily-driver story is locked. |
-| Share extension / barcode scan | **Later** | Useful convenience features, not current strategic bottlenecks. |
-| Offline-first resilience | **Later** | Important when sync architecture becomes real. |
+| Move to Supabase | **Next** | PostgreSQL, real auth (Apple Sign In), real-time sync, iOS + Android SDKs. Replaces UserDefaults + KV for user data. Keep Cloudflare Worker as OpenAI relay. |
+| Push notifications | **Next** | Expiring items, "you haven’t planned dinner yet." Requires Supabase auth first. |
+| Household accounts / multi-profile | **Later** | After Supabase is in place. |
+| Android via React Native | **Later** | After iOS experience is solid. |
 
 ### Recommended near-term order
 
-1. **Cloud/data backup**
-2. **Saved planning hub completion**
-3. **Recipe-first entry point beyond Saved/Home**
-4. **Home recommendation extraction / architecture cleanup**
-5. **Dish-name search**
+1. `codex/nutrition-layer` — Recipe macros + NutritionGoals in UserProfile + OpenAI schema
+2. `codex/nutrition-home` — Home progress card + tonight’s pick
+3. Quick cleanup: store decode hardening + recipe cache eviction
+4. `codex/saved-planning-hub` — now richer with nutrition data
+5. `codex/weekly-meal-plan` — weekly planning + grocery generation
+6. `codex/supabase-foundation` — real auth + sync (can overlap with #4–5)
 
 ---
 
