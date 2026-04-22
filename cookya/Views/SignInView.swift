@@ -36,9 +36,10 @@ struct SignInView: View {
                             .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
 
                         if let errorMessage {
+                            let isConfirmation = errorMessage.hasPrefix("Account created")
                             Text(errorMessage)
                                 .font(.footnote)
-                                .foregroundStyle(.red)
+                                .foregroundStyle(isConfirmation ? .green : .red)
                                 .multilineTextAlignment(.center)
                         }
 
@@ -56,9 +57,9 @@ struct SignInView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(canSubmit ? Color.accentColor : Color.gray)
+                            .background(.tint, in: RoundedRectangle(cornerRadius: 12))
                             .foregroundStyle(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .opacity(canSubmit ? 1 : 0.5)
                         }
                         .disabled(!canSubmit || isLoading)
                     }
@@ -69,7 +70,7 @@ struct SignInView: View {
                     } label: {
                         Text(isSignUp ? "Already have an account? Sign in" : "Don't have an account? Sign up")
                             .font(.footnote)
-                            .foregroundStyle(.accentColor)
+                            .foregroundStyle(.tint)
                     }
 
                     Spacer()
@@ -110,6 +111,9 @@ struct SignInView: View {
     }
 
     private func errorMessage(from error: Error) -> String {
+        if let authError = error as? AuthStore.AuthError, authError == .confirmationRequired {
+            return "Account created! Check your email to confirm before signing in."
+        }
         let description = error.localizedDescription.lowercased()
         if description.contains("invalid") || description.contains("credentials") {
             return "Incorrect email or password."

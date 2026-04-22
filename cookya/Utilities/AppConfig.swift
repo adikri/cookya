@@ -67,7 +67,8 @@ struct AppConfig {
             guard let value else { continue }
             let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
             if trimmed.isEmpty { continue }
-            if trimmed == "Debug" || trimmed == "Release" || trimmed == "$(OPENAI_API_KEY)" { continue }
+            if trimmed == "Debug" || trimmed == "Release" { continue }
+            if trimmed.hasPrefix("$(") && trimmed.hasSuffix(")") { continue }
             return trimmed
         }
         return nil

@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 import Supabase
 
 @MainActor
@@ -8,6 +9,16 @@ final class AuthStore: ObservableObject {
 
     var isAuthenticated: Bool { session != nil }
 
+    enum AuthError: LocalizedError {
+        case confirmationRequired
+        var errorDescription: String? {
+            switch self {
+            case .confirmationRequired:
+                return "confirmation_required"
+            }
+        }
+    }
+
     private var client: SupabaseClient { SupabaseManager.shared.client }
 
     init() {
@@ -15,15 +26,21 @@ final class AuthStore: ObservableObject {
     }
 
     func signIn(email: String, password: String) async throws {
-        let response = try await client.auth.signIn(email: email, password: password)
-        session = response.session
-        AppLogger.action("auth_sign_in_succeeded", metadata: ["userId": response.user.id.uuidString])
+        let authSession = try await client.auth.signIn(email: email, password: password)
+        session = authSession
+        AppLogger.action("auth_sign_in_succeeded", metadata: ["userId": authSession.user.id.uuidString])
     }
 
     func signUp(email: String, password: String) async throws {
         let response = try await client.auth.signUp(email: email, password: password)
-        session = response.session
-        AppLogger.action("auth_sign_up_succeeded", metadata: ["userId": response.user.id.uuidString])
+        if let s = response.session {
+            session = s
+            AppLogger.action("auth_sign_up_succeeded", metadata: ["userId": response.user.id.uuidString])
+        } else {
+            // Supabase requires email confirmation — sign-up queued
+            AppLogger.action("auth_sign_up_confirmation_required", metadata: ["userId": response.user.id.uuidString])
+            throw AuthError.confirmationRequired
+        }
     }
 
     func signOut() async {

@@ -14,6 +14,7 @@
 		402655652F59ABA300D3C60A /* SavedRecipesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402655642F59AB9900D3C60A /* SavedRecipesView.swift */; };
 		402655672F59ABCC00D3C60A /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402655662F59ABC600D3C60A /* ProfileView.swift */; };
 		402655692F59ABDB00D3C60A /* IngredientInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402655682F59ABD600D3C60A /* IngredientInputView.swift */; };
+		40540AEC2F995D87004DB382 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 40540AEB2F995D87004DB382 /* Supabase */; };
 		40A100012F5A010000D3C60A /* Ingredient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100002F5A010000D3C60A /* Ingredient.swift */; };
 		40A100032F5A010000D3C60A /* Difficulty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100022F5A010000D3C60A /* Difficulty.swift */; };
 		40A100052F5A010000D3C60A /* Recipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100042F5A010000D3C60A /* Recipe.swift */; };
@@ -48,7 +49,6 @@
 		40A100402F5C300000D3C60A /* DebugLogsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100412F5C300000D3C60A /* DebugLogsView.swift */; };
 		40A100422F5C400000D3C60A /* PantryRecipeSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100432F5C400000D3C60A /* PantryRecipeSelection.swift */; };
 		40A100442F5D000000D3C60A /* CookedMealRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100452F5D000000D3C60A /* CookedMealRecord.swift */; };
-		40A100902F9A010000D3C60A /* NutritionGoals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100912F9A010000D3C60A /* NutritionGoals.swift */; };
 		40A100462F5D000000D3C60A /* CookedMealStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100472F5D000000D3C60A /* CookedMealStore.swift */; };
 		40A100482F5D000000D3C60A /* CookedHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100492F5D000000D3C60A /* CookedHistoryView.swift */; };
 		40A1004A2F5D000000D3C60A /* PurchaseExpirySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1004B2F5D000000D3C60A /* PurchaseExpirySheet.swift */; };
@@ -62,6 +62,7 @@
 		40A1005E2F5D300000D3C60A /* PersistencePayloadValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1005F2F5D300000D3C60A /* PersistencePayloadValidator.swift */; };
 		40A100602F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100612F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift */; };
 		40A100642F5D500000D3C60A /* HomeRecommendationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100632F5D500000D3C60A /* HomeRecommendationEngine.swift */; };
+		40A100902F9A010000D3C60A /* NutritionGoals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100912F9A010000D3C60A /* NutritionGoals.swift */; };
 		40B000042F60000000D3C60A /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000012F60000000D3C60A /* KeychainStore.swift */; };
 		40B000052F60000000D3C60A /* BackendAuthToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000022F60000000D3C60A /* BackendAuthToken.swift */; };
 		40B000062F60000000D3C60A /* BackendAccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000032F60000000D3C60A /* BackendAccessView.swift */; };
@@ -75,7 +76,6 @@
 		40D000022F9B010000D3C60A /* PlannedMeal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D000012F9B000000D3C60A /* PlannedMeal.swift */; };
 		40D000042F9B010000D3C60A /* WeeklyPlanStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D000032F9B000000D3C60A /* WeeklyPlanStore.swift */; };
 		40D000062F9B010000D3C60A /* WeeklyMealPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D000052F9B000000D3C60A /* WeeklyMealPlanView.swift */; };
-		40E000032F9C000000D3C60A /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 40E000022F9C000000D3C60A /* Supabase */; };
 		40E000042F9C010000D3C60A /* SupabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000052F9C000000D3C60A /* SupabaseManager.swift */; };
 		40E000062F9C010000D3C60A /* AuthStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000072F9C000000D3C60A /* AuthStore.swift */; };
 		40E0000B2F9C010000D3C60A /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000092F9C000000D3C60A /* SignInView.swift */; };
@@ -143,7 +143,6 @@
 		40A100412F5C300000D3C60A /* DebugLogsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLogsView.swift; sourceTree = "<group>"; };
 		40A100432F5C400000D3C60A /* PantryRecipeSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryRecipeSelection.swift; sourceTree = "<group>"; };
 		40A100452F5D000000D3C60A /* CookedMealRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookedMealRecord.swift; sourceTree = "<group>"; };
-		40A100912F9A010000D3C60A /* NutritionGoals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionGoals.swift; sourceTree = "<group>"; };
 		40A100472F5D000000D3C60A /* CookedMealStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookedMealStore.swift; sourceTree = "<group>"; };
 		40A100492F5D000000D3C60A /* CookedHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookedHistoryView.swift; sourceTree = "<group>"; };
 		40A1004B2F5D000000D3C60A /* PurchaseExpirySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseExpirySheet.swift; sourceTree = "<group>"; };
@@ -159,6 +158,7 @@
 		40A1005F2F5D300000D3C60A /* PersistencePayloadValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistencePayloadValidator.swift; sourceTree = "<group>"; };
 		40A100612F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneratedRecipeCachePolicy.swift; sourceTree = "<group>"; };
 		40A100632F5D500000D3C60A /* HomeRecommendationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeRecommendationEngine.swift; sourceTree = "<group>"; };
+		40A100912F9A010000D3C60A /* NutritionGoals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionGoals.swift; sourceTree = "<group>"; };
 		40B000012F60000000D3C60A /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
 		40B000022F60000000D3C60A /* BackendAuthToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendAuthToken.swift; sourceTree = "<group>"; };
 		40B000032F60000000D3C60A /* BackendAccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendAccessView.swift; sourceTree = "<group>"; };
@@ -195,7 +195,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				40E000032F9C000000D3C60A /* Supabase in Frameworks */,
+				40540AEC2F995D87004DB382 /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,6 +222,7 @@
 				402655562F59A83600D3C60A /* cookya */,
 				402655382F599F4D00D3C60A /* cookyaTests */,
 				402655422F599F4D00D3C60A /* cookyaUITests */,
+				40540AEA2F995D87004DB382 /* Frameworks */,
 				402655292F599F4B00D3C60A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -379,6 +380,13 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		40540AEA2F995D87004DB382 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		40A1004E2F5D100000D3C60A /* Config */ = {
 			isa = PBXGroup;
 			children = (
@@ -406,7 +414,7 @@
 			);
 			name = cookya;
 			packageProductDependencies = (
-				40E000022F9C000000D3C60A /* Supabase */,
+				40540AEB2F995D87004DB382 /* Supabase */,
 			);
 			productName = cookya;
 			productReference = 402655282F599F4B00D3C60A /* cookya.app */;
@@ -490,11 +498,11 @@
 			);
 			mainGroup = 4026551F2F599F4B00D3C60A;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				40540AE92F995CDD004DB382 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 402655292F599F4B00D3C60A /* Products */;
-			packages = (
-				40E000012F9C000000D3C60A /* XCRemoteSwiftPackageReference "supabase-swift" */,
-			);
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -549,7 +557,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nSECRETS_FILE=\"${PROJECT_DIR}/cookya/Config/Secrets.xcconfig\"\n\n# Never embed an API key into non-Debug (Release/Archive) builds.\n# Also: do not bundle OPENAI_API_KEY even in Debug builds.\n# Keys must be provided at runtime (e.g. scheme env var) and should not live in app resources.\nif [ \"${CONFIGURATION}\" != \"Debug\" ]; then\n  if [ -n \"${TARGET_BUILD_DIR}\" ] && [ -n \"${UNLOCALIZED_RESOURCES_FOLDER_PATH}\" ]; then\n    rm -f \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/LocalSecrets.plist\"\n  fi\n  exit 0\nfi\n\nif [ -z \"${TARGET_BUILD_DIR}\" ] || [ -z \"${UNLOCALIZED_RESOURCES_FOLDER_PATH}\" ]; then\n  exit 0\nfi\nOUTPUT_DIR=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"\nOUTPUT_PLIST=\"${OUTPUT_DIR}/LocalSecrets.plist\"\nmkdir -p \"${OUTPUT_DIR}\"\n\nif [ -f \"${SECRETS_FILE}\" ]; then\n  extract_value() {\n    key=\"$1\"\n    grep -E \"^[[:space:]]*${key}[[:space:]]*=\" \"${SECRETS_FILE}\" | tail -n 1 | sed -E 's/^[^=]*=[[:space:]]*//'\n  }\n\n  OPENAI_BASE_URL_VALUE=\"$(extract_value OPENAI_BASE_URL)\"\n  OPENAI_MODEL_VALUE=\"$(extract_value OPENAI_MODEL)\"\n  COOKYA_BACKEND_BASE_URL_VALUE=\"$(extract_value COOKYA_BACKEND_BASE_URL)\"\n\n  cat > \"${OUTPUT_PLIST}\" <<EOF\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n  <key>OPENAI_BASE_URL</key>\n  <string>${OPENAI_BASE_URL_VALUE}</string>\n  <key>OPENAI_MODEL</key>\n  <string>${OPENAI_MODEL_VALUE}</string>\n  <key>COOKYA_BACKEND_BASE_URL</key>\n  <string>${COOKYA_BACKEND_BASE_URL_VALUE}</string>\n</dict>\n</plist>\nEOF\nelse\n  rm -f \"${OUTPUT_PLIST}\"\nfi\n";
+			shellScript = "set -e\nSECRETS_FILE=\"${PROJECT_DIR}/cookya/Config/Secrets.xcconfig\"\n\n# Never embed an API key into non-Debug (Release/Archive) builds.\n# Also: do not bundle OPENAI_API_KEY even in Debug builds.\n# Keys must be provided at runtime (e.g. scheme env var) and should not live in app resources.\nif [ \"${CONFIGURATION}\" != \"Debug\" ]; then\n  if [ -n \"${TARGET_BUILD_DIR}\" ] && [ -n \"${UNLOCALIZED_RESOURCES_FOLDER_PATH}\" ]; then\n    rm -f \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/LocalSecrets.plist\"\n  fi\n  exit 0\nfi\n\nif [ -z \"${TARGET_BUILD_DIR}\" ] || [ -z \"${UNLOCALIZED_RESOURCES_FOLDER_PATH}\" ]; then\n  exit 0\nfi\nOUTPUT_DIR=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"\nOUTPUT_PLIST=\"${OUTPUT_DIR}/LocalSecrets.plist\"\nmkdir -p \"${OUTPUT_DIR}\"\n\nif [ -f \"${SECRETS_FILE}\" ]; then\n  extract_value() {\n    key=\"$1\"\n    grep -E \"^[[:space:]]*${key}[[:space:]]*=\" \"${SECRETS_FILE}\" | tail -n 1 | sed -E 's/^[^=]*=[[:space:]]*//'\n  }\n\n  OPENAI_BASE_URL_VALUE=\"$(extract_value OPENAI_BASE_URL)\"\n  OPENAI_MODEL_VALUE=\"$(extract_value OPENAI_MODEL)\"\n  COOKYA_BACKEND_BASE_URL_VALUE=\"$(extract_value COOKYA_BACKEND_BASE_URL)\"\n  SUPABASE_URL_VALUE=\"$(extract_value SUPABASE_URL)\"\n  SUPABASE_PUBLISHABLE_KEY_VALUE=\"$(extract_value SUPABASE_PUBLISHABLE_KEY)\"\n\n  cat > \"${OUTPUT_PLIST}\" <<EOF\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n  <key>OPENAI_BASE_URL</key>\n  <string>${OPENAI_BASE_URL_VALUE}</string>\n  <key>OPENAI_MODEL</key>\n  <string>${OPENAI_MODEL_VALUE}</string>\n  <key>COOKYA_BACKEND_BASE_URL</key>\n  <string>${COOKYA_BACKEND_BASE_URL_VALUE}</string>\n  <key>SUPABASE_URL</key>\n  <string>${SUPABASE_URL_VALUE}</string>\n  <key>SUPABASE_PUBLISHABLE_KEY</key>\n  <string>${SUPABASE_PUBLISHABLE_KEY_VALUE}</string>\n</dict>\n</plist>\nEOF\nelse\n  rm -f \"${OUTPUT_PLIST}\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -659,25 +667,6 @@
 			targetProxy = 402655402F599F4D00D3C60A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		40E000012F9C000000D3C60A /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/supabase/supabase-swift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		40E000022F9C000000D3C60A /* Supabase */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 40E000012F9C000000D3C60A /* XCRemoteSwiftPackageReference "supabase-swift" */;
-			productName = Supabase;
-		};
-/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCBuildConfiguration section */
 		402655472F599F4D00D3C60A /* Debug */ = {
@@ -819,6 +808,8 @@
 				INFOPLIST_KEY_OPENAI_API_KEY = "$(OPENAI_API_KEY)";
 				INFOPLIST_KEY_OPENAI_BASE_URL = "$(OPENAI_BASE_URL)";
 				INFOPLIST_KEY_OPENAI_MODEL = "$(OPENAI_MODEL)";
+				INFOPLIST_KEY_SUPABASE_PUBLISHABLE_KEY = "$(SUPABASE_PUBLISHABLE_KEY)";
+				INFOPLIST_KEY_SUPABASE_URL = "$(SUPABASE_URL)";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -837,6 +828,8 @@
 				OPENAI_API_KEY = "$(inherited)";
 				OPENAI_BASE_URL = "$(inherited)";
 				OPENAI_MODEL = "$(inherited)";
+				SUPABASE_PUBLISHABLE_KEY = "$(inherited)";
+				SUPABASE_URL = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.adityakrishna.cookya;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -871,6 +864,8 @@
 				INFOPLIST_KEY_OPENAI_API_KEY = "$(OPENAI_API_KEY)";
 				INFOPLIST_KEY_OPENAI_BASE_URL = "$(OPENAI_BASE_URL)";
 				INFOPLIST_KEY_OPENAI_MODEL = "$(OPENAI_MODEL)";
+				INFOPLIST_KEY_SUPABASE_PUBLISHABLE_KEY = "$(SUPABASE_PUBLISHABLE_KEY)";
+				INFOPLIST_KEY_SUPABASE_URL = "$(SUPABASE_URL)";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -889,6 +884,8 @@
 				OPENAI_API_KEY = "$(inherited)";
 				OPENAI_BASE_URL = "$(inherited)";
 				OPENAI_MODEL = "$(inherited)";
+				SUPABASE_PUBLISHABLE_KEY = "$(inherited)";
+				SUPABASE_URL = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.adityakrishna.cookya;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -1042,6 +1039,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		40540AE92F995CDD004DB382 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		40540AEB2F995D87004DB382 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 40540AE92F995CDD004DB382 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 402655202F599F4B00D3C60A /* Project object */;
 }
