@@ -72,6 +72,9 @@
 		40B000102F60A00000D3C60A /* AppNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B0000F2F60A00000D3C60A /* AppNotifications.swift */; };
 		40C000032F70000000D3C60A /* BackendSnapshotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C000022F70000000D3C60A /* BackendSnapshotService.swift */; };
 		40C000042F80000000D3C60A /* BackendSyncStatusStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C000052F80000000D3C60A /* BackendSyncStatusStore.swift */; };
+		40D000022F9B010000D3C60A /* PlannedMeal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D000012F9B000000D3C60A /* PlannedMeal.swift */; };
+		40D000042F9B010000D3C60A /* WeeklyPlanStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D000032F9B000000D3C60A /* WeeklyPlanStore.swift */; };
+		40D000062F9B010000D3C60A /* WeeklyMealPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D000052F9B000000D3C60A /* WeeklyMealPlanView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -162,6 +165,9 @@
 		40B0000F2F60A00000D3C60A /* AppNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNotifications.swift; sourceTree = "<group>"; };
 		40C000022F70000000D3C60A /* BackendSnapshotService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendSnapshotService.swift; sourceTree = "<group>"; };
 		40C000052F80000000D3C60A /* BackendSyncStatusStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendSyncStatusStore.swift; sourceTree = "<group>"; };
+		40D000012F9B000000D3C60A /* PlannedMeal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannedMeal.swift; sourceTree = "<group>"; };
+		40D000032F9B000000D3C60A /* WeeklyPlanStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyPlanStore.swift; sourceTree = "<group>"; };
+		40D000052F9B000000D3C60A /* WeeklyMealPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyMealPlanView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -274,6 +280,7 @@
 				402655642F59AB9900D3C60A /* SavedRecipesView.swift */,
 				402655542F59A83600D3C60A /* HomeView.swift */,
 				402655622F59AB7E00D3C60A /* MainTabView.swift */,
+				40D000052F9B000000D3C60A /* WeeklyMealPlanView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -303,6 +310,7 @@
 				40A100572F5D300000D3C60A /* StructuredQuantity.swift */,
 				40A100152F5B000000D3C60A /* UserProfile.swift */,
 				40A100512F5D300000D3C60A /* KnownInventoryItem.swift */,
+				40D000012F9B000000D3C60A /* PlannedMeal.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -326,6 +334,7 @@
 				40A100172F5B000000D3C60A /* ProfileStore.swift */,
 				40A1000C2F5A060000D3C60A /* RecipeGeneratingService.swift */,
 				40A1000A2F5A030000D3C60A /* RecipeStore.swift */,
+				40D000032F9B000000D3C60A /* WeeklyPlanStore.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -598,6 +607,9 @@
 				40A100162F5B000000D3C60A /* UserProfile.swift in Sources */,
 				402655652F59ABA300D3C60A /* SavedRecipesView.swift in Sources */,
 				402655632F59AB7E00D3C60A /* MainTabView.swift in Sources */,
+				40D000022F9B010000D3C60A /* PlannedMeal.swift in Sources */,
+				40D000042F9B010000D3C60A /* WeeklyPlanStore.swift in Sources */,
+				40D000062F9B010000D3C60A /* WeeklyMealPlanView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
