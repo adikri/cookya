@@ -80,7 +80,7 @@ final class RecipeViewModel: ObservableObject {
         )
     }
 
-    func generateRecipe(profile: UserProfile?, pantryItems: [PantryItem], forceRefresh: Bool = false) {
+    func generateRecipe(profile: UserProfile?, pantryItems: [PantryItem], nutritionGap: NutritionGap? = nil, forceRefresh: Bool = false) {
         let selectedPantrySelections = currentPantrySelections(from: pantryItems)
         let selectedPantryItems = selectedPantrySelections.map(\.pantryItem)
 
@@ -91,7 +91,7 @@ final class RecipeViewModel: ObservableObject {
 
         generationError = nil
 
-        let request = currentRequest(profile: profile, pantrySelections: selectedPantrySelections)
+        let request = currentRequest(profile: profile, pantrySelections: selectedPantrySelections, nutritionGap: nutritionGap)
 
         if !forceRefresh, let cachedRecipe = recipeStore.cachedGeneratedRecipe(for: request) {
             showGeneratedRecipe(
@@ -170,14 +170,15 @@ final class RecipeViewModel: ObservableObject {
             }
     }
 
-    private func currentRequest(profile: UserProfile?, pantrySelections: [PantryRecipeSelection]) -> RecipeGenerationRequest {
+    private func currentRequest(profile: UserProfile?, pantrySelections: [PantryRecipeSelection], nutritionGap: NutritionGap?) -> RecipeGenerationRequest {
         RecipeGenerationRequest(
             pantrySelections: pantrySelections,
             manualIngredients: ingredients,
             difficulty: selectedDifficulty,
             servings: servings,
             profile: profile,
-            prioritizedIngredients: pantrySelections.map(\.pantryItem).filter(\.isExpiringSoon)
+            prioritizedIngredients: pantrySelections.map(\.pantryItem).filter(\.isExpiringSoon),
+            nutritionGap: nutritionGap
         )
     }
 

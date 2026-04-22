@@ -147,10 +147,31 @@ COOKYA_DEVICE_ID="<your-device-id>" ./scripts/build-device.sh
 - `./scripts/build-sim.sh`
   - **When**: you want a deterministic simulator build (good for debugging/CI-style checks).
 - `./scripts/test-sim.sh`
-  - **When**: you want to run tests from CLI on a concrete simulator destination.
+  - **When**: full test run. Boots the simulator if not already running (avoids the 60-120s cold-boot hang), then runs all tests.
+- `./scripts/test-quick.sh`
+  - **When**: you already have a build from `test-sim.sh` and just want to re-run tests without recompiling. Much faster for rapid iteration. Requires simulator to be Booted; exits with an error if not.
 
 If you change your primary device/simulator, update the IDs in these scripts using:
 `xcodebuild -scheme cookya -showdestinations`.
+
+### Why tests used to take forever (and how it's fixed)
+
+Root cause: `xcodebuild test` starts the simulator from a cold Shutdown state every run. Cold-booting an iOS simulator takes 60-120 seconds — longer than the actual tests. The test runner would appear hung the whole time.
+
+Additional causes observed:
+- Stale `xcodebuild` processes from interrupted runs compete with new runs.
+- Killing a running test mid-install corrupts the simulator device state ("Invalid device state" error).
+
+Fixes applied:
+- `test-sim.sh` now boots the simulator before calling `xcodebuild` and waits for `Booted`.
+- `test-quick.sh` uses `test-without-building` — skips compilation and simulator boot for fast re-runs.
+
+If a run hangs or you see "Invalid device state":
+```bash
+pkill -f xcodebuild        # kill stale processes
+xcrun simctl shutdown all  # reset simulator
+./scripts/test-sim.sh      # clean start (will re-boot)
+```
 
 ### Prevent committing PII/secrets (pre-commit hook)
 

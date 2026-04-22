@@ -77,6 +77,11 @@ struct BackendRecipeService: RecipeGeneratingService {
     }
 }
 
+private struct BackendNutritionGap: Encodable {
+    let remainingCalories: Int
+    let remainingProteinG: Int
+}
+
 private struct BackendRecipeRequest: Encodable {
     let pantryItems: [BackendPantryItem]
     let manualIngredients: [Ingredient]
@@ -85,6 +90,7 @@ private struct BackendRecipeRequest: Encodable {
     let profile: UserProfile?
     let prioritizedIngredientNames: [String]
     let locationContext: String?
+    let nutritionGap: BackendNutritionGap?
 
     init(from request: RecipeGenerationRequest) {
         pantryItems = request.pantrySelections.map {
@@ -103,6 +109,9 @@ private struct BackendRecipeRequest: Encodable {
         profile = request.profile
         prioritizedIngredientNames = request.prioritizedIngredients.map(\.name)
         locationContext = request.profile?.location
+        nutritionGap = request.nutritionGap.map {
+            BackendNutritionGap(remainingCalories: $0.remainingCalories, remainingProteinG: $0.remainingProteinG)
+        }
     }
 }
 

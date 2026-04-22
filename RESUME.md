@@ -1,22 +1,25 @@
 ## Interrupted: 2026-04-22
 
-**Branch:** codex/home-recommendation-extraction
-**Last commit:** 6146720 (Extract Home recommendation engine with deterministic ranking tests)
+**Branch:** codex/nutrition-layer
+**Last commit:** 2089c58 (Update PLANNING.md to nutrition-first roadmap)
 
 **Was working on:**
-Closing out the home-recommendation-extraction branch (committing meta files: CLAUDE.md, RESUME.md, WORKLOG.md), then starting `codex/nutrition-layer`.
+Building the nutrition layer — Recipe macros, NutritionGoals in UserProfile, CookedMealRecord macro snapshot, OpenAI/Worker schema changes, goal-aware generation prompt.
 
 **Done this session (not yet committed):**
-- CLAUDE.md created (codebase guidance for future sessions)
-- RESUME.md created (this file — automated session checkpoint)
-- WORKLOG.md updated (interrupt/resume pattern documented, session 2 log added)
-- Product direction locked: nutrition-first roadmap
+- (in progress)
 
 **Exact next step:**
-1. Commit CLAUDE.md + RESUME.md + WORKLOG.md on current branch
-2. Create PR for `codex/home-recommendation-extraction`
-3. Branch `codex/nutrition-layer` from main after merge
-4. Start with `Recipe.swift` — add `protein: Int`, `carbs: Int`, `fat: Int`, `fiber: Int`
+1. Create `cookya/Models/NutritionGoals.swift` and add to project
+2. Update `Recipe.swift` — add protein/carbs/fat/fiber
+3. Update `CookedMealRecord.swift` — add macro snapshot fields
+4. Update `UserProfile.swift` — add nutritionGoals field
+5. Update `RecipeGenerationRequest.swift` — add nutritionGap
+6. Update `CookedMealStore.swift` — macro snapshot + todayNutrition()
+7. Update `OpenAIRecipeService.swift` — extend schema + prompt
+8. Update `BackendRecipeService.swift` — pass nutritionGap
+9. Update `worker/src/index.ts` — extend Recipe type + schema + prompt
+10. Update `RecipeViewModel.swift` — accept nutritionGap param
 
 **Open questions / blockers:**
-None — direction is fully locked and approved.
+None.

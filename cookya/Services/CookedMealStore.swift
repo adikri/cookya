@@ -49,7 +49,12 @@ final class CookedMealStore: ObservableObject {
             recipeIngredients: recipe.ingredients,
             consumptions: consumptions,
             warnings: warnings,
-            profile: profile
+            profile: profile,
+            calories: recipe.calories,
+            proteinG: recipe.protein,
+            carbsG: recipe.carbs,
+            fatG: recipe.fat,
+            fiberG: recipe.fiber
         )
     }
 
@@ -69,7 +74,12 @@ final class CookedMealStore: ObservableObject {
             recipeIngredients: source.recipeIngredients,
             consumptions: consumptions,
             warnings: warnings,
-            profile: profile
+            profile: profile,
+            calories: source.calories,
+            proteinG: source.proteinG,
+            carbsG: source.carbsG,
+            fatG: source.fatG,
+            fiberG: source.fiberG
         )
     }
 
@@ -131,12 +141,40 @@ final class CookedMealStore: ObservableObject {
         }
     }
 
+    func todayNutrition(for profile: UserProfile?) -> NutritionSummary {
+        let today = Calendar.current.startOfDay(for: .now)
+        let todayRecords = records(for: profile).filter { $0.cookedAt >= today }
+        return todayRecords.reduce(.zero) { sum, record in
+            NutritionSummary(
+                calories: sum.calories + record.calories,
+                proteinG: sum.proteinG + record.proteinG,
+                carbsG: sum.carbsG + record.carbsG,
+                fatG: sum.fatG + record.fatG,
+                fiberG: sum.fiberG + record.fiberG
+            )
+        }
+    }
+
+    func nutritionGap(for profile: UserProfile?) -> NutritionGap? {
+        guard let goals = profile?.effectiveNutritionGoals else { return nil }
+        let today = todayNutrition(for: profile)
+        return NutritionGap(
+            remainingCalories: goals.dailyCalories - today.calories,
+            remainingProteinG: goals.dailyProteinG - today.proteinG
+        )
+    }
+
     private func insertRecord(
         recipeTitle: String,
         recipeIngredients: [Ingredient],
         consumptions: [PantryConsumption],
         warnings: [String],
-        profile: UserProfile?
+        profile: UserProfile?,
+        calories: Int = 0,
+        proteinG: Int = 0,
+        carbsG: Int = 0,
+        fatG: Int = 0,
+        fiberG: Int = 0
     ) {
         let profileId = profile?.id ?? guestProfileId
         let profileName = profile?.name ?? "Guest"
@@ -147,7 +185,12 @@ final class CookedMealStore: ObservableObject {
             recipeTitle: recipeTitle,
             recipeIngredients: recipeIngredients,
             consumptions: consumptions.filter { !$0.usedQuantityText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty },
-            warnings: warnings
+            warnings: warnings,
+            calories: calories,
+            proteinG: proteinG,
+            carbsG: carbsG,
+            fatG: fatG,
+            fiberG: fiberG
         )
 
         records.insert(record, at: 0)

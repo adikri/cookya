@@ -38,8 +38,11 @@ Use the repo scripts instead of typing raw `xcodebuild` flags:
 # Simulator build
 ./scripts/build-sim.sh
 
-# Simulator tests (full suite)
+# Simulator tests (full suite — boots simulator if needed)
 ./scripts/test-sim.sh
+
+# Fast re-run without recompiling (simulator must already be Booted)
+./scripts/test-quick.sh
 
 # Run a single test class
 xcodebuild test \

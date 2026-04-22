@@ -33,6 +33,11 @@ type UserProfile = {
   location?: string;
 };
 
+type NutritionGap = {
+  remainingCalories: number;
+  remainingProteinG: number;
+};
+
 type BackendRecipeGenerateRequest = {
   pantryItems: BackendPantryItem[];
   manualIngredients: Ingredient[];
@@ -41,6 +46,7 @@ type BackendRecipeGenerateRequest = {
   profile?: UserProfile | null;
   prioritizedIngredientNames: string[];
   locationContext?: string | null;
+  nutritionGap?: NutritionGap | null;
 };
 
 type Recipe = {
@@ -48,6 +54,10 @@ type Recipe = {
   ingredients: Ingredient[];
   instructions: string[];
   calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
   difficulty: Difficulty;
 };
 
@@ -238,6 +248,16 @@ function buildUserPrompt(body: BackendRecipeGenerateRequest): string {
       ? "vegetarian"
       : "no vegetarian restriction";
 
+  const nutritionLines = body.nutritionGap
+    ? [
+        "",
+        "Nutrition goal context:",
+        `- Remaining calories today: ${body.nutritionGap.remainingCalories} kcal`,
+        `- Remaining protein today: ${body.nutritionGap.remainingProteinG}g`,
+        "Prioritize a recipe that helps meet these remaining goals.",
+      ]
+    : [];
+
   return [
     "Create one home-cooking recipe using these ingredients and requested difficulty.",
     "",
@@ -253,6 +273,7 @@ function buildUserPrompt(body: BackendRecipeGenerateRequest): string {
     `Avoid foods/allergens: ${avoidFoods}`,
     `Location context: ${location}`,
     `Prioritize these ingredients first if possible: ${prioritized.length ? prioritized : "none"}`,
+    ...nutritionLines,
     "",
     "Hard constraints:",
     "- Never include any avoid foods.",
@@ -260,6 +281,7 @@ function buildUserPrompt(body: BackendRecipeGenerateRequest): string {
     "- Keep recipe realistic for home cooking.",
     `- Make the recipe suitable for exactly ${body.servings} serving(s).`,
     "- If a selected pantry quantity is provided, treat it as the target amount to use for that ingredient.",
+    "- Estimate protein, carbs, fat, and fiber accurately for the given servings.",
     "",
     "Output only JSON matching the schema exactly.",
   ].join("\n");
@@ -288,7 +310,7 @@ async function callOpenAI(body: BackendRecipeGenerateRequest, env: Env): Promise
         schema: {
           type: "object",
           additionalProperties: false,
-          required: ["title", "ingredients", "instructions", "calories", "difficulty"],
+          required: ["title", "ingredients", "instructions", "calories", "protein", "carbs", "fat", "fiber", "difficulty"],
           properties: {
             title: { type: "string" },
             ingredients: {
@@ -305,6 +327,10 @@ async function callOpenAI(body: BackendRecipeGenerateRequest, env: Env): Promise
             },
             instructions: { type: "array", items: { type: "string" }, minItems: 1 },
             calories: { type: "integer", minimum: 0 },
+            protein: { type: "integer", minimum: 0 },
+            carbs: { type: "integer", minimum: 0 },
+            fat: { type: "integer", minimum: 0 },
+            fiber: { type: "integer", minimum: 0 },
             difficulty: { type: "string", enum: ["easy", "medium", "hard"] },
           },
         },

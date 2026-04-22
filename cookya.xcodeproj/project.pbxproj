@@ -48,6 +48,7 @@
 		40A100402F5C300000D3C60A /* DebugLogsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100412F5C300000D3C60A /* DebugLogsView.swift */; };
 		40A100422F5C400000D3C60A /* PantryRecipeSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100432F5C400000D3C60A /* PantryRecipeSelection.swift */; };
 		40A100442F5D000000D3C60A /* CookedMealRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100452F5D000000D3C60A /* CookedMealRecord.swift */; };
+		40A100902F9A010000D3C60A /* NutritionGoals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100912F9A010000D3C60A /* NutritionGoals.swift */; };
 		40A100462F5D000000D3C60A /* CookedMealStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100472F5D000000D3C60A /* CookedMealStore.swift */; };
 		40A100482F5D000000D3C60A /* CookedHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100492F5D000000D3C60A /* CookedHistoryView.swift */; };
 		40A1004A2F5D000000D3C60A /* PurchaseExpirySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1004B2F5D000000D3C60A /* PurchaseExpirySheet.swift */; };
@@ -135,6 +136,7 @@
 		40A100412F5C300000D3C60A /* DebugLogsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLogsView.swift; sourceTree = "<group>"; };
 		40A100432F5C400000D3C60A /* PantryRecipeSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryRecipeSelection.swift; sourceTree = "<group>"; };
 		40A100452F5D000000D3C60A /* CookedMealRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookedMealRecord.swift; sourceTree = "<group>"; };
+		40A100912F9A010000D3C60A /* NutritionGoals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionGoals.swift; sourceTree = "<group>"; };
 		40A100472F5D000000D3C60A /* CookedMealStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookedMealStore.swift; sourceTree = "<group>"; };
 		40A100492F5D000000D3C60A /* CookedHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookedHistoryView.swift; sourceTree = "<group>"; };
 		40A1004B2F5D000000D3C60A /* PurchaseExpirySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseExpirySheet.swift; sourceTree = "<group>"; };
@@ -294,6 +296,7 @@
 				40A1003B2F5C100000D3C60A /* PantryConsumption.swift */,
 				40A1002F2F5C000000D3C60A /* PantryItem.swift */,
 				40A100432F5C400000D3C60A /* PantryRecipeSelection.swift */,
+				40A100912F9A010000D3C60A /* NutritionGoals.swift */,
 				40A100042F5A010000D3C60A /* Recipe.swift */,
 				40A100312F5C000000D3C60A /* RecipeGenerationRequest.swift */,
 				40A100132F5B000000D3C60A /* SavedRecipe.swift */,
@@ -546,6 +549,7 @@
 				40A100482F5D000000D3C60A /* CookedHistoryView.swift in Sources */,
 				40A100442F5D000000D3C60A /* CookedMealRecord.swift in Sources */,
 				40A100462F5D000000D3C60A /* CookedMealStore.swift in Sources */,
+				40A100902F9A010000D3C60A /* NutritionGoals.swift in Sources */,
 				40A1001E2F5B100000D3C60A /* DietaryPreferencesView.swift in Sources */,
 				40A1001C2F5B100000D3C60A /* EditProfileView.swift in Sources */,
 				40A1002E2F5C000000D3C60A /* GroceryItemEditorView.swift in Sources */,
