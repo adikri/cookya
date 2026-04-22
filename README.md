@@ -1,6 +1,8 @@
 # Cookya
 
-Cookya is an **iOS (SwiftUI) kitchen app** for a single household: manage **pantry** and **grocery**, generate **recipes** from what you have (with dietary and location context), **cook** meals with pantry updates, and keep **saved recipes** and **cooked history** in one place. The day-to-day loop is: *pantry → decide what to cook → shop → cook → update pantry → repeat*.
+Cookya is a **household cooking assistant** — manage **pantry** and **grocery**, generate **recipes** from what you have, track **nutrition goals**, plan meals for the week, and keep **saved recipes** and **cooked history** in one place. The day-to-day loop is: *pantry → decide what to cook → shop → cook → update pantry → repeat*.
+
+The iOS SwiftUI app is the personal daily driver and feature test bed. An Android React Native app targeting the Play Store is in development, sharing the same Supabase backend.
 
 This repository contains the **iPhone app** plus optional **backends** so you can run recipe generation and data sync **without putting an OpenAI API key inside the app you ship to your phone**.
 
@@ -10,10 +12,10 @@ This repository contains the **iPhone app** plus optional **backends** so you ca
 
 | Path | What it is |
 |------|----------------|
-| `cookya/` | iOS app (Xcode target `cookya`) |
-| `worker/` | **Recommended** production-style backend: Cloudflare Worker (recipe relay + KV inventory + snapshot backup). See [`worker/README.md`](worker/README.md). |
-| `backend/` | Optional **local** Node/Express relay for the same recipe API while developing. See [`backend/README.md`](backend/README.md). |
-| `scripts/` | CLI helpers for simulator/device builds and tests (see [`SKILLS.md`](SKILLS.md)). |
+| `cookya/` | iOS SwiftUI app (personal daily driver + feature prototype) |
+| `worker/` | Cloudflare Worker — OpenAI recipe relay (production). See [`worker/README.md`](worker/README.md). |
+| `backend/` | Optional local Node/Express relay for development. See [`backend/README.md`](backend/README.md). |
+| `scripts/` | CLI helpers for simulator/device builds. See [`CLAUDE.md`](CLAUDE.md). |
 
 ---
 
@@ -60,12 +62,13 @@ You can pass `OPENAI_API_KEY` via the Run scheme environment for local debugging
 
 ### 4. Backup and durability
 
-- **Export/import** (files): Profile → Backup.  
-- **Cloud snapshot** (optional): with the Worker + KV + app token, the app can sync a full snapshot to the backend; see [`worker/README.md`](worker/README.md) snapshot section.
+- **Export/import** (files): Profile → Backup.
+- **Cloud snapshot** (current): with the Worker + KV + app token, the app can sync a full snapshot to the backend; see [`worker/README.md`](worker/README.md).
+- **Supabase sync** (in progress): PostgreSQL-backed real-time sync will replace the KV snapshot layer and enable multi-device use.
 
-### 5. CLI builds and tests (optional)
+### 5. CLI builds (optional)
 
-If you prefer terminal builds or CI-style checks, see [`SKILLS.md`](SKILLS.md) for `scripts/build-sim.sh`, `scripts/test-sim.sh`, and device builds (`COOKYA_DEVICE_ID`).
+See [`CLAUDE.md`](CLAUDE.md) for `scripts/build-sim.sh` and device builds (`COOKYA_DEVICE_ID`). Tests are run manually in Xcode.
 
 ---
 

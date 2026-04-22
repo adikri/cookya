@@ -32,6 +32,41 @@ Use this file to keep daily planning and end-of-day progress visible.
 
 ---
 
+## 2026-04-22 (session 3)
+
+### Done
+- Fixed worker purchase bug: `POST /v1/grocery/{id}/purchase` was using `crypto.randomUUID()` for the returned pantry item ID, causing duplicate pantry entries on first purchase of any ingredient
+- Added nutrition layer to HomeView: today's calories + protein progress card, derived from `CookedMealStore.todayNutrition`
+- Added "tonight's pick" to `HomeRecommendationEngine`: promotes highest-protein ready recipe when daily protein gap > 20g
+- Added saved planning hub: macros on every recipe row, full macros section + goal-fit context in recipe detail view
+- Added weekly meal plan: new "Plan" tab, up to 7 meals, deduplicated missing ingredients, one-tap grocery generation
+- Merged `codex/nutrition-layer` → main via PR #3
+- Updated PLANNING.md: Phase N all Built, Phase C weekly plan Built, Phase D rewritten for Android-first strategy
+- Added DECISIONS.md: decision log for architecture and product choices
+- Rewrote Phase D and user section of PLANNING.md for Android-first distribution
+- Added DECISIONS.md and CLAUDE.md reference to it
+- Doc system cleanup: retired SKILLS.md (content folded into CLAUDE.md), trimmed DECISIONS.md to product/architecture only, updated README.md for Android strategy and Supabase roadmap, added mandatory session-end rules to CLAUDE.md
+
+### Commits (session 3)
+- `7417bbc` Fix worker purchase endpoint creating pantry item with random UUID
+- `e9f2983` Add nutrition-home: progress card, tonight's pick, and nutrition-aware engine
+- `3ccb7ff` Add saved planning hub: macros, goal fit, and PLANNING.md Phase N update
+- `6d27287` Add weekly meal plan: Plan tab, up to 7 meals, auto-generate grocery list
+- `82c5cca` Add PlannedMeal, WeeklyPlanStore, WeeklyMealPlanView to Xcode project
+- `19b8e16` Mark weekly meal plan Built in PLANNING.md
+- `da74265` Merge PR #3: codex/nutrition-layer → main
+- `2441f80` Clean up PLANNING.md: update stale Active/Built/Next labels
+- `961892a` Rewrite PLANNING.md Phase D for Android-first distribution strategy
+- `3298d4e` Add DECISIONS.md: decision log for architecture and product choices
+- *(doc cleanup commit — pending)*
+
+### Carry Forward
+- Set up Supabase project (user action: create project at supabase.com, get URL + anon key)
+- `codex/supabase-foundation`: Supabase auth (email/password) + database schema + iOS integration
+- `codex/react-native-android`: Android app on same Supabase backend, Play Store target
+
+---
+
 ## 2026-04-22 (continued)
 
 ### Done (session 2)

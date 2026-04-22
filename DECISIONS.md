@@ -42,17 +42,3 @@ Format: date · decision · options considered · reason.
 **Options considered:** Nutrition-aware sorting; separate "high protein" section; macros only in detail.
 **Reason:** Readiness-first ordering is the core value of the saved hub. Overriding it with nutrition would make the hub less predictable and defeat its primary purpose. Showing macros inline gives the user the information without changing the structure they rely on.
 
-### Worker purchase endpoint: use grocery item ID for new pantry entry
-**Decision:** `POST /v1/grocery/{id}/purchase` returns a pantry item with `id: id` (the grocery item's ID), not `id: crypto.randomUUID()`.
-**Options considered:** Keep random UUID and fix client-side dedup; use grocery item's ID.
-**Reason:** The iOS client inserts a local placeholder with `id = groceryItem.id` before the API call. When the backend returned a different UUID, `replacePantryItemLocally` couldn't find the placeholder and appended a second entry — a duplicate. Using the same ID makes the replace work correctly without any client changes.
-
-### CLI test runs: always use Xcode manually
-**Decision:** Never invoke `xcodebuild test`, `test-sim.sh`, or `test-quick.sh` from the terminal.
-**Options considered:** CLI test runs, Xcode manual runs.
-**Reason:** CLI test invocations stall repeatedly in this environment with no output. After writing tests, provide the user with the test class name and expected results; they run it in Xcode via the gutter diamond or Product → Test.
-
-### New Swift files: always edit project.pbxproj directly
-**Decision:** When creating new `.swift` files, immediately edit `project.pbxproj` in the same step — never ask the user to add files in Xcode manually.
-**Options considered:** Ask user to add via Xcode UI, edit project file directly.
-**Reason:** Asking the user to do things that can be done via code wastes their time. The project file edits (PBXBuildFile, PBXFileReference, group children, Sources build phase) are mechanical and reliable when done carefully.

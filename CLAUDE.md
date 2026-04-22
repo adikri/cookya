@@ -28,7 +28,7 @@ When the interrupted work is committed cleanly:
 
 Read `PLANNING.md` first — it is the product and engineering source of truth. It defines what is Built, Active, Next, and Later, and contains the architecture conventions to follow.
 
-Read `DECISIONS.md` for the reasoning behind significant past decisions. When a new significant decision is made (architecture, product direction, tooling), add an entry to `DECISIONS.md` and commit it alongside the related code.
+Read `DECISIONS.md` for the reasoning behind significant past decisions. When a new significant **product or architecture** decision is made (not tooling/workflow — those go here in CLAUDE.md), add an entry to `DECISIONS.md` and commit it alongside the related code.
 
 ---
 
@@ -174,3 +174,35 @@ If `xcodebuild test` stalls after a clean compile, suspect simulator/XCTest runt
 Deleting the app from device or erasing a simulator **destroys all local app data**. Before any such debugging step, confirm whether data is backed up and warn the user explicitly.
 
 Operations that are safe for data: clean build folder, delete DerivedData, rebuild, restart Xcode/Simulator.
+
+---
+
+## Session end — mandatory
+
+At the end of every working session, before stopping:
+
+1. **Update `WORKLOG.md`** — add an entry for the session: what was done, all commits created, carry-forward items. This is not optional.
+2. **Update `README.md`** — if the product description, architecture, or repository layout changed during the session, update it before closing.
+
+---
+
+## Engineering habits
+
+**Classify failures fast (< 2 min):**
+- Compile error → compiler points to file/line with type/symbol issue → fix the code
+- Tooling/environment → simulator, codesign, sandbox, DerivedData permissions → fix the environment
+
+**Smallest failing command:** keep a minimal repro that proves the bug, use it to verify the fix.
+
+**Simulator stall recovery:**
+```bash
+pkill -f xcodebuild        # kill stale processes
+xcrun simctl shutdown all  # reset simulator state
+./scripts/build-sim.sh     # clean start
+```
+
+**project.pbxproj is a config database, not source code.** When a Swift type is "missing", check target membership / Sources build phase before suspecting the Swift code itself. Always edit it directly when adding new files — never ask the user to add files in Xcode manually.
+
+**Secrets:** never ship API keys in the iOS client. Use the backend relay with server-side keys and a revocable app token in Keychain.
+
+**Commit shape:** each commit tells one story. Don't mix Xcode signing churn with feature logic.
