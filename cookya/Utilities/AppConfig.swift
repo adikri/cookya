@@ -8,6 +8,22 @@ struct AppConfig {
     let supabaseURL: URL
     let supabasePublishableKey: String
 
+    nonisolated init(
+        openAIAPIKey: String,
+        openAIBaseURL: URL,
+        openAIModel: String,
+        backendBaseURL: URL?,
+        supabaseURL: URL = URL(string: "https://localhost")!,
+        supabasePublishableKey: String = ""
+    ) {
+        self.openAIAPIKey = openAIAPIKey
+        self.openAIBaseURL = openAIBaseURL
+        self.openAIModel = openAIModel
+        self.backendBaseURL = backendBaseURL
+        self.supabaseURL = supabaseURL
+        self.supabasePublishableKey = supabasePublishableKey
+    }
+
     nonisolated static var live: AppConfig {
         let env = ProcessInfo.processInfo.environment
         let bundledSecrets = bundledSecretsDictionary()
