@@ -12,6 +12,7 @@ struct ProfileView: View {
     @EnvironmentObject private var recipeStore: RecipeStore
     @EnvironmentObject private var cookedMealStore: CookedMealStore
     @EnvironmentObject private var backendSync: BackendSyncStatusStore
+    @EnvironmentObject private var authStore: AuthStore
     @State private var showConfirmRestore = false
 
     var body: some View {
@@ -101,6 +102,12 @@ struct ProfileView: View {
                         BackendAccessView()
                     } label: {
                         settingsRow("Backend access")
+                    }
+                    Button(role: .destructive) {
+                        Task { await authStore.signOut() }
+                    } label: {
+                        Label("Sign out", systemImage: "rectangle.portrait.and.arrow.right")
+                            .foregroundStyle(.red)
                     }
                 }
 

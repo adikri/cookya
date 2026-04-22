@@ -5,6 +5,8 @@ struct AppConfig {
     let openAIBaseURL: URL
     let openAIModel: String
     let backendBaseURL: URL?
+    let supabaseURL: URL
+    let supabasePublishableKey: String
 
     nonisolated static var live: AppConfig {
         let env = ProcessInfo.processInfo.environment
@@ -34,14 +36,29 @@ struct AppConfig {
             Bundle.main.object(forInfoDictionaryKey: "COOKYA_BACKEND_BASE_URL") as? String
         )
 
+        let supabaseURLString = firstValid(
+            env["SUPABASE_URL"],
+            bundledSecrets["SUPABASE_URL"],
+            Bundle.main.object(forInfoDictionaryKey: "SUPABASE_URL") as? String
+        ) ?? ""
+
+        let supabaseKey = firstValid(
+            env["SUPABASE_PUBLISHABLE_KEY"],
+            bundledSecrets["SUPABASE_PUBLISHABLE_KEY"],
+            Bundle.main.object(forInfoDictionaryKey: "SUPABASE_PUBLISHABLE_KEY") as? String
+        ) ?? ""
+
         let resolvedOpenAIBaseURL = resolvedOpenAIBaseURL(from: baseURLString)
         let resolvedBackendBaseURL = resolvedBackendBaseURL(from: backendBaseURLString)
+        let resolvedSupabaseURL = URL(string: supabaseURLString) ?? URL(string: "https://localhost")!
 
         return AppConfig(
             openAIAPIKey: apiKey,
             openAIBaseURL: resolvedOpenAIBaseURL,
             openAIModel: model,
-            backendBaseURL: resolvedBackendBaseURL
+            backendBaseURL: resolvedBackendBaseURL,
+            supabaseURL: resolvedSupabaseURL,
+            supabasePublishableKey: supabaseKey
         )
     }
 

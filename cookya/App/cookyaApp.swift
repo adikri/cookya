@@ -17,6 +17,7 @@ struct cookyaApp: App {
     @StateObject private var knownItemStore: KnownItemStore
     @StateObject private var backendSyncStatusStore: BackendSyncStatusStore
     @StateObject private var weeklyPlanStore: WeeklyPlanStore
+    @StateObject private var authStore: AuthStore
     private let backupCoordinator: AppBackupCoordinator
 
     init() {
@@ -32,6 +33,7 @@ struct cookyaApp: App {
         _knownItemStore = StateObject(wrappedValue: KnownItemStore(userDefaults: userDefaults))
         _backendSyncStatusStore = StateObject(wrappedValue: BackendSyncStatusStore(userDefaults: userDefaults))
         _weeklyPlanStore = StateObject(wrappedValue: WeeklyPlanStore(userDefaults: userDefaults))
+        _authStore = StateObject(wrappedValue: AuthStore())
 
         backupCoordinator.startObserving()
         AppLogger.log("App launched", metadata: ["logsDirectory": AppLogger.logsDirectoryPath])
@@ -43,7 +45,12 @@ struct cookyaApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if profileStore.hasCompletedOnboarding {
+            if authStore.isLoading {
+                ProgressView()
+            } else if !authStore.isAuthenticated {
+                SignInView()
+                    .environmentObject(authStore)
+            } else if profileStore.hasCompletedOnboarding {
                 MainTabView()
                     .environmentObject(recipeStore)
                     .environmentObject(inventoryStore)
@@ -52,9 +59,11 @@ struct cookyaApp: App {
                     .environmentObject(knownItemStore)
                     .environmentObject(backendSyncStatusStore)
                     .environmentObject(weeklyPlanStore)
+                    .environmentObject(authStore)
             } else {
                 ProfileOnboardingView()
                     .environmentObject(profileStore)
+                    .environmentObject(authStore)
             }
         }
         .onChange(of: scenePhase) { _, newPhase in

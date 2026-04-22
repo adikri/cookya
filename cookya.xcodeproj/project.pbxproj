@@ -75,6 +75,10 @@
 		40D000022F9B010000D3C60A /* PlannedMeal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D000012F9B000000D3C60A /* PlannedMeal.swift */; };
 		40D000042F9B010000D3C60A /* WeeklyPlanStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D000032F9B000000D3C60A /* WeeklyPlanStore.swift */; };
 		40D000062F9B010000D3C60A /* WeeklyMealPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D000052F9B000000D3C60A /* WeeklyMealPlanView.swift */; };
+		40E000032F9C000000D3C60A /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 40E000022F9C000000D3C60A /* Supabase */; };
+		40E000042F9C010000D3C60A /* SupabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000052F9C000000D3C60A /* SupabaseManager.swift */; };
+		40E000062F9C010000D3C60A /* AuthStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000072F9C000000D3C60A /* AuthStore.swift */; };
+		40E0000B2F9C010000D3C60A /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000092F9C000000D3C60A /* SignInView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -168,6 +172,9 @@
 		40D000012F9B000000D3C60A /* PlannedMeal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannedMeal.swift; sourceTree = "<group>"; };
 		40D000032F9B000000D3C60A /* WeeklyPlanStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyPlanStore.swift; sourceTree = "<group>"; };
 		40D000052F9B000000D3C60A /* WeeklyMealPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyMealPlanView.swift; sourceTree = "<group>"; };
+		40E000052F9C000000D3C60A /* SupabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseManager.swift; sourceTree = "<group>"; };
+		40E000072F9C000000D3C60A /* AuthStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthStore.swift; sourceTree = "<group>"; };
+		40E000092F9C000000D3C60A /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -188,6 +195,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				40E000032F9C000000D3C60A /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,6 +289,7 @@
 				402655542F59A83600D3C60A /* HomeView.swift */,
 				402655622F59AB7E00D3C60A /* MainTabView.swift */,
 				40D000052F9B000000D3C60A /* WeeklyMealPlanView.swift */,
+				40E000092F9C000000D3C60A /* SignInView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -335,6 +344,8 @@
 				40A1000C2F5A060000D3C60A /* RecipeGeneratingService.swift */,
 				40A1000A2F5A030000D3C60A /* RecipeStore.swift */,
 				40D000032F9B000000D3C60A /* WeeklyPlanStore.swift */,
+				40E000052F9C000000D3C60A /* SupabaseManager.swift */,
+				40E000072F9C000000D3C60A /* AuthStore.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -395,6 +406,7 @@
 			);
 			name = cookya;
 			packageProductDependencies = (
+				40E000022F9C000000D3C60A /* Supabase */,
 			);
 			productName = cookya;
 			productReference = 402655282F599F4B00D3C60A /* cookya.app */;
@@ -480,6 +492,9 @@
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 402655292F599F4B00D3C60A /* Products */;
+			packages = (
+				40E000012F9C000000D3C60A /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -610,6 +625,9 @@
 				40D000022F9B010000D3C60A /* PlannedMeal.swift in Sources */,
 				40D000042F9B010000D3C60A /* WeeklyPlanStore.swift in Sources */,
 				40D000062F9B010000D3C60A /* WeeklyMealPlanView.swift in Sources */,
+				40E000042F9C010000D3C60A /* SupabaseManager.swift in Sources */,
+				40E000062F9C010000D3C60A /* AuthStore.swift in Sources */,
+				40E0000B2F9C010000D3C60A /* SignInView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -641,6 +659,25 @@
 			targetProxy = 402655402F599F4D00D3C60A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		40E000012F9C000000D3C60A /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		40E000022F9C000000D3C60A /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 40E000012F9C000000D3C60A /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCBuildConfiguration section */
 		402655472F599F4D00D3C60A /* Debug */ = {
