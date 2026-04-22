@@ -18,6 +18,34 @@ Use this file to keep daily planning and end-of-day progress visible.
 - Note what carries into the next session
 - Push to GitHub after the wrap-up
 
+### If tokens run out mid-session (interrupt)
+- Claude maintains `RESUME.md` automatically throughout each session — no manual action needed
+- The next session reads `RESUME.md` first and picks up from **Exact next step**
+
+**When resumed work completes**, Claude adds a `### Session Resumed` block to that day's entry:
+```
+### Session Resumed — <date> ~<time>
+*(Carried from interrupted session)*
+- Was working on: <...>
+- Done at resume: <...>
+```
+
+---
+
+## 2026-04-22 (continued)
+
+### Done (session 2)
+- Added `CLAUDE.md` — codebase guidance for future Claude sessions (build commands, architecture, conventions)
+- Added `RESUME.md` — automated interrupt checkpoint system (Claude maintains it throughout sessions)
+- Updated `WORKLOG.md` — documented interrupt/resume pattern
+- Product design review: shifted product direction to nutrition-first (health-conscious use case)
+- Locked roadmap: nutrition layer → nutrition home → saved hub → Supabase → Android
+
+### Carry Forward
+- Commit + PR this branch (`codex/home-recommendation-extraction`) — meta files only
+- Branch `codex/nutrition-layer`: Recipe macros, NutritionGoals in UserProfile, OpenAI schema, Worker schema
+- Branch `codex/nutrition-home`: Home progress card, tonight's pick, HomeRecommendationEngine nutrition awareness
+
 ---
 
 ## 2026-04-22
