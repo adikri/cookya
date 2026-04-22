@@ -32,6 +32,25 @@ Use this file to keep daily planning and end-of-day progress visible.
 
 ---
 
+## 2026-04-23 (session 4)
+
+### Done
+- Supabase auth foundation: sign in, sign up, session restore, sign out
+- Root cause of sign-up failure: Bundle Local Secrets build phase only extracted 3 keys — SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY were never written to LocalSecrets.plist. Fixed the build phase script.
+- AppConfig firstValid() hardened to reject any unexpanded $(VAR) build setting
+- SPM lesson: packages must be added via Xcode UI (File → Add Package Dependencies), not hand-editing project.pbxproj
+- Doc system enforced: all rules already existed, execution gap identified and called out
+
+### Commits
+- `fe946f1` Add Supabase auth: sign in, sign up, session restore, sign out
+
+### Carry Forward
+- Next slice: `codex/supabase-foundation` continues with database schema — PostgreSQL tables for pantry, grocery, saved recipes, cooked records, weekly plan, profile
+- Replace BackendInventoryService (Cloudflare KV) with Supabase client
+- Consider: create a new branch `codex/supabase-schema` for the data layer
+
+---
+
 ## 2026-04-22 (session 3)
 
 ### Done
