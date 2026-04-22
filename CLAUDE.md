@@ -28,6 +28,8 @@ When the interrupted work is committed cleanly:
 
 Read `PLANNING.md` first — it is the product and engineering source of truth. It defines what is Built, Active, Next, and Later, and contains the architecture conventions to follow.
 
+Read `DECISIONS.md` for the reasoning behind significant past decisions. When a new significant decision is made (architecture, product direction, tooling), add an entry to `DECISIONS.md` and commit it alongside the related code.
+
 ---
 
 ## Build and test commands
