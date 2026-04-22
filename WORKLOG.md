@@ -32,6 +32,56 @@ Use this file to keep daily planning and end-of-day progress visible.
 
 ---
 
+## 2026-04-23 (session 5)
+
+### Done
+- Audited codebase for security, testing, logging, and debugging gaps (comprehensive agent report)
+- Added 11 tests to `WeeklyPlanStoreTests`: CRUD, max capacity, persistence, bad data recovery
+- Fixed AppConfig to support `nonisolated init` with default Supabase parameters for backward compatibility
+- Added security decision to DECISIONS.md: which keys are safe to bundle + RLS as critical prerequisite for Supabase
+- Updated PLANNING.md: flagged RLS as required before schema goes live
+
+### Commits
+- `5daf574` Add WeeklyPlanStore tests: CRUD, max capacity, persistence, bad data
+
+### Audit Summary (gaps identified)
+
+**Security**
+- Worker rate limiting is in-memory only (no KV persistence)
+- No CORS restrictions on Worker endpoints
+- Supabase publishable key bundled — safe only with RLS in place
+
+**Testing** — Critical gap
+- AuthStore (session 4 work): 0 tests
+- CookedMealStore nutrition methods: 0 tests
+- NutritionGoals formula: 0 tests
+- WeeklyPlanStore: **11 tests added this session** ✅
+- Supabase integration: 0 tests
+- Weekly plan view logic: 0 tests
+- 25 existing regression tests (strong base)
+
+**Logging** — Significant gap
+- Missing: SupabaseManager init logging, CookedMealStore add/delete tracking, profile onboarding completion, which recommendation was shown on Home, recipe generation fallback path
+- Missing: request/response logging for network calls, performance timing, structured log levels
+- No AppLogger in 6 new files from sessions 3–4
+
+**Debugging**
+- No real-time console output (AppLogger writes to files only)
+- No request/response inspection for network failures
+- No performance metrics on async operations
+- DebugLogsView is DEBUG-only
+
+### Next Tech Debt Work (priority order)
+1. Add logging to: SupabaseManager init, CookedMealStore add/delete, recipe generation fallback, recommendation display
+2. AuthStore tests (mock Supabase SDK, test all 4 paths + error cases)
+3. Request/response logging for critical network calls
+
+### Carry Forward
+- `codex/supabase-foundation`: Supabase database schema + RLS policies (required before sync)
+- Replace BackendInventoryService with Supabase client after schema is live
+
+---
+
 ## 2026-04-23 (session 4)
 
 ### Done

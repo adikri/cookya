@@ -5,6 +5,24 @@ Format: date · decision · options considered · reason.
 
 ---
 
+## 2026-04-23
+
+### Which keys are safe to bundle in the app binary
+
+**Decision:** Bundle `SUPABASE_PUBLISHABLE_KEY` and `COOKYA_BACKEND_BASE_URL`. Never bundle `OPENAI_API_KEY`. Store `COOKYA_APP_TOKEN` in Keychain only.
+
+**Options considered:** Bundle all non-secret config; bundle nothing and fetch at runtime; apply same rule to all keys.
+
+**Reason:**
+- `OPENAI_API_KEY` bills money if leaked — must never leave the server. Goes through the Cloudflare Worker relay permanently.
+- `COOKYA_APP_TOKEN` authenticates the app to the Worker — user enters it at runtime, stored in Keychain. Not bundled.
+- `SUPABASE_PUBLISHABLE_KEY` is intentionally public (equivalent to Firebase's web API key). Safe to bundle *because* Supabase's Row Level Security (RLS) is the real protection layer — the key alone grants nothing beyond what RLS policies allow.
+- `COOKYA_BACKEND_BASE_URL` is a URL with no auth value.
+
+**Critical prerequisite:** The Supabase publishable key being bundled is only safe once RLS policies are in place on every table. Until then, the anon key gives unrestricted access to all data. RLS setup is a required part of `codex/supabase-schema`, not an optional follow-up.
+
+---
+
 ## 2026-04-22
 
 ### Android-first distribution strategy
