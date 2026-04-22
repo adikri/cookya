@@ -318,11 +318,20 @@ private struct SavedRecipeRow: View {
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
-            Text("\(saved.recipe.difficulty.rawValue.capitalized) • \(saved.recipe.calories) kcal • \(saved.profileNameSnapshot)")
+            Text(savedRecipeMetaLine)
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
         .padding(.vertical, 4)
+    }
+
+    private var savedRecipeMetaLine: String {
+        var parts = [saved.recipe.difficulty.rawValue.capitalized, "\(saved.recipe.calories) kcal"]
+        if saved.recipe.protein > 0 {
+            parts.append("~\(saved.recipe.protein)g protein")
+        }
+        parts.append(saved.profileNameSnapshot)
+        return parts.joined(separator: " • ")
     }
 }
 
@@ -403,6 +412,7 @@ struct SavedRecipeDetailView: View {
             recipe: saved.recipe,
             headerFootnote: "Saved on \(saved.savedAt.formatted(date: .abbreviated, time: .shortened))",
             primaryReadyActionTitle: "Cook This",
+            nutritionGap: cookedMealStore.nutritionGap(for: profileStore.activeProfile),
             onCook: {
                 AppLogger.action(
                     "saved_recipe_cook_again_tapped",
@@ -530,6 +540,7 @@ private struct RecipePlanningView: View {
     let recipe: Recipe
     let headerFootnote: String?
     let primaryReadyActionTitle: String
+    var nutritionGap: NutritionGap? = nil
     let onCook: () -> Void
     let onAddMissingToGrocery: () -> Void
 
@@ -555,6 +566,29 @@ private struct RecipePlanningView: View {
                 }
             } header: {
                 Text("Recipe")
+            }
+
+            if recipe.protein > 0 || recipe.carbs > 0 || recipe.fat > 0 || recipe.fiber > 0 {
+                Section {
+                    LabeledContent("Calories", value: "\(recipe.calories) kcal")
+                    LabeledContent("Protein", value: "\(recipe.protein)g")
+                    if recipe.carbs > 0 {
+                        LabeledContent("Carbs", value: "\(recipe.carbs)g")
+                    }
+                    if recipe.fat > 0 {
+                        LabeledContent("Fat", value: "\(recipe.fat)g")
+                    }
+                    if recipe.fiber > 0 {
+                        LabeledContent("Fiber", value: "\(recipe.fiber)g")
+                    }
+                    if let gap = nutritionGap, gap.remainingProteinG > 0, recipe.protein > 0 {
+                        let pct = min(100, Int(Double(recipe.protein) / Double(gap.remainingProteinG) * 100))
+                        LabeledContent("Goal fit", value: "Covers ~\(pct)% of your remaining protein goal today")
+                            .foregroundStyle(.green)
+                    }
+                } header: {
+                    Text("Macros")
+                }
             }
 
             Section {

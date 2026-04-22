@@ -138,11 +138,11 @@ The use case is a health-conscious user who wants nutritionally dense home-cooke
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Macros on Recipe (protein, carbs, fat, fiber) | **Next** | Extend OpenAI structured output schema. `CookedMealRecord` and `SavedRecipe` also need macros. |
-| NutritionGoals in UserProfile | **Next** | Auto-calculated from weight/height/age; user-overridable. |
-| Today’s nutrition progress on Home | **Next** | Derived from `CookedMealStore`. The feedback loop that makes the app sticky. |
-| Goal-aware recipe generation | **Next** | Pass daily nutrition gap to OpenAI prompt. Prompt change, not architecture change. |
-| "Tonight’s pick" — one opinionated answer | **Next** | Extend `HomeRecommendationEngine` to factor in nutrition gap. One card with visible reasoning, not a list. |
+| Macros on Recipe (protein, carbs, fat, fiber) | **Built** | OpenAI structured output schema extended. `CookedMealRecord` and `SavedRecipe` carry macro snapshots. |
+| NutritionGoals in UserProfile | **Built** | Auto-calculated from weight/height/age (Mifflin-St Jeor); user-overridable. |
+| Today’s nutrition progress on Home | **Built** | Calories + protein progress bars on HomeView, derived from `CookedMealStore.todayNutrition`. |
+| Goal-aware recipe generation | **Built** | Daily nutrition gap passed to OpenAI prompt on both iOS and Worker paths. |
+| "Tonight’s pick" — one opinionated answer | **Built** | `HomeRecommendationEngine` promotes highest-protein ready recipe when gap > 20g, with visible reason string. |
 
 Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home` (UI + recommendation engine).
 
@@ -153,7 +153,7 @@ Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home`
 |------|--------|-------|
 | Reusable planning detail | **Built** | Readiness, grouped ingredients, cook vs grocery CTA. |
 | Home -> planning detail routing | **Built** | Saved-recipe recommendations now deep-link into planning detail. |
-| Saved planning hub | **Deferred** | Was Active — deferring until nutrition layer is in. Will be richer with nutrition data. |
+| Saved planning hub | **Next** | Nutrition layer is now in. Richer view of saved recipes with readiness, macros, and goal fit. |
 | Recipe entry points beyond Saved/Home | **Next** | Add a clearer recipe-first starting surface. |
 | Dish-name search | **Later** | Search for a target meal and compare it against pantry. |
 | Pantry comparison + grocery add everywhere | **Next** | Reuse planning detail for all recipe-first flows. |
@@ -164,7 +164,7 @@ Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home`
 | Item | Status | Notes |
 |------|--------|-------|
 | Home best-next-step recommendations | **Built** | `HomeRecommendationEngine` extracted and tested. |
-| Tonight’s pick (single opinionated answer) | **Next** | Part of Phase N — extends `HomeRecommendationEngine` with nutrition awareness. |
+| Tonight’s pick (single opinionated answer) | **Built** | Part of Phase N — `HomeRecommendationEngine` extended with nutrition gap. |
 | Weekly meal planning | **Next** | Pick 5-7 meals for the week, auto-generate grocery list. Follows Phase N. |
 | Meal prep suggestions | **Next** | "Prep X on Sunday for Monday + Tuesday." Follows weekly planning. |
 | Time-aware recipe generation | **Later** | Constrain recipes by available cooking time. |
@@ -183,12 +183,12 @@ Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home`
 
 ### Recommended near-term order
 
-1. `codex/nutrition-layer` — Recipe macros + NutritionGoals in UserProfile + OpenAI schema
-2. `codex/nutrition-home` — Home progress card + tonight’s pick
-3. Quick cleanup: store decode hardening + recipe cache eviction
-4. `codex/saved-planning-hub` — now richer with nutrition data
+1. ~~`codex/nutrition-layer` — Recipe macros + NutritionGoals in UserProfile + OpenAI schema~~ **Done**
+2. ~~`codex/nutrition-home` — Home progress card + tonight’s pick~~ **Done**
+3. ~~Quick cleanup: store decode hardening + recipe cache eviction~~ **Done**
+4. `codex/saved-planning-hub` — saved recipes with readiness, macros, and goal fit **← current**
 5. `codex/weekly-meal-plan` — weekly planning + grocery generation
-6. `codex/supabase-foundation` — real auth + sync (can overlap with #4–5)
+6. `codex/supabase-foundation` — real auth + sync (can overlap with #5)
 
 ---
 
