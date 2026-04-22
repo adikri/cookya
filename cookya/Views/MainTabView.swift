@@ -13,6 +13,7 @@ struct MainTabView: View {
     @EnvironmentObject private var inventoryStore: InventoryStore
     @EnvironmentObject private var cookedMealStore: CookedMealStore
     @EnvironmentObject private var knownItemStore: KnownItemStore
+    @EnvironmentObject private var weeklyPlanStore: WeeklyPlanStore
 
     var body: some View {
         TabView {
@@ -27,6 +28,11 @@ struct MainTabView: View {
                     Label("Saved", systemImage: "bookmark")
                 }
 
+            WeeklyMealPlanView()
+                .tabItem {
+                    Label("Plan", systemImage: "calendar")
+                }
+
             ProfileView()
                 .tabItem {
                     Label("Profile", systemImage: "person")
@@ -38,6 +44,7 @@ struct MainTabView: View {
             inventoryStore.reloadFromDisk()
             cookedMealStore.reloadFromDisk()
             knownItemStore.reloadFromDisk()
+            weeklyPlanStore.reloadFromDisk()
             AppLogger.action("backup_import_reloaded")
         }
     }
@@ -50,5 +57,6 @@ struct MainTabView_Previews: PreviewProvider {
             .environmentObject(InventoryStore())
             .environmentObject(ProfileStore())
             .environmentObject(CookedMealStore())
+            .environmentObject(WeeklyPlanStore())
     }
 }
