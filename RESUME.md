@@ -1,25 +1,15 @@
 ## Interrupted: 2026-04-22
 
 **Branch:** codex/nutrition-layer
-**Last commit:** 2089c58 (Update PLANNING.md to nutrition-first roadmap)
+**Last commit:** 3ffcd6a (Add nutrition layer: macros, goals, goal-aware generation, and test infra fix)
 
 **Was working on:**
-Building the nutrition layer — Recipe macros, NutritionGoals in UserProfile, CookedMealRecord macro snapshot, OpenAI/Worker schema changes, goal-aware generation prompt.
+Bug fix: worker purchase endpoint duplicate pantry item.
 
 **Done this session (not yet committed):**
-- (in progress)
+- Fixed `worker/src/index.ts`: `POST /v1/grocery/{id}/purchase` now uses `id: id` instead of `id: crypto.randomUUID()` so the returned pantry item's ID matches the local placeholder iOS already inserted. Prevents duplicate pantry entries on first purchase of an ingredient (and on fresh purchase when an expired item of the same name exists).
+- Updated `PLANNING.md`: Phase A items 3 & 4 (recipe cache eviction, store hardening) marked Built; section 4 debt list trimmed to reflect current reality.
 
 **Exact next step:**
-1. Create `cookya/Models/NutritionGoals.swift` and add to project
-2. Update `Recipe.swift` — add protein/carbs/fat/fiber
-3. Update `CookedMealRecord.swift` — add macro snapshot fields
-4. Update `UserProfile.swift` — add nutritionGoals field
-5. Update `RecipeGenerationRequest.swift` — add nutritionGap
-6. Update `CookedMealStore.swift` — macro snapshot + todayNutrition()
-7. Update `OpenAIRecipeService.swift` — extend schema + prompt
-8. Update `BackendRecipeService.swift` — pass nutritionGap
-9. Update `worker/src/index.ts` — extend Recipe type + schema + prompt
-10. Update `RecipeViewModel.swift` — accept nutritionGap param
-
-**Open questions / blockers:**
-None.
+1. Commit these changes (worker fix + PLANNING.md update)
+2. Continue with Phase N nutrition-home: Today's nutrition progress card on HomeView + "Tonight's pick" recommendation

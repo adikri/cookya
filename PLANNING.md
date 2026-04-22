@@ -89,21 +89,15 @@ These are the main technical priorities that still matter.
 
 ### Next
 
-1. **Data durability / backup**
-   - the app is useful enough now that reinstall/device-loss risk matters
-   - add lightweight cloud backup or another durable persistence layer before relying on the app long-term
-
-2. **Move high-value logic out of Views incrementally**
+1. **Move high-value logic out of Views incrementally**
    - `HomeView` still contains too much recommendation logic
    - `SavedRecipesView` now has planning-hub shaping logic that should eventually move toward a dedicated ViewModel/service-backed layer
 
-3. **Verify recipe cache bounds**
-   - confirm whether generated recipe cache eviction exists
-   - if not, add a simple capped policy
+### Done (no longer open)
 
-4. **Harden store decode / persist failures**
-   - log decode fallbacks explicitly
-   - use debug assertions where encode failures should never be silent
+- **Data durability / backup** — KV snapshot via Cloudflare Worker.
+- **Recipe cache eviction policy** — `GeneratedRecipeCachePolicy`: LRU, capped at 50, tested.
+- **Harden store decode / persist failures** — `AppLogger` on all decode fallbacks; `assertionFailure` on encode failures in all stores.
 
 ### Later
 
@@ -132,8 +126,8 @@ Use these markers consistently:
 |------|--------|-------|
 | Lightweight cloud/data backup | **Built** | KV snapshot via Cloudflare Worker. |
 | Backend recipe generation relay (no client OpenAI key) | **Built** | Cloudflare Worker with static token auth. |
-| Store decode/persist hardening | **Next** | Log silent fallbacks; assert on impossible encode failures in DEBUG. |
-| Recipe cache eviction policy | **Next** | Cap generated recipe cache if still unbounded. |
+| Store decode/persist hardening | **Built** | AppLogger on decode fallbacks; assertionFailure on encode failures in all stores. |
+| Recipe cache eviction policy | **Built** | GeneratedRecipeCachePolicy: LRU eviction, cap of 50, tested. |
 | Home recommendation extraction | **Built** | `HomeRecommendationEngine` extracted with full test coverage. |
 | Broader test coverage | **Later** | Extend beyond current regression coverage. |
 

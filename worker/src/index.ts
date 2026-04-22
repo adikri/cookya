@@ -532,7 +532,7 @@ export default {
 
         const pantry = await kvGetJson<PantryItem[]>(kv, kvKey(authCtx, "pantry"), []);
         const pantryItem: PantryItem = {
-          id: crypto.randomUUID(),
+          id: id,
           name: body.name,
           quantityText: body.quantityText ?? "",
           category: body.category ?? "pantry",
