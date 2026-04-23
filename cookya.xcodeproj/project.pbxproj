@@ -78,6 +78,7 @@
 		40D000062F9B010000D3C60A /* WeeklyMealPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D000052F9B000000D3C60A /* WeeklyMealPlanView.swift */; };
 		40E000042F9C010000D3C60A /* SupabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000052F9C000000D3C60A /* SupabaseManager.swift */; };
 		40E000062F9C010000D3C60A /* AuthStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000072F9C000000D3C60A /* AuthStore.swift */; };
+		40E000082F9C010000D3C60B /* AuthServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000092F9C000000D3C60B /* AuthServiceProtocol.swift */; };
 		40E0000B2F9C010000D3C60A /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000092F9C000000D3C60A /* SignInView.swift */; };
 /* End PBXBuildFile section */
 
@@ -175,6 +176,7 @@
 		40E000052F9C000000D3C60A /* SupabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseManager.swift; sourceTree = "<group>"; };
 		40E000072F9C000000D3C60A /* AuthStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthStore.swift; sourceTree = "<group>"; };
 		40E000092F9C000000D3C60A /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
+		40E000092F9C000000D3C60B /* AuthServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthServiceProtocol.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -347,6 +349,7 @@
 				40D000032F9B000000D3C60A /* WeeklyPlanStore.swift */,
 				40E000052F9C000000D3C60A /* SupabaseManager.swift */,
 				40E000072F9C000000D3C60A /* AuthStore.swift */,
+				40E000092F9C000000D3C60B /* AuthServiceProtocol.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -635,6 +638,7 @@
 				40D000062F9B010000D3C60A /* WeeklyMealPlanView.swift in Sources */,
 				40E000042F9C010000D3C60A /* SupabaseManager.swift in Sources */,
 				40E000062F9C010000D3C60A /* AuthStore.swift in Sources */,
+				40E000082F9C010000D3C60B /* AuthServiceProtocol.swift in Sources */,
 				40E0000B2F9C010000D3C60A /* SignInView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -828,13 +832,13 @@
 				OPENAI_API_KEY = "$(inherited)";
 				OPENAI_BASE_URL = "$(inherited)";
 				OPENAI_MODEL = "$(inherited)";
-				SUPABASE_PUBLISHABLE_KEY = "$(inherited)";
-				SUPABASE_URL = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.adityakrishna.cookya;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPABASE_PUBLISHABLE_KEY = "$(inherited)";
+				SUPABASE_URL = "$(inherited)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -884,13 +888,13 @@
 				OPENAI_API_KEY = "$(inherited)";
 				OPENAI_BASE_URL = "$(inherited)";
 				OPENAI_MODEL = "$(inherited)";
-				SUPABASE_PUBLISHABLE_KEY = "$(inherited)";
-				SUPABASE_URL = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.adityakrishna.cookya;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPABASE_PUBLISHABLE_KEY = "$(inherited)";
+				SUPABASE_URL = "$(inherited)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;

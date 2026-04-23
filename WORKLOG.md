@@ -72,11 +72,23 @@ Use this file to keep daily planning and end-of-day progress visible.
 - DebugLogsView is DEBUG-only
 
 ### Next Tech Debt Work (priority order)
-1. Add logging to: SupabaseManager init, CookedMealStore add/delete, recipe generation fallback, recommendation display
-2. AuthStore tests (mock Supabase SDK, test all 4 paths + error cases)
+1. ~~Add logging to: SupabaseManager init, CookedMealStore add/delete, recipe generation fallback, recommendation display~~ ✅ Done session 6
+2. ~~AuthStore tests (mock Supabase SDK, test all 4 paths + error cases)~~ ✅ Done session 6
 3. Request/response logging for critical network calls
 
+## 2026-04-23 (session 6)
+
+### Done
+- **Logging slice**: Added AppLogger to SupabaseManager init, CookedMealStore add/delete, BackendRecipeService fallback paths (both), HomeView recommendation display
+- **AuthStore tests slice**: Extracted `AuthServiceProtocol` + `LiveAuthService` to make AuthStore testable without a real Supabase client; exposed `sessionRestoreTask` for awaiting in tests; fixed sign-out bug (session now always cleared on sign-out regardless of server call result); 9 tests covering sign-in success/failure, sign-up with/without session, sign-up network failure, sign-out success/failure, session restore success/failure, isLoading state
+- **SOP established**: docs updated per slice, committed together with code (not batched at session end)
+
+### Commits
+- `af192c1` Add AppLogger to SupabaseManager, CookedMealStore, recipe fallback, and Home recommendation
+- *(AuthStore tests — pending commit)*
+
 ### Carry Forward
+- Tech debt #3: Request/response logging for critical network calls (BackendRecipeService, InventorySyncingService)
 - `codex/supabase-foundation`: Supabase database schema + RLS policies (required before sync)
 - Replace BackendInventoryService with Supabase client after schema is live
 

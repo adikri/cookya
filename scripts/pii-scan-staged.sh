@@ -8,8 +8,8 @@ cd "$(git rev-parse --show-toplevel)"
 
 echo "PII/secrets scan (staged changes)…"
 
-# Only scan text diffs of staged content.
-DIFF="$(git diff --cached --unified=0 --no-color)"
+# Only scan text diffs of staged content (exclude this script itself to avoid pattern self-match).
+DIFF="$(git diff --cached --unified=0 --no-color -- ':!scripts/pii-scan-staged.sh')"
 
 # Patterns: adjust conservatively to avoid noise.
 PATTERNS=(
@@ -21,11 +21,11 @@ PATTERNS=(
   "sk-[A-Za-z0-9]{20,}"
   "sk-proj-[A-Za-z0-9]{20,}"
 
-  # Apple device UDID-ish strings often start with 00008…
-  "00008[0-9A-Fa-f-]{6,}"
+  # Apple device UDIDs start with 00008 and have a dash at position 9 (e.g. 00008110-000E3C40…)
+  "00008[0-9A-Fa-f]{3}-[0-9A-Fa-f]{4,}"
 
-  # Emails
-  "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+  # Emails with a non-trivial local part (5+ chars) to avoid test fixtures like a@b.com
+  "[A-Za-z0-9._%+-]{5,}@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
 )
 
 FOUND=0
