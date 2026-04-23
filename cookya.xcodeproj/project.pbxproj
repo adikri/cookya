@@ -53,6 +53,7 @@
 		40A100482F5D000000D3C60A /* CookedHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100492F5D000000D3C60A /* CookedHistoryView.swift */; };
 		40A1004A2F5D000000D3C60A /* PurchaseExpirySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1004B2F5D000000D3C60A /* PurchaseExpirySheet.swift */; };
 		40A100502F5D300000D3C60A /* KnownInventoryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100512F5D300000D3C60A /* KnownInventoryItem.swift */; };
+		40A100522F5D300000D3C60B /* PantryItemCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100532F5D300000D3C60B /* PantryItemCatalog.swift */; };
 		40A100522F5D300000D3C60A /* KnownItemStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100532F5D300000D3C60A /* KnownItemStore.swift */; };
 		40A100542F5D300000D3C60A /* KnownItemPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100552F5D300000D3C60A /* KnownItemPickerView.swift */; };
 		40A100562F5D300000D3C60A /* StructuredQuantity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100572F5D300000D3C60A /* StructuredQuantity.swift */; };
@@ -153,6 +154,7 @@
 		40A1004C2F5D100000D3C60A /* AppDefaults.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppDefaults.xcconfig; sourceTree = "<group>"; };
 		40A1004D2F5D100000D3C60A /* Secrets.xcconfig.example */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig.example; sourceTree = "<group>"; };
 		40A100512F5D300000D3C60A /* KnownInventoryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnownInventoryItem.swift; sourceTree = "<group>"; };
+		40A100532F5D300000D3C60B /* PantryItemCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryItemCatalog.swift; sourceTree = "<group>"; };
 		40A100532F5D300000D3C60A /* KnownItemStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnownItemStore.swift; sourceTree = "<group>"; };
 		40A100552F5D300000D3C60A /* KnownItemPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnownItemPickerView.swift; sourceTree = "<group>"; };
 		40A100572F5D300000D3C60A /* StructuredQuantity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructuredQuantity.swift; sourceTree = "<group>"; };
@@ -328,6 +330,7 @@
 				40A100572F5D300000D3C60A /* StructuredQuantity.swift */,
 				40A100152F5B000000D3C60A /* UserProfile.swift */,
 				40A100512F5D300000D3C60A /* KnownInventoryItem.swift */,
+				40A100532F5D300000D3C60B /* PantryItemCatalog.swift */,
 				40D000012F9B000000D3C60A /* PlannedMeal.swift */,
 			);
 			path = Models;
@@ -611,6 +614,7 @@
 				40A100642F5D500000D3C60A /* HomeRecommendationEngine.swift in Sources */,
 				40A1005E2F5D300000D3C60A /* PersistencePayloadValidator.swift in Sources */,
 				40A100502F5D300000D3C60A /* KnownInventoryItem.swift in Sources */,
+				40A100522F5D300000D3C60B /* PantryItemCatalog.swift in Sources */,
 				40A100542F5D300000D3C60A /* KnownItemPickerView.swift in Sources */,
 				40A1000F2F5A060000D3C60A /* OpenAIRecipeService.swift in Sources */,
 				40A1005C2F5D300000D3C60A /* AppBackupCoordinator.swift in Sources */,

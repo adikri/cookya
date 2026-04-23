@@ -7,7 +7,9 @@ struct GroceryListView: View {
     @EnvironmentObject private var cookedMealStore: CookedMealStore
 
     @State private var editorItem: GroceryItem?
+    @State private var isShowingItemPicker = false
     @State private var isAddingItem = false
+    @State private var pickerSelection: KnownInventoryItem?
     @State private var purchaseItem: GroceryItem?
     @State private var purchaseFeedbackMessage: String?
     @State private var deletedGroceryItem: GroceryItem?
@@ -93,7 +95,7 @@ struct GroceryListView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    isAddingItem = true
+                    isShowingItemPicker = true
                 } label: {
                     Label("Add Grocery Item", systemImage: "plus")
                 }
@@ -102,8 +104,17 @@ struct GroceryListView: View {
         .refreshable {
             await inventoryStore.refresh()
         }
+        .sheet(isPresented: $isShowingItemPicker) {
+            KnownItemPickerView(title: "Add Grocery Item") { suggestion in
+                isAddingItem = true
+                pickerSelection = suggestion
+            } onAddNew: {
+                isAddingItem = true
+                pickerSelection = nil
+            }
+        }
         .sheet(isPresented: $isAddingItem) {
-            GroceryItemEditorView(item: nil) { item in
+            GroceryItemEditorView(item: nil, prefill: pickerSelection) { item in
                 Task { await inventoryStore.saveGroceryItem(item) }
             }
         }

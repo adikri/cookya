@@ -6,55 +6,55 @@ struct KnownItemPickerView: View {
 
     let title: String
     let onSelect: (KnownInventoryItem) -> Void
+    let onAddNew: () -> Void
 
     @State private var searchText = ""
 
     var body: some View {
         NavigationStack {
             List {
-                if filteredItems.isEmpty {
+                if !historyItems.isEmpty {
+                    Section {
+                        ForEach(historyItems) { item in
+                            itemRow(item, subtitle: historySubtitle(item))
+                        }
+                    } header: {
+                        Text("Recent")
+                    }
+                }
+
+                if !catalogResults.isEmpty {
+                    Section {
+                        ForEach(catalogResults) { item in
+                            itemRow(item.asKnownItem(), subtitle: item.category.displayName)
+                        }
+                    } header: {
+                        Text(searchText.isEmpty ? "Common Items" : "Catalog")
+                    }
+                }
+
+                if historyItems.isEmpty && catalogResults.isEmpty {
                     ContentUnavailableView(
-                        "No remembered items",
-                        systemImage: "tray",
-                        description: Text(searchText.isEmpty ? "Once you save Pantry or Grocery items, they’ll appear here for quick reuse." : "No remembered items match your search.")
+                        "No matches",
+                        systemImage: "magnifyingglass",
+                        description: Text("Try a different search, or add a new item.")
                     )
                     .listRowBackground(Color.clear)
-                } else {
-                    ForEach(filteredItems) { item in
-                        Button {
-                            AppLogger.action(
-                                "known_item_picker_selected",
-                                screen: title,
-                                metadata: [
-                                    "item": item.name,
-                                    "source": item.lastSource.rawValue
-                                ]
-                            )
-                            onSelect(item)
-                            dismiss()
-                        } label: {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(item.name)
-                                        .foregroundStyle(.primary)
-                                    Text(itemSubtitle(item))
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.caption.weight(.semibold))
-                                    .foregroundStyle(.tertiary)
-                            }
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
+                }
+
+                Section {
+                    Button {
+                        dismiss()
+                        onAddNew()
+                    } label: {
+                        Label("Add new item", systemImage: "plus.circle")
+                            .foregroundStyle(.tint)
                     }
                 }
             }
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $searchText, prompt: "Search remembered items")
+            .searchable(text: $searchText, prompt: "Search items")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") { dismiss() }
@@ -63,14 +63,54 @@ struct KnownItemPickerView: View {
         }
     }
 
-    private var filteredItems: [KnownInventoryItem] {
+    @ViewBuilder
+    private func itemRow(_ item: KnownInventoryItem, subtitle: String) -> some View {
+        Button {
+            AppLogger.action(
+                "item_picker_selected",
+                screen: title,
+                metadata: ["item": item.name]
+            )
+            onSelect(item)
+            dismiss()
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(item.name)
+                        .foregroundStyle(.primary)
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                if !item.lastQuantityText.isEmpty {
+                    Text(item.lastQuantityText)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var historyItems: [KnownInventoryItem] {
         knownItemStore.suggestions(matching: searchText)
     }
 
-    private func itemSubtitle(_ item: KnownInventoryItem) -> String {
-        let detail = item.lastQuantityText.isEmpty
-            ? item.defaultCategory.displayName
-            : "\(item.lastQuantityText) • \(item.defaultCategory.displayName)"
-        return "Last used in \(item.lastSource.rawValue.capitalized) • \(detail)"
+    private var catalogResults: [CatalogItem] {
+        let historyNames = Set(historyItems.map { KnownInventoryItemNormalizer.normalize($0.name) })
+        return PantryItemCatalog.items(matching: searchText)
+            .filter { !historyNames.contains(KnownInventoryItemNormalizer.normalize($0.name)) }
+            .prefix(searchText.isEmpty ? 30 : 50)
+            .map { $0 }
+    }
+
+    private func historySubtitle(_ item: KnownInventoryItem) -> String {
+        let parts: [String] = [
+            item.defaultCategory.displayName,
+            item.usageCount > 1 ? "Used \(item.usageCount)×" : nil
+        ].compactMap { $0 }
+        return parts.joined(separator: " · ")
     }
 }

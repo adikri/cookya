@@ -76,6 +76,20 @@ Use this file to keep daily planning and end-of-day progress visible.
 2. ~~AuthStore tests (mock Supabase SDK, test all 4 paths + error cases)~~ ✅ Done session 6
 3. Request/response logging for critical network calls
 
+## 2026-04-24 (session 7)
+
+### Done
+- **Item picker slice**: Replaced free-text-first Add flow with catalog-backed picker as the primary entry point for pantry and grocery. `PantryItemCatalog` with ~290 items (global + Indian staples). `KnownItemPickerView` upgraded to show history first, then catalog items not in history, plus "Add new item" fallback. `PantryItemEditorView` and `GroceryItemEditorView` accept `prefill` param and no longer show inline "Choose from memory" button. Added Indian pantry staples after testing revealed moong dal was missing; saved cooking context to memory for future sessions.
+
+### Commits
+- *(item picker — pending commit)*
+
+### Carry Forward
+- Expand catalog as new items are discovered missing during real use
+- Per-entity Supabase sync for saved_recipes, cooked_meal_records, weekly_plan_meals, profiles
+
+---
+
 ## 2026-04-23 (session 6)
 
 ### Done

@@ -6,7 +6,9 @@ struct PantryView: View {
     @State private var editorItem: PantryItem?
     @State private var expiryItem: PantryItem?
     @State private var quantityAdjustItem: PantryItem?
+    @State private var isShowingItemPicker = false
     @State private var isAddingItem = false
+    @State private var pickerSelection: KnownInventoryItem?
     @State private var isDiscardingExpiredItems = false
     @State private var isShowingExpiryReview = false
     @State private var deletedPantryItem: PantryItem?
@@ -98,7 +100,7 @@ struct PantryView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    isAddingItem = true
+                    isShowingItemPicker = true
                 } label: {
                     Label("Add Pantry Item", systemImage: "plus")
                 }
@@ -107,8 +109,17 @@ struct PantryView: View {
         .refreshable {
             await inventoryStore.refresh()
         }
+        .sheet(isPresented: $isShowingItemPicker) {
+            KnownItemPickerView(title: "Add Pantry Item") { suggestion in
+                isAddingItem = true
+                pickerSelection = suggestion
+            } onAddNew: {
+                isAddingItem = true
+                pickerSelection = nil
+            }
+        }
         .sheet(isPresented: $isAddingItem) {
-            PantryItemEditorView(item: nil) { item in
+            PantryItemEditorView(item: nil, prefill: pickerSelection) { item in
                 Task { await inventoryStore.savePantryItem(item) }
             }
         }

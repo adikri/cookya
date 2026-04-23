@@ -155,11 +155,9 @@ Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home`
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Fuzzy autocomplete on known items | **Next** | Extend `KnownItemStore` query from exact normalized match to fuzzy/prefix match. "tomatoe" surfaces "Tomatoes" before save. No model changes. |
-| "Did you mean?" post-entry suggestion | **Next** | After Add is tapped, show a one-tap correction chip if a close match exists in known items. No friction on happy path. |
-| Unit canonicalization picker | **Later** | Replace free-text quantity with number + constrained unit picker (g, kg, ml, L, count, cups, etc.). Eliminates "1 litre" vs "1 L" permanently. More invasive — do after fuzzy approaches are validated. |
-
-**Sequencing note:** Do this slice immediately after iOS Supabase integration. First real sync should be clean data.
+| Catalog-backed item picker | **Built** | `PantryItemCatalog` with ~290 items (including Indian staples). `KnownItemPickerView` upgraded to show history + catalog. Picker is now the primary Add entry point in PantryView and GroceryListView. Coexists with free-text editor as fallback. |
+| Fuzzy autocomplete on known items | **Later** | Current picker already filters catalog + history. Deeper fuzzy matching (e.g. "tomatoe" → "Tomatoes") can be added later if needed. |
+| Unit canonicalization picker | **Later** | `QuantityInputView` already has Quick Pick mode (number + unit selector). Full enforcement deferred. |
 
 ---
 
