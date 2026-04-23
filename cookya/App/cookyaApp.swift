@@ -28,7 +28,10 @@ struct cookyaApp: App {
         self.backupCoordinator = backupCoordinator
         _recipeStore = StateObject(wrappedValue: RecipeStore(userDefaults: userDefaults))
         _profileStore = StateObject(wrappedValue: ProfileStore(userDefaults: userDefaults))
-        _inventoryStore = StateObject(wrappedValue: InventoryStore(userDefaults: userDefaults))
+        _inventoryStore = StateObject(wrappedValue: InventoryStore(
+            inventoryService: SupabaseInventoryService(client: SupabaseManager.shared.client),
+            userDefaults: userDefaults
+        ))
         _cookedMealStore = StateObject(wrappedValue: CookedMealStore(userDefaults: userDefaults))
         _knownItemStore = StateObject(wrappedValue: KnownItemStore(userDefaults: userDefaults))
         _backendSyncStatusStore = StateObject(wrappedValue: BackendSyncStatusStore(userDefaults: userDefaults))

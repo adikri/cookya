@@ -79,6 +79,7 @@
 		40E000042F9C010000D3C60A /* SupabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000052F9C000000D3C60A /* SupabaseManager.swift */; };
 		40E000062F9C010000D3C60A /* AuthStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000072F9C000000D3C60A /* AuthStore.swift */; };
 		40E000082F9C010000D3C60B /* AuthServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000092F9C000000D3C60B /* AuthServiceProtocol.swift */; };
+		40F000012F9C010000D3C60C /* SupabaseInventoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F000022F9C000000D3C60C /* SupabaseInventoryService.swift */; };
 		40E0000B2F9C010000D3C60A /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000092F9C000000D3C60A /* SignInView.swift */; };
 /* End PBXBuildFile section */
 
@@ -177,6 +178,7 @@
 		40E000072F9C000000D3C60A /* AuthStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthStore.swift; sourceTree = "<group>"; };
 		40E000092F9C000000D3C60A /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		40E000092F9C000000D3C60B /* AuthServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthServiceProtocol.swift; sourceTree = "<group>"; };
+		40F000022F9C000000D3C60C /* SupabaseInventoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseInventoryService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -350,6 +352,7 @@
 				40E000052F9C000000D3C60A /* SupabaseManager.swift */,
 				40E000072F9C000000D3C60A /* AuthStore.swift */,
 				40E000092F9C000000D3C60B /* AuthServiceProtocol.swift */,
+				40F000022F9C000000D3C60C /* SupabaseInventoryService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -639,6 +642,7 @@
 				40E000042F9C010000D3C60A /* SupabaseManager.swift in Sources */,
 				40E000062F9C010000D3C60A /* AuthStore.swift in Sources */,
 				40E000082F9C010000D3C60B /* AuthServiceProtocol.swift in Sources */,
+				40F000012F9C010000D3C60C /* SupabaseInventoryService.swift in Sources */,
 				40E0000B2F9C010000D3C60A /* SignInView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

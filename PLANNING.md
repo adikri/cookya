@@ -150,6 +150,19 @@ The use case is a health-conscious user who wants nutritionally dense home-cooke
 
 Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home` (UI + recommendation engine).
 
+### Phase E — Data Quality at Entry
+**Goal:** prevent bad data from entering the pantry/grocery before it can sync to Supabase and affect recipe generation, readiness detection, and nutrition tracking.
+
+| Item | Status | Notes |
+|------|--------|-------|
+| Fuzzy autocomplete on known items | **Next** | Extend `KnownItemStore` query from exact normalized match to fuzzy/prefix match. "tomatoe" surfaces "Tomatoes" before save. No model changes. |
+| "Did you mean?" post-entry suggestion | **Next** | After Add is tapped, show a one-tap correction chip if a close match exists in known items. No friction on happy path. |
+| Unit canonicalization picker | **Later** | Replace free-text quantity with number + constrained unit picker (g, kg, ml, L, count, cups, etc.). Eliminates "1 litre" vs "1 L" permanently. More invasive — do after fuzzy approaches are validated. |
+
+**Sequencing note:** Do this slice immediately after iOS Supabase integration. First real sync should be clean data.
+
+---
+
 ### Phase B — Complete Recipe-First Planning
 **Goal:** let users start from the meal they want, not only from pantry inventory. **Deferred until after Phase N.**
 
@@ -182,7 +195,8 @@ Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home`
 |------|--------|-------|
 | Supabase auth (email + Google) | **Next** | Email/password for all platforms. Google Sign In for Android. Apple Sign In deferred (requires paid Apple Developer). |
 | Supabase database schema + RLS | **Built** | 6 tables (pantry, grocery, saved_recipes, cooked_meal_records, weekly_plan_meals, profiles). RLS enabled on all tables. Migration in `supabase/migrations/20260423_initial_schema.sql`. |
-| iOS Supabase integration | **Next** | Replace BackendInventoryService + KV snapshot with Supabase. Keep Cloudflare Worker as OpenAI relay only. |
+| iOS Supabase integration — inventory | **Built** | `SupabaseInventoryService` replaces `BackendInventoryService` for pantry/grocery CRUD. Cloudflare Worker KV inventory endpoints no longer used. |
+| iOS Supabase integration — snapshot | **Next** | Replace `BackendSnapshotService` KV backup with Supabase-based backup. Cloudflare Worker then becomes OpenAI relay only. |
 | React Native Android app | **Next** | New RN project. Same Supabase backend. Core loop: home, pantry, grocery, recipe generation. Target: Play Store. |
 | Push notifications | **Later** | Expiring items, "haven’t planned dinner yet." Requires Supabase auth first. |
 | Household accounts / shared pantry | **Later** | After Supabase is in place. Key feature for partner sharing. |

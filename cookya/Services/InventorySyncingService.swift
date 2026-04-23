@@ -12,6 +12,7 @@ protocol InventorySyncingService {
 
 enum InventorySyncError: LocalizedError, Equatable {
     case missingBackendURL
+    case notAuthenticated
     case cancelled
     case networkError
     case invalidResponse
@@ -21,6 +22,8 @@ enum InventorySyncError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .missingBackendURL:
+            return nil
+        case .notAuthenticated:
             return nil
         case .cancelled:
             return nil
