@@ -90,14 +90,16 @@ Use this file to keep daily planning and end-of-day progress visible.
   - `InventoryStore.markPurchased`: if-branch double-merged pre-purchase snapshot with already-merged local item; fixed to upsert the already-computed local result
   - `RecipeViewModelTests`: sole non-async test in `@MainActor` class caused SIGABRT from Swift task deallocation ordering; fixed by making it `async`
 
+- **Supabase schema slice**: Created 6 PostgreSQL tables (pantry_items, grocery_items, saved_recipes, cooked_meal_records, weekly_plan_meals, profiles) with RLS policies and indexes. Applied to production Supabase project. Migration saved to `supabase/migrations/20260423_initial_schema.sql`. DECISIONS.md updated with profileId design rationale and future household migration path.
+
 ### Commits
 - `af192c1` Add AppLogger to SupabaseManager, CookedMealStore, recipe fallback, and Home recommendation
 - `0210e3c` Add AuthStore tests via injected AuthServiceProtocol; always clear session on sign-out
-- *(request/response logging + InventoryStore fixes — pending commit)*
+- `8b77b5d` Add request/response logging to network services; fix InventoryStore merge bugs
+- *(Supabase schema — pending commit)*
 
 ### Carry Forward
-- `codex/supabase-foundation`: Supabase database schema + RLS policies (required before sync)
-- Replace BackendInventoryService with Supabase client after schema is live
+- iOS Supabase integration: replace BackendInventoryService + KV snapshot with Supabase client calls against the new tables
 
 ---
 

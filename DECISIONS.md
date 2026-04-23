@@ -7,6 +7,24 @@ Format: date · decision · options considered · reason.
 
 ## 2026-04-23
 
+### Supabase schema: local profileId preserved as PK; user_id as RLS anchor
+
+**Decision:** `profiles.id` = local iOS `UserProfile.id` (locally-generated UUID). Every table carries `user_id UUID REFERENCES auth.users(id)` as the RLS anchor. `profiles.user_id` has a UNIQUE constraint — 1:1 with the auth user.
+
+**Options considered:**
+- Use `auth.uid()` as the profile primary key now — cleaner long-term but requires touching `SavedRecipe.profileId` and `CookedMealRecord.profileId` iOS models immediately.
+- Preserve local `id` as PK, add `user_id` separately — no model churn, fully safe for single-user phase.
+
+**Reason:** The app is single-user for now (one Supabase auth user = one profile). RLS via `user_id` already scopes all data correctly. Preserving the local UUID as PK keeps this slice self-contained.
+
+**Migration path when household accounts ship:**
+1. Make `profiles.user_id` the primary key (drop separate `id` or keep as alias)
+2. Update `saved_recipes.profile_id` and `cooked_meal_records.profile_id` to reference `auth.users(id)`
+3. Update iOS models: `SavedRecipe.profileId` and `CookedMealRecord.profileId` populated from `auth.uid()` instead of local profile UUID
+4. Extend RLS policies with a `household_members` join table
+
+---
+
 ### Which keys are safe to bundle in the app binary
 
 **Decision:** Bundle `SUPABASE_PUBLISHABLE_KEY` and `COOKYA_BACKEND_BASE_URL`. Never bundle `OPENAI_API_KEY`. Store `COOKYA_APP_TOKEN` in Keychain only.
