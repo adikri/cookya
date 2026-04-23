@@ -403,8 +403,7 @@ final class InventoryStore: ObservableObject {
             let syncedPantryItem: PantryItem
             if let existingPantryItem = existingPantryBeforePurchase,
                existingPantryItem.id == localPantryItem.id {
-                let mergedPantryItem = mergePantryItems(existing: existingPantryItem, incoming: localPantryItem, preferredExpiryDate: expiryDate)
-                syncedPantryItem = try await inventoryService.upsertPantryItem(mergedPantryItem)
+                syncedPantryItem = try await inventoryService.upsertPantryItem(localPantryItem)
             } else {
                 var purchasedPantryItem = try await inventoryService.markPurchased(groceryItem: purchaseCandidate)
                 purchasedPantryItem.name = localPantryItem.name
@@ -504,9 +503,10 @@ final class InventoryStore: ObservableObject {
     }
 
     private func mergePantryItems(existing: PantryItem, incoming: PantryItem, preferredExpiryDate: Date?) -> PantryItem {
-        PantryItem(
+        let trimmedName = incoming.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        return PantryItem(
             id: existing.id,
-            name: incoming.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? existing.name : incoming.name,
+            name: trimmedName.isEmpty ? existing.name : trimmedName,
             quantityText: Self.mergeQuantityText(existing.quantityText, incoming.quantityText),
             category: incoming.category,
             expiryDate: preferredExpiryDate ?? incoming.expiryDate ?? existing.expiryDate,
@@ -904,7 +904,6 @@ final class InventoryStore: ObservableObject {
 
         if trimmedExisting.isEmpty { return trimmedIncoming }
         if trimmedIncoming.isEmpty { return trimmedExisting }
-        if trimmedExisting.caseInsensitiveCompare(trimmedIncoming) == .orderedSame { return trimmedExisting }
 
         if let existingStructured = StructuredQuantity.parse(trimmedExisting),
            let incomingStructured = StructuredQuantity.parse(trimmedIncoming),
@@ -914,6 +913,9 @@ final class InventoryStore: ObservableObject {
                 unit: existingStructured.unit
             ).displayText
         }
+
+        // If structured parsing fails and both texts are identical, avoid "X + X" duplication.
+        if trimmedExisting.caseInsensitiveCompare(trimmedIncoming) == .orderedSame { return trimmedExisting }
 
         return "\(trimmedExisting) + \(trimmedIncoming)"
     }

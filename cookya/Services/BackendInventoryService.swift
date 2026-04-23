@@ -67,6 +67,8 @@ struct BackendInventoryService: InventorySyncingService {
         }
         request.httpBody = body
 
+        AppLogger.action("inventory_sync_request", screen: "BackendInventoryService", metadata: ["method": method, "path": path])
+
         do {
             let (data, response) = try await session.data(for: request)
             guard let http = response as? HTTPURLResponse else {
@@ -75,16 +77,25 @@ struct BackendInventoryService: InventorySyncingService {
 
             guard (200 ... 299).contains(http.statusCode) else {
                 let apiError = try? decoder.decode(APIErrorResponse.self, from: data)
+                AppLogger.action("inventory_sync_server_error", screen: "BackendInventoryService", metadata: [
+                    "method": method, "path": path,
+                    "statusCode": String(http.statusCode),
+                    "message": apiError?.error.message ?? ""
+                ])
                 throw InventorySyncError.serverError(code: http.statusCode, message: apiError?.error.message)
             }
 
             if T.self == EmptyResponse.self {
+                AppLogger.action("inventory_sync_success", screen: "BackendInventoryService", metadata: ["method": method, "path": path])
                 return EmptyResponse() as! T
             }
 
             do {
-                return try decoder.decode(T.self, from: data)
+                let decoded = try decoder.decode(T.self, from: data)
+                AppLogger.action("inventory_sync_success", screen: "BackendInventoryService", metadata: ["method": method, "path": path])
+                return decoded
             } catch {
+                AppLogger.action("inventory_sync_decode_failed", screen: "BackendInventoryService", metadata: ["method": method, "path": path])
                 throw InventorySyncError.decodingFailed
             }
         } catch let error as InventorySyncError {

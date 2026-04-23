@@ -58,6 +58,8 @@ struct BackendSnapshotService {
             throw SnapshotError.invalidResponse
         }
 
+        AppLogger.action("snapshot_fetch_started", screen: "BackendSnapshotService")
+
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -68,22 +70,31 @@ struct BackendSnapshotService {
             guard let http = response as? HTTPURLResponse else { throw SnapshotError.invalidResponse }
 
             if http.statusCode == 404 {
+                AppLogger.action("snapshot_fetch_not_found", screen: "BackendSnapshotService")
                 throw SnapshotError.notFound
             }
 
             guard (200 ... 299).contains(http.statusCode) else {
                 let apiError = try? decoder.decode(APIErrorResponse.self, from: data)
+                AppLogger.action("snapshot_fetch_server_error", screen: "BackendSnapshotService", metadata: [
+                    "statusCode": String(http.statusCode),
+                    "message": apiError?.error.message ?? ""
+                ])
                 throw SnapshotError.serverError(code: http.statusCode, message: apiError?.error.message)
             }
 
             do {
-                return try decoder.decode(CookyaExportBackup.self, from: data)
+                let backup = try decoder.decode(CookyaExportBackup.self, from: data)
+                AppLogger.action("snapshot_fetch_succeeded", screen: "BackendSnapshotService")
+                return backup
             } catch {
+                AppLogger.action("snapshot_fetch_decode_failed", screen: "BackendSnapshotService")
                 throw SnapshotError.decodingFailed
             }
         } catch let error as SnapshotError {
             throw error
         } catch {
+            AppLogger.action("snapshot_fetch_network_error", screen: "BackendSnapshotService", metadata: ["error": String(describing: error)])
             throw SnapshotError.networkError
         }
     }
@@ -94,6 +105,8 @@ struct BackendSnapshotService {
         guard let url = URL(string: "/v1/snapshot", relativeTo: baseURL)?.absoluteURL else {
             throw SnapshotError.invalidResponse
         }
+
+        AppLogger.action("snapshot_upsert_started", screen: "BackendSnapshotService")
 
         let data = try encoder.encode(backup)
 
@@ -108,11 +121,17 @@ struct BackendSnapshotService {
             guard let http = response as? HTTPURLResponse else { throw SnapshotError.invalidResponse }
             guard (200 ... 299).contains(http.statusCode) else {
                 let apiError = try? decoder.decode(APIErrorResponse.self, from: respData)
+                AppLogger.action("snapshot_upsert_server_error", screen: "BackendSnapshotService", metadata: [
+                    "statusCode": String(http.statusCode),
+                    "message": apiError?.error.message ?? ""
+                ])
                 throw SnapshotError.serverError(code: http.statusCode, message: apiError?.error.message)
             }
+            AppLogger.action("snapshot_upsert_succeeded", screen: "BackendSnapshotService")
         } catch let error as SnapshotError {
             throw error
         } catch {
+            AppLogger.action("snapshot_upsert_network_error", screen: "BackendSnapshotService", metadata: ["error": String(describing: error)])
             throw SnapshotError.networkError
         }
     }

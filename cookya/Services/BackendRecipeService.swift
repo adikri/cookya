@@ -40,12 +40,19 @@ struct BackendRecipeService: RecipeGeneratingService {
 
             guard (200 ... 299).contains(http.statusCode) else {
                 let apiError = try? decoder.decode(BackendErrorResponse.self, from: data)
+                AppLogger.action("recipe_generation_server_error", screen: "BackendRecipeService", metadata: [
+                    "statusCode": String(http.statusCode),
+                    "message": apiError?.error.message ?? ""
+                ])
                 throw RecipeGenerationError.serverError(code: http.statusCode, message: apiError?.error.message)
             }
 
             do {
-                return try decoder.decode(Recipe.self, from: data)
+                let recipe = try decoder.decode(Recipe.self, from: data)
+                AppLogger.action("recipe_generation_succeeded", screen: "BackendRecipeService", metadata: ["title": recipe.title])
+                return recipe
             } catch {
+                AppLogger.action("recipe_generation_decode_failed", screen: "BackendRecipeService")
                 throw RecipeGenerationError.decodingFailed
             }
         } catch is CancellationError {

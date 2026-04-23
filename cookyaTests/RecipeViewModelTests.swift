@@ -46,7 +46,7 @@ final class RecipeViewModelTests: XCTestCase {
         XCTAssertEqual(service.callCount, 1)
     }
 
-    func testGenerateRecipeWithoutIngredientsShowsValidationError() {
+    func testGenerateRecipeWithoutIngredientsShowsValidationError() async {
         let service = MockRecipeService(result: .failure(RecipeGenerationError.networkError))
         let viewModel = RecipeViewModel(
             recipeService: service,

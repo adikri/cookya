@@ -83,12 +83,19 @@ Use this file to keep daily planning and end-of-day progress visible.
 - **AuthStore tests slice**: Extracted `AuthServiceProtocol` + `LiveAuthService` to make AuthStore testable without a real Supabase client; exposed `sessionRestoreTask` for awaiting in tests; fixed sign-out bug (session now always cleared on sign-out regardless of server call result); 9 tests covering sign-in success/failure, sign-up with/without session, sign-up network failure, sign-out success/failure, session restore success/failure, isLoading state
 - **SOP established**: docs updated per slice, committed together with code (not batched at session end)
 
+- **Request/response logging slice**: Added request/success/error logging to BackendInventoryService (all paths in `send`), BackendSnapshotService (`fetchLatest` + `upsertLatest`), and BackendRecipeService (server error, decode failure, success)
+- **Pre-existing bugs fixed** (surfaced by running the full test suite):
+  - `InventoryStore.mergePantryItems`: name trimmed for empty-check but stored untrimmed — `" egg "` survived merge
+  - `InventoryStore.mergeQuantityText`: early-return shortcut for identical strings ran before structured parsing — `"1 loaf" + "1 loaf" → "1 loaf"` instead of `"2 loaf"`; moved shortcut to fallback position
+  - `InventoryStore.markPurchased`: if-branch double-merged pre-purchase snapshot with already-merged local item; fixed to upsert the already-computed local result
+  - `RecipeViewModelTests`: sole non-async test in `@MainActor` class caused SIGABRT from Swift task deallocation ordering; fixed by making it `async`
+
 ### Commits
 - `af192c1` Add AppLogger to SupabaseManager, CookedMealStore, recipe fallback, and Home recommendation
-- *(AuthStore tests — pending commit)*
+- `0210e3c` Add AuthStore tests via injected AuthServiceProtocol; always clear session on sign-out
+- *(request/response logging + InventoryStore fixes — pending commit)*
 
 ### Carry Forward
-- Tech debt #3: Request/response logging for critical network calls (BackendRecipeService, InventorySyncingService)
 - `codex/supabase-foundation`: Supabase database schema + RLS policies (required before sync)
 - Replace BackendInventoryService with Supabase client after schema is live
 
