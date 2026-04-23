@@ -87,11 +87,18 @@ Use this file to keep daily planning and end-of-day progress visible.
 ### Commits
 - `152dba0` Add catalog-backed item picker as primary Add entry point for pantry and grocery
 - `268f926` Sync all remaining stores to Supabase; all 7 tables now live
-- *(item picker UX redesign — pending commit)*
+- `c9a14d0` Redesign item picker: search-first with category grid and icons
+
+### Key learnings this session
+- **Item picker discoverability**: flat catalog list of 30 items is worse UX than a compact category grid — users don't know what to look for, they need structure
+- **Indian pantry staples must always be in the catalog**: moong dal, toor dal, besan, atta, ghee etc. — saved to memory so future sessions don't miss this
+- **Category icons improve scannability**: `InventoryCategory.icon` added; reusable across the app wherever categories are displayed
+- **Supabase sync architecture is complete**: all 7 tables live, all stores syncing optimistically — app is now production-grade on data durability
 
 ### Carry Forward
 - Expand catalog as new items are discovered missing during real use
-- Android React Native app (`codex/react-native-android`) — next major milestone
+- Android React Native app (`codex/react-native-android`) — next major milestone for public launch
+- Session refresh / token expiry handling (Supabase auth token ~1hr TTL)
 
 ---
 
