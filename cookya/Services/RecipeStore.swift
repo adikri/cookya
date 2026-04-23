@@ -17,17 +17,20 @@ final class RecipeStore: ObservableObject {
     private let generatedRecipeCacheLimit: Int
     private var generatedRecipeCache: [String: Recipe] = [:]
     private var generatedRecipeTimestamps: [String: Date] = [:]
+    private let syncService: (any SavedRecipeSyncing)?
 
     init(
         userDefaults: UserDefaults = .standard,
         encoder: JSONEncoder = JSONEncoder(),
         decoder: JSONDecoder = JSONDecoder(),
-        generatedRecipeCacheLimit: Int = 50
+        generatedRecipeCacheLimit: Int = 50,
+        syncService: (any SavedRecipeSyncing)? = nil
     ) {
         self.userDefaults = userDefaults
         self.encoder = encoder
         self.decoder = decoder
         self.generatedRecipeCacheLimit = generatedRecipeCacheLimit
+        self.syncService = syncService
         loadSavedRecipes()
         loadGeneratedRecipeCache()
         loadGeneratedRecipeTimestamps()
@@ -40,26 +43,24 @@ final class RecipeStore: ObservableObject {
 
         guard !isSaved(recipe, for: profile) else { return }
 
-        savedRecipes.insert(
-            SavedRecipe(
-                recipe: recipe,
-                profileId: profileId,
-                profileNameSnapshot: profileName
-            ),
-            at: 0
-        )
+        let saved = SavedRecipe(recipe: recipe, profileId: profileId, profileNameSnapshot: profileName)
+        savedRecipes.insert(saved, at: 0)
         persistSavedRecipes()
+        Task { try? await syncService?.upsertSavedRecipe(saved) }
     }
 
     func removeRecipes(at offsets: IndexSet) {
+        let toDelete = offsets.map { savedRecipes[$0] }
         savedRecipes.remove(atOffsets: offsets)
         persistSavedRecipes()
+        Task { for recipe in toDelete { try? await syncService?.deleteSavedRecipe(id: recipe.id) } }
     }
 
     func updateFavoriteState(for savedRecipeID: UUID, isFavorite: Bool) {
         guard let index = savedRecipes.firstIndex(where: { $0.id == savedRecipeID }) else { return }
         savedRecipes[index].isFavorite = isFavorite
         persistSavedRecipes()
+        Task { try? await syncService?.upsertSavedRecipe(savedRecipes[index]) }
     }
 
     func isSaved(_ recipe: Recipe, for profile: UserProfile?) -> Bool {

@@ -82,6 +82,8 @@
 		40E000082F9C010000D3C60B /* AuthServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000092F9C000000D3C60B /* AuthServiceProtocol.swift */; };
 		40F000012F9C010000D3C60C /* SupabaseInventoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F000022F9C000000D3C60C /* SupabaseInventoryService.swift */; };
 		40F000032F9C010000D3C60D /* SnapshotSyncingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F000042F9C000000D3C60D /* SnapshotSyncingService.swift */; };
+		40F000072F9C010000D3C60F /* StoreSyncProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F000082F9C000000D3C60F /* StoreSyncProtocols.swift */; };
+		40F000092F9C010000D3C610 /* SupabaseStoreSyncServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F0000A2F9C000000D3C610 /* SupabaseStoreSyncServices.swift */; };
 		40F000052F9C010000D3C60E /* SupabaseSnapshotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F000062F9C000000D3C60E /* SupabaseSnapshotService.swift */; };
 		40E0000B2F9C010000D3C60A /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000092F9C000000D3C60A /* SignInView.swift */; };
 /* End PBXBuildFile section */
@@ -184,6 +186,8 @@
 		40E000092F9C000000D3C60B /* AuthServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthServiceProtocol.swift; sourceTree = "<group>"; };
 		40F000022F9C000000D3C60C /* SupabaseInventoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseInventoryService.swift; sourceTree = "<group>"; };
 		40F000042F9C000000D3C60D /* SnapshotSyncingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotSyncingService.swift; sourceTree = "<group>"; };
+		40F000082F9C000000D3C60F /* StoreSyncProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSyncProtocols.swift; sourceTree = "<group>"; };
+		40F0000A2F9C000000D3C610 /* SupabaseStoreSyncServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseStoreSyncServices.swift; sourceTree = "<group>"; };
 		40F000062F9C000000D3C60E /* SupabaseSnapshotService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseSnapshotService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -361,6 +365,8 @@
 				40E000092F9C000000D3C60B /* AuthServiceProtocol.swift */,
 				40F000022F9C000000D3C60C /* SupabaseInventoryService.swift */,
 				40F000042F9C000000D3C60D /* SnapshotSyncingService.swift */,
+				40F000082F9C000000D3C60F /* StoreSyncProtocols.swift */,
+				40F0000A2F9C000000D3C610 /* SupabaseStoreSyncServices.swift */,
 				40F000062F9C000000D3C60E /* SupabaseSnapshotService.swift */,
 			);
 			path = Services;
@@ -654,6 +660,8 @@
 				40E000082F9C010000D3C60B /* AuthServiceProtocol.swift in Sources */,
 				40F000012F9C010000D3C60C /* SupabaseInventoryService.swift in Sources */,
 				40F000032F9C010000D3C60D /* SnapshotSyncingService.swift in Sources */,
+				40F000072F9C010000D3C60F /* StoreSyncProtocols.swift in Sources */,
+				40F000092F9C010000D3C610 /* SupabaseStoreSyncServices.swift in Sources */,
 				40F000052F9C010000D3C60E /* SupabaseSnapshotService.swift in Sources */,
 				40E0000B2F9C010000D3C60A /* SignInView.swift in Sources */,
 			);

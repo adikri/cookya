@@ -81,12 +81,15 @@ Use this file to keep daily planning and end-of-day progress visible.
 ### Done
 - **Item picker slice**: Replaced free-text-first Add flow with catalog-backed picker as the primary entry point for pantry and grocery. `PantryItemCatalog` with ~290 items (global + Indian staples). `KnownItemPickerView` upgraded to show history first, then catalog items not in history, plus "Add new item" fallback. `PantryItemEditorView` and `GroceryItemEditorView` accept `prefill` param and no longer show inline "Choose from memory" button. Added Indian pantry staples after testing revealed moong dal was missing; saved cooking context to memory for future sessions.
 
+- **Supabase store sync slice**: Added `StoreSyncProtocols` (4 protocols + `StoreSyncError`) and `SupabaseStoreSyncServices` (4 implementations). `RecipeStore`, `CookedMealStore`, `ProfileStore`, `WeeklyPlanStore` all accept injected sync services and push mutations to Supabase in the background. All 7 Supabase tables now live. Added direct-fields init to `PlannedMeal` for DTO reconstruction.
+
 ### Commits
-- *(item picker — pending commit)*
+- `152dba0` Add catalog-backed item picker as primary Add entry point for pantry and grocery
+- *(Supabase store sync — pending commit)*
 
 ### Carry Forward
 - Expand catalog as new items are discovered missing during real use
-- Per-entity Supabase sync for saved_recipes, cooked_meal_records, weekly_plan_meals, profiles
+- Android React Native app (`codex/react-native-android`) — next major milestone
 
 ---
 

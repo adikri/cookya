@@ -29,16 +29,29 @@ struct cookyaApp: App {
         backupCoordinator.restoreIfNeeded()
 
         self.backupCoordinator = backupCoordinator
-        _recipeStore = StateObject(wrappedValue: RecipeStore(userDefaults: userDefaults))
-        _profileStore = StateObject(wrappedValue: ProfileStore(userDefaults: userDefaults))
+        let supabase = SupabaseManager.shared.client
+        _recipeStore = StateObject(wrappedValue: RecipeStore(
+            userDefaults: userDefaults,
+            syncService: SupabaseSavedRecipeSyncService(client: supabase)
+        ))
+        _profileStore = StateObject(wrappedValue: ProfileStore(
+            userDefaults: userDefaults,
+            syncService: SupabaseProfileSyncService(client: supabase)
+        ))
         _inventoryStore = StateObject(wrappedValue: InventoryStore(
-            inventoryService: SupabaseInventoryService(client: SupabaseManager.shared.client),
+            inventoryService: SupabaseInventoryService(client: supabase),
             userDefaults: userDefaults
         ))
-        _cookedMealStore = StateObject(wrappedValue: CookedMealStore(userDefaults: userDefaults))
+        _cookedMealStore = StateObject(wrappedValue: CookedMealStore(
+            userDefaults: userDefaults,
+            syncService: SupabaseCookedMealSyncService(client: supabase)
+        ))
         _knownItemStore = StateObject(wrappedValue: KnownItemStore(userDefaults: userDefaults))
         _backendSyncStatusStore = StateObject(wrappedValue: BackendSyncStatusStore(userDefaults: userDefaults))
-        _weeklyPlanStore = StateObject(wrappedValue: WeeklyPlanStore(userDefaults: userDefaults))
+        _weeklyPlanStore = StateObject(wrappedValue: WeeklyPlanStore(
+            userDefaults: userDefaults,
+            syncService: SupabaseWeeklyPlanSyncService(client: supabase)
+        ))
         _authStore = StateObject(wrappedValue: AuthStore())
 
         backupCoordinator.startObserving()

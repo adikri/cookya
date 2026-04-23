@@ -11,6 +11,7 @@ final class ProfileStore: ObservableObject {
     private let userDefaults: UserDefaults
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
+    private let syncService: (any ProfileSyncing)?
 
     var hasCompletedOnboarding: Bool {
         primaryProfile != nil || isGuestModeActive
@@ -33,11 +34,13 @@ final class ProfileStore: ObservableObject {
     init(
         userDefaults: UserDefaults = .standard,
         encoder: JSONEncoder = JSONEncoder(),
-        decoder: JSONDecoder = JSONDecoder()
+        decoder: JSONDecoder = JSONDecoder(),
+        syncService: (any ProfileSyncing)? = nil
     ) {
         self.userDefaults = userDefaults
         self.encoder = encoder
         self.decoder = decoder
+        self.syncService = syncService
         loadProfile()
     }
 
@@ -157,6 +160,7 @@ final class ProfileStore: ObservableObject {
                 )
                 assertionFailure("Failed to persist primary profile: \(error)")
             }
+            Task { try? await syncService?.upsertProfile(profile) }
         }
         userDefaults.set(isGuestModeActive, forKey: guestModeStorageKey)
     }

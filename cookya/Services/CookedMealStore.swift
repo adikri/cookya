@@ -24,15 +24,18 @@ final class CookedMealStore: ObservableObject {
     private let userDefaults: UserDefaults
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
+    private let syncService: (any CookedMealSyncing)?
 
     init(
         userDefaults: UserDefaults = .standard,
         encoder: JSONEncoder = JSONEncoder(),
-        decoder: JSONDecoder = JSONDecoder()
+        decoder: JSONDecoder = JSONDecoder(),
+        syncService: (any CookedMealSyncing)? = nil
     ) {
         self.userDefaults = userDefaults
         self.encoder = encoder
         self.decoder = decoder
+        self.syncService = syncService
         self.encoder.dateEncodingStrategy = .iso8601
         self.decoder.dateDecodingStrategy = .iso8601
         loadRecords()
@@ -87,6 +90,7 @@ final class CookedMealStore: ObservableObject {
         records.removeAll { $0.id == record.id }
         persist()
         AppLogger.action("cooked_meal_deleted", screen: "CookedMealStore", metadata: ["recipeTitle": record.recipeTitle])
+        Task { try? await syncService?.deleteRecord(id: record.id) }
     }
 
     func restoreRecord(_ record: CookedMealRecord) {
@@ -197,6 +201,7 @@ final class CookedMealStore: ObservableObject {
         records.insert(record, at: 0)
         persist()
         AppLogger.action("cooked_meal_added", screen: "CookedMealStore", metadata: ["recipeTitle": recipeTitle, "profile": profileName])
+        Task { try? await syncService?.upsertRecord(record) }
     }
 
     private func persist() {
