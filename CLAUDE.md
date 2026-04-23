@@ -177,6 +177,30 @@ Operations that are safe for data: clean build folder, delete DerivedData, rebui
 
 ---
 
+## Work slice SOP — mandatory sequence
+
+Every slice of work follows this order. No steps skipped, no reordering.
+
+```
+1. PLAN    → read PLANNING.md first; use /plan or discuss tradeoffs for non-trivial changes
+2. CODE    → implement
+3. BUILD   → tell user which target to build (Cmd+B); wait for confirmation
+4. TEST    → tell user which test class to run in Xcode; wait for green confirmation
+5. DOCS    → only after tests are confirmed green:
+               - WORKLOG.md  — add done item for this slice
+               - PLANNING.md — update Built/Active/Next labels if anything changed
+               - DECISIONS.md — add entry if a significant arch/product decision was made
+               - ai-playbook  — if a workflow rule itself changed
+6. COMMIT  → stage code + docs together in one commit
+```
+
+**Hard rules:**
+- Never start coding (step 2) before the plan is agreed (step 1)
+- Never update docs (step 5) before tests are confirmed green (step 4)
+- Never commit code without its docs, or docs without their code
+
+---
+
 ## Session end — mandatory
 
 At the end of every working session, before stopping:
