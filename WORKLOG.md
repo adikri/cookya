@@ -100,10 +100,12 @@ Use this file to keep daily planning and end-of-day progress visible.
 - `8b77b5d` Add request/response logging to network services; fix InventoryStore merge bugs
 - `1f0550a` Add Supabase schema v1: 6 tables with RLS, indexes, and migration file
 - `db7ad03` Wire SupabaseInventoryService as the live inventory sync backend
-- *(iOS Supabase snapshot integration — pending commit)*
+- `029832f` Wire SupabaseSnapshotService as the live backup backend; Cloudflare Worker is now OpenAI relay only
 
 ### Carry Forward
-- Phase E: item entry data quality (fuzzy autocomplete, "did you mean?" suggestion)
+- **Next slice**: Phase E — item entry data quality: fuzzy autocomplete on `KnownItemStore`, "did you mean?" post-entry suggestion
+- **Later**: per-entity Supabase sync for saved_recipes, cooked_meal_records, weekly_plan_meals, profiles (currently backed by local UserDefaults only)
+- **Later**: Android React Native app (`codex/react-native-android`)
 
 ---
 

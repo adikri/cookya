@@ -13,8 +13,9 @@ This repository contains the **iPhone app** plus optional **backends** so you ca
 | Path | What it is |
 |------|----------------|
 | `cookya/` | iOS SwiftUI app (personal daily driver + feature prototype) |
-| `worker/` | Cloudflare Worker — OpenAI recipe relay (production). See [`worker/README.md`](worker/README.md). |
+| `worker/` | Cloudflare Worker — **OpenAI recipe relay only** (inventory and snapshot moved to Supabase). See [`worker/README.md`](worker/README.md). |
 | `backend/` | Optional local Node/Express relay for development. See [`backend/README.md`](backend/README.md). |
+| `supabase/` | Database migrations for the Supabase PostgreSQL backend. |
 | `scripts/` | CLI helpers for simulator/device builds. See [`CLAUDE.md`](CLAUDE.md). |
 
 ---
@@ -60,13 +61,22 @@ Full detail: [`OPENAI_SETUP.md`](OPENAI_SETUP.md).
 
 You can pass `OPENAI_API_KEY` via the Run scheme environment for local debugging only. Prefer Option A or B for anything you treat as a real install. Details: [`OPENAI_SETUP.md`](OPENAI_SETUP.md).
 
-### 4. Backup and durability
+### 4. Supabase setup (auth + sync)
+
+The app now uses **Supabase** for authentication and data sync. Set `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` in `Secrets.xcconfig` (both are safe to bundle — Row Level Security policies protect data access).
+
+- **Auth**: email/password sign-in and sign-up are built in.
+- **Pantry/grocery sync**: live via `pantry_items` and `grocery_items` tables.
+- **App snapshot backup**: full backup stored as JSONB in `user_snapshots` — restores automatically on reinstall/new device.
+- **Schema migrations**: `supabase/migrations/` — apply via the Supabase SQL editor.
+
+### 5. Backup and durability
 
 - **Export/import** (files): Profile → Backup.
-- **Cloud snapshot** (current): with the Worker + KV + app token, the app can sync a full snapshot to the backend; see [`worker/README.md`](worker/README.md).
-- **Supabase sync** (in progress): PostgreSQL-backed real-time sync will replace the KV snapshot layer and enable multi-device use.
+- **Cloud backup** (Supabase): automatic — syncs on every app state change. Restores on fresh install when local state is empty.
+- **Worker KV snapshot**: deprecated — Cloudflare Worker is now OpenAI relay only.
 
-### 5. CLI builds (optional)
+### 6. CLI builds (optional)
 
 See [`CLAUDE.md`](CLAUDE.md) for `scripts/build-sim.sh` and device builds (`COOKYA_DEVICE_ID`). Tests are run manually in Xcode.
 
