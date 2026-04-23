@@ -22,7 +22,10 @@ struct cookyaApp: App {
 
     init() {
         let userDefaults = UserDefaults.standard
-        let backupCoordinator = AppBackupCoordinator(userDefaults: userDefaults)
+        let backupCoordinator = AppBackupCoordinator(
+            userDefaults: userDefaults,
+            snapshotService: SupabaseSnapshotService(client: SupabaseManager.shared.client)
+        )
         backupCoordinator.restoreIfNeeded()
 
         self.backupCoordinator = backupCoordinator

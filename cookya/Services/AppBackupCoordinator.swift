@@ -52,7 +52,7 @@ final class AppBackupCoordinator {
     private let backupFileURL: URL
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
-    private let snapshotService: BackendSnapshotService
+    private let snapshotService: any SnapshotSyncingService
     private var defaultsObserver: NSObjectProtocol?
     private var isApplyingRestore = false
 
@@ -61,13 +61,13 @@ final class AppBackupCoordinator {
         fileManager: FileManager = .default,
         notificationCenter: NotificationCenter = .default,
         backupFileURL: URL? = nil,
-        snapshotService: BackendSnapshotService? = nil
+        snapshotService: (any SnapshotSyncingService)? = nil
     ) {
         self.userDefaults = userDefaults
         self.fileManager = fileManager
         self.notificationCenter = notificationCenter
         self.backupFileURL = backupFileURL ?? Self.defaultBackupFileURL(fileManager: fileManager)
-        self.snapshotService = snapshotService ?? BackendSnapshotService()
+        self.snapshotService = snapshotService ?? SupabaseSnapshotService(client: SupabaseManager.shared.client)
 
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
@@ -186,10 +186,9 @@ final class AppBackupCoordinator {
                 "backend_snapshot_restore_succeeded",
                 metadata: ["version": String(backup.version), "createdAt": backup.createdAt.ISO8601Format()]
             )
-        } catch let error as BackendSnapshotService.SnapshotError {
+        } catch let error as SnapshotSyncError {
             if case .notFound = error { return }
-            if case .missingBackendURL = error { return }
-            if case .missingAuthToken = error { return }
+            if case .notAuthenticated = error { return }
             AppLogger.action(
                 "backend_snapshot_restore_failed",
                 metadata: ["error": String(describing: error), "message": error.errorDescription ?? ""]

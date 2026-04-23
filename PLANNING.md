@@ -196,7 +196,7 @@ Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home`
 | Supabase auth (email + Google) | **Next** | Email/password for all platforms. Google Sign In for Android. Apple Sign In deferred (requires paid Apple Developer). |
 | Supabase database schema + RLS | **Built** | 6 tables (pantry, grocery, saved_recipes, cooked_meal_records, weekly_plan_meals, profiles). RLS enabled on all tables. Migration in `supabase/migrations/20260423_initial_schema.sql`. |
 | iOS Supabase integration — inventory | **Built** | `SupabaseInventoryService` replaces `BackendInventoryService` for pantry/grocery CRUD. Cloudflare Worker KV inventory endpoints no longer used. |
-| iOS Supabase integration — snapshot | **Next** | Replace `BackendSnapshotService` KV backup with Supabase-based backup. Cloudflare Worker then becomes OpenAI relay only. |
+| iOS Supabase integration — snapshot | **Built** | `SupabaseSnapshotService` replaces `BackendSnapshotService`. Full backup stored as JSONB in `user_snapshots` table. Cloudflare Worker is now OpenAI relay only. |
 | React Native Android app | **Next** | New RN project. Same Supabase backend. Core loop: home, pantry, grocery, recipe generation. Target: Play Store. |
 | Push notifications | **Later** | Expiring items, "haven’t planned dinner yet." Requires Supabase auth first. |
 | Household accounts / shared pantry | **Later** | After Supabase is in place. Key feature for partner sharing. |

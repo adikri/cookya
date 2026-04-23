@@ -166,3 +166,22 @@ CREATE POLICY "Users manage their own profile"
     ON profiles FOR ALL
     USING  (auth.uid() = user_id)
     WITH CHECK (auth.uid() = user_id);
+
+
+-- ------------------------------------------------------------
+-- user_snapshots — applied 2026-04-23 (snapshot service migration)
+-- Full CookyaExportBackup stored as JSONB; one row per user.
+-- Replaces Cloudflare Worker KV snapshot backup.
+-- ------------------------------------------------------------
+CREATE TABLE user_snapshots (
+    user_id    UUID        PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    snapshot   JSONB       NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL
+);
+
+ALTER TABLE user_snapshots ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users manage their own snapshot"
+    ON user_snapshots FOR ALL
+    USING  (auth.uid() = user_id)
+    WITH CHECK (auth.uid() = user_id);

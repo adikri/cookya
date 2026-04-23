@@ -1,38 +1,6 @@
 import Foundation
 
-struct BackendSnapshotService {
-    enum SnapshotError: LocalizedError, Equatable {
-        case missingBackendURL
-        case missingAuthToken
-        case notFound
-        case networkError
-        case invalidResponse
-        case decodingFailed
-        case serverError(code: Int, message: String?)
-
-        var errorDescription: String? {
-            switch self {
-            case .missingBackendURL:
-                return "Missing backend URL."
-            case .missingAuthToken:
-                return "Missing backend access token."
-            case .notFound:
-                return "No backup found on backend."
-            case .networkError:
-                return "Could not reach backend."
-            case .invalidResponse:
-                return "Backend returned an unexpected response."
-            case .decodingFailed:
-                return "Could not decode backup data from backend."
-            case let .serverError(code, message):
-                if let message, !message.isEmpty {
-                    return "Backend error (\(code)): \(message)"
-                }
-                return "Backend error (\(code))."
-            }
-        }
-    }
-
+struct BackendSnapshotService: SnapshotSyncingService {
     private let session: URLSession
     private let config: AppConfig
     private let encoder: JSONEncoder
@@ -52,10 +20,10 @@ struct BackendSnapshotService {
     }
 
     func fetchLatest() async throws -> CookyaExportBackup {
-        guard let baseURL = config.backendBaseURL else { throw SnapshotError.missingBackendURL }
-        guard let token = BackendAuthToken.load(), !token.isEmpty else { throw SnapshotError.missingAuthToken }
+        guard let baseURL = config.backendBaseURL else { throw SnapshotSyncError.notAuthenticated }
+        guard let token = BackendAuthToken.load(), !token.isEmpty else { throw SnapshotSyncError.notAuthenticated }
         guard let url = URL(string: "/v1/snapshot", relativeTo: baseURL)?.absoluteURL else {
-            throw SnapshotError.invalidResponse
+            throw SnapshotSyncError.networkError
         }
 
         AppLogger.action("snapshot_fetch_started", screen: "BackendSnapshotService")
@@ -67,20 +35,16 @@ struct BackendSnapshotService {
 
         do {
             let (data, response) = try await session.data(for: request)
-            guard let http = response as? HTTPURLResponse else { throw SnapshotError.invalidResponse }
+            guard let http = response as? HTTPURLResponse else { throw SnapshotSyncError.networkError }
 
             if http.statusCode == 404 {
                 AppLogger.action("snapshot_fetch_not_found", screen: "BackendSnapshotService")
-                throw SnapshotError.notFound
+                throw SnapshotSyncError.notFound
             }
 
-            guard (200 ... 299).contains(http.statusCode) else {
-                let apiError = try? decoder.decode(APIErrorResponse.self, from: data)
-                AppLogger.action("snapshot_fetch_server_error", screen: "BackendSnapshotService", metadata: [
-                    "statusCode": String(http.statusCode),
-                    "message": apiError?.error.message ?? ""
-                ])
-                throw SnapshotError.serverError(code: http.statusCode, message: apiError?.error.message)
+            guard (200...299).contains(http.statusCode) else {
+                AppLogger.action("snapshot_fetch_server_error", screen: "BackendSnapshotService", metadata: ["statusCode": String(http.statusCode)])
+                throw SnapshotSyncError.networkError
             }
 
             do {
@@ -89,21 +53,21 @@ struct BackendSnapshotService {
                 return backup
             } catch {
                 AppLogger.action("snapshot_fetch_decode_failed", screen: "BackendSnapshotService")
-                throw SnapshotError.decodingFailed
+                throw SnapshotSyncError.decodingFailed
             }
-        } catch let error as SnapshotError {
-            throw error
+        } catch let e as SnapshotSyncError {
+            throw e
         } catch {
             AppLogger.action("snapshot_fetch_network_error", screen: "BackendSnapshotService", metadata: ["error": String(describing: error)])
-            throw SnapshotError.networkError
+            throw SnapshotSyncError.networkError
         }
     }
 
     func upsertLatest(_ backup: CookyaExportBackup) async throws {
-        guard let baseURL = config.backendBaseURL else { throw SnapshotError.missingBackendURL }
-        guard let token = BackendAuthToken.load(), !token.isEmpty else { throw SnapshotError.missingAuthToken }
+        guard let baseURL = config.backendBaseURL else { throw SnapshotSyncError.notAuthenticated }
+        guard let token = BackendAuthToken.load(), !token.isEmpty else { throw SnapshotSyncError.notAuthenticated }
         guard let url = URL(string: "/v1/snapshot", relativeTo: baseURL)?.absoluteURL else {
-            throw SnapshotError.invalidResponse
+            throw SnapshotSyncError.networkError
         }
 
         AppLogger.action("snapshot_upsert_started", screen: "BackendSnapshotService")
@@ -117,31 +81,18 @@ struct BackendSnapshotService {
         request.httpBody = data
 
         do {
-            let (respData, response) = try await session.data(for: request)
-            guard let http = response as? HTTPURLResponse else { throw SnapshotError.invalidResponse }
-            guard (200 ... 299).contains(http.statusCode) else {
-                let apiError = try? decoder.decode(APIErrorResponse.self, from: respData)
-                AppLogger.action("snapshot_upsert_server_error", screen: "BackendSnapshotService", metadata: [
-                    "statusCode": String(http.statusCode),
-                    "message": apiError?.error.message ?? ""
-                ])
-                throw SnapshotError.serverError(code: http.statusCode, message: apiError?.error.message)
+            let (_, response) = try await session.data(for: request)
+            guard let http = response as? HTTPURLResponse else { throw SnapshotSyncError.networkError }
+            guard (200...299).contains(http.statusCode) else {
+                AppLogger.action("snapshot_upsert_server_error", screen: "BackendSnapshotService", metadata: ["statusCode": String(http.statusCode)])
+                throw SnapshotSyncError.networkError
             }
             AppLogger.action("snapshot_upsert_succeeded", screen: "BackendSnapshotService")
-        } catch let error as SnapshotError {
-            throw error
+        } catch let e as SnapshotSyncError {
+            throw e
         } catch {
             AppLogger.action("snapshot_upsert_network_error", screen: "BackendSnapshotService", metadata: ["error": String(describing: error)])
-            throw SnapshotError.networkError
+            throw SnapshotSyncError.networkError
         }
     }
 }
-
-private struct APIErrorResponse: Decodable {
-    let error: APIError
-
-    struct APIError: Decodable {
-        let message: String
-    }
-}
-
