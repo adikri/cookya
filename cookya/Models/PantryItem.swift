@@ -17,6 +17,23 @@ enum InventoryCategory: String, CaseIterable, Codable, Hashable {
     var displayName: String {
         rawValue.capitalized
     }
+
+    var icon: String {
+        switch self {
+        case .produce:   return "leaf.fill"
+        case .dairy:     return "drop.fill"
+        case .protein:   return "fork.knife"
+        case .grains:    return "bag.fill"
+        case .spices:    return "flame.fill"
+        case .beverages: return "cup.and.saucer.fill"
+        case .frozen:    return "snowflake"
+        case .canned:    return "archivebox.fill"
+        case .bakery:    return "birthday.cake.fill"
+        case .pantry:    return "house.fill"
+        case .snacks:    return "star.fill"
+        case .other:     return "square.fill"
+        }
+    }
 }
 
 struct PantryQuantity: Hashable {

@@ -82,10 +82,12 @@ Use this file to keep daily planning and end-of-day progress visible.
 - **Item picker slice**: Replaced free-text-first Add flow with catalog-backed picker as the primary entry point for pantry and grocery. `PantryItemCatalog` with ~290 items (global + Indian staples). `KnownItemPickerView` upgraded to show history first, then catalog items not in history, plus "Add new item" fallback. `PantryItemEditorView` and `GroceryItemEditorView` accept `prefill` param and no longer show inline "Choose from memory" button. Added Indian pantry staples after testing revealed moong dal was missing; saved cooking context to memory for future sessions.
 
 - **Supabase store sync slice**: Added `StoreSyncProtocols` (4 protocols + `StoreSyncError`) and `SupabaseStoreSyncServices` (4 implementations). `RecipeStore`, `CookedMealStore`, `ProfileStore`, `WeeklyPlanStore` all accept injected sync services and push mutations to Supabase in the background. All 7 Supabase tables now live. Added direct-fields init to `PlannedMeal` for DTO reconstruction.
+- **Item picker UX redesign**: `KnownItemPickerView` replaced flat catalog list with search-first + 3-col category grid (SF Symbol icons per category via `InventoryCategory.icon`). Empty state shows recent items + category grid + "Add new item" — no scrolling needed. Tapping a category drills into that category's items. Search still filters full catalog + history.
 
 ### Commits
 - `152dba0` Add catalog-backed item picker as primary Add entry point for pantry and grocery
-- *(Supabase store sync — pending commit)*
+- `268f926` Sync all remaining stores to Supabase; all 7 tables now live
+- *(item picker UX redesign — pending commit)*
 
 ### Carry Forward
 - Expand catalog as new items are discovered missing during real use

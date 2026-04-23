@@ -155,7 +155,7 @@ Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home`
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Catalog-backed item picker | **Built** | `PantryItemCatalog` with ~290 items (including Indian staples). `KnownItemPickerView` upgraded to show history + catalog. Picker is now the primary Add entry point in PantryView and GroceryListView. Coexists with free-text editor as fallback. |
+| Catalog-backed item picker | **Built** | `PantryItemCatalog` with ~290 items (including Indian staples). `KnownItemPickerView` redesigned: search-first with 3-col category grid (icons via `InventoryCategory.icon`), recent items capped at 5, category drill-down, "Add new item" always visible. Picker is the primary Add entry point in PantryView and GroceryListView. |
 | Fuzzy autocomplete on known items | **Later** | Current picker already filters catalog + history. Deeper fuzzy matching (e.g. "tomatoe" → "Tomatoes") can be added later if needed. |
 | Unit canonicalization picker | **Later** | `QuantityInputView` already has Quick Pick mode (number + unit selector). Full enforcement deferred. |
 
