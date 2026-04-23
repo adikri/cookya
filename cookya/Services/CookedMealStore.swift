@@ -86,6 +86,7 @@ final class CookedMealStore: ObservableObject {
     func deleteRecord(_ record: CookedMealRecord) {
         records.removeAll { $0.id == record.id }
         persist()
+        AppLogger.action("cooked_meal_deleted", screen: "CookedMealStore", metadata: ["recipeTitle": record.recipeTitle])
     }
 
     func restoreRecord(_ record: CookedMealRecord) {
@@ -195,6 +196,7 @@ final class CookedMealStore: ObservableObject {
 
         records.insert(record, at: 0)
         persist()
+        AppLogger.action("cooked_meal_added", screen: "CookedMealStore", metadata: ["recipeTitle": recipeTitle, "profile": profileName])
     }
 
     private func persist() {

@@ -13,5 +13,6 @@ final class SupabaseManager {
             supabaseURL: config.supabaseURL,
             supabaseKey: config.supabasePublishableKey
         )
+        AppLogger.action("supabase_client_initialized", screen: "SupabaseManager", metadata: ["url": config.supabaseURL.host ?? "unknown"])
     }
 }

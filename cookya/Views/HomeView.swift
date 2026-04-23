@@ -132,6 +132,9 @@ struct HomeView: View {
             .navigationBarTitleDisplayMode(.inline)
             .task {
                 AppLogger.screen("Home", metadata: ["profile": profileStore.activeProfile?.name ?? "Guest"])
+                if let recommendation = bestNextStep {
+                    AppLogger.action("home_recommendation_shown", screen: "Home", metadata: ["type": String(describing: recommendation).components(separatedBy: "(").first ?? String(describing: recommendation)])
+                }
                 await inventoryStore.refreshIfNeeded()
             }
             .refreshable {

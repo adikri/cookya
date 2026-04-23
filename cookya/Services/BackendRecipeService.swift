@@ -16,6 +16,7 @@ struct BackendRecipeService: RecipeGeneratingService {
 
     func generateRecipe(request: RecipeGenerationRequest) async throws -> Recipe {
         guard let baseURL = config.backendBaseURL else {
+            AppLogger.action("recipe_generation_fallback", screen: "BackendRecipeService", metadata: ["reason": "no_backend_url"])
             return try await fallbackRecipeService.generateRecipe(request: request)
         }
 
@@ -50,6 +51,7 @@ struct BackendRecipeService: RecipeGeneratingService {
         } catch is CancellationError {
             throw RecipeGenerationError.cancelled
         } catch let error as URLError where shouldFallbackToOpenAI(error) {
+            AppLogger.action("recipe_generation_fallback", screen: "BackendRecipeService", metadata: ["reason": "network_error", "code": String(error.code.rawValue)])
             return try await fallbackRecipeService.generateRecipe(request: request)
         } catch let error as RecipeGenerationError {
             throw error
