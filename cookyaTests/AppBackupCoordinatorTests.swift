@@ -135,6 +135,73 @@ final class AppBackupCoordinatorTests: XCTestCase {
         XCTAssertEqual(snapshotService.upsertedBackups.first?.snapshot.knownInventoryItemsData, knownItemsData)
     }
 
+    // MARK: - restoreFromBackendIfNeeded
+
+    func testRestoreFromBackendAppliesBackupWhenLocalIsEmpty() async throws {
+        let pantryItems = [PantryItem(name: "Rice", quantityText: "2 cups", category: .grains)]
+        let pantryData = try JSONEncoder.withISO8601Dates().encode(pantryItems)
+        let snapshot = AppBackupSnapshot(
+            pantryItemsData: pantryData,
+            groceryItemsData: nil,
+            savedRecipesData: nil,
+            cookedMealRecordsData: nil,
+            primaryProfileData: nil,
+            guestModeActive: nil,
+            knownInventoryItemsData: nil
+        )
+        snapshotService.fetchLatestResult = .success(CookyaExportBackup(snapshot: snapshot))
+
+        let coordinator = makeCoordinator()
+        await coordinator.restoreFromBackendIfNeeded()
+
+        XCTAssertEqual(testDefaults.data(forKey: AppPersistenceKey.pantryItems), pantryData)
+        XCTAssertEqual(snapshotService.fetchLatestCallCount, 1)
+    }
+
+    func testRestoreFromBackendDoesNotRunWhenLocalStateIsPresent() async throws {
+        let existing = try JSONEncoder.withISO8601Dates().encode([
+            PantryItem(name: "Bread", quantityText: "1 loaf", category: .bakery)
+        ])
+        testDefaults.set(existing, forKey: AppPersistenceKey.pantryItems)
+
+        let coordinator = makeCoordinator()
+        await coordinator.restoreFromBackendIfNeeded()
+
+        // fetchLatest must never be called — live data must not be overwritten.
+        XCTAssertEqual(snapshotService.fetchLatestCallCount, 0)
+        XCTAssertEqual(testDefaults.data(forKey: AppPersistenceKey.pantryItems), existing)
+    }
+
+    func testRestoreFromBackendSilentlyIgnoresNotFound() async {
+        snapshotService.fetchLatestResult = .failure(SnapshotSyncError.notFound)
+
+        let coordinator = makeCoordinator()
+        await coordinator.restoreFromBackendIfNeeded()
+
+        XCTAssertNil(testDefaults.data(forKey: AppPersistenceKey.pantryItems))
+        XCTAssertEqual(snapshotService.fetchLatestCallCount, 1)
+    }
+
+    func testRestoreFromBackendSilentlyIgnoresNotAuthenticated() async {
+        snapshotService.fetchLatestResult = .failure(SnapshotSyncError.notAuthenticated)
+
+        let coordinator = makeCoordinator()
+        await coordinator.restoreFromBackendIfNeeded()
+
+        XCTAssertNil(testDefaults.data(forKey: AppPersistenceKey.pantryItems))
+        XCTAssertEqual(snapshotService.fetchLatestCallCount, 1)
+    }
+
+    func testRestoreFromBackendSilentlyHandlesNetworkError() async {
+        snapshotService.fetchLatestResult = .failure(SnapshotSyncError.networkError)
+
+        let coordinator = makeCoordinator()
+        await coordinator.restoreFromBackendIfNeeded()
+
+        XCTAssertNil(testDefaults.data(forKey: AppPersistenceKey.pantryItems))
+        XCTAssertEqual(snapshotService.fetchLatestCallCount, 1)
+    }
+
     private func makeCoordinator(
         notificationCenter: NotificationCenter = NotificationCenter(),
         uploadDebounceNanoseconds: UInt64 = 350_000_000
@@ -153,9 +220,12 @@ final class AppBackupCoordinatorTests: XCTestCase {
 @MainActor
 private final class MockSnapshotSyncService: SnapshotSyncingService {
     private(set) var upsertedBackups: [CookyaExportBackup] = []
+    private(set) var fetchLatestCallCount = 0
+    var fetchLatestResult: Result<CookyaExportBackup, Error> = .failure(SnapshotSyncError.notFound)
 
     func fetchLatest() async throws -> CookyaExportBackup {
-        throw SnapshotSyncError.notFound
+        fetchLatestCallCount += 1
+        return try fetchLatestResult.get()
     }
 
     func upsertLatest(_ backup: CookyaExportBackup) async throws {

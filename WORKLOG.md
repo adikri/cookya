@@ -123,6 +123,28 @@ Use this file to keep daily planning and end-of-day progress visible.
 
 ---
 
+## 2026-04-25 — Backup/restore durability (B1) + auth test reliability fix
+
+### Done
+- Extended `MockSnapshotSyncService` with configurable `fetchLatestResult` and `fetchLatestCallCount` recorder
+- Added 5 tests for `AppBackupCoordinator.restoreFromBackendIfNeeded()`:
+  - happy path: applies backup when local state is empty
+  - guard: does not fetch when local state is present (live data not overwritten)
+  - silent ignore: `.notFound`
+  - silent ignore: `.notAuthenticated`
+  - silent handle: `.networkError`
+- Fixed flaky auth state change tests: replaced single `Task.yield()` with `drainObservers()` (3 yields) to cover the MainActor scheduling cycles needed for `AsyncStream` delivery
+
+### Validated
+- `Cmd + B` ✓
+- `AppBackupCoordinatorTests` — 8/8 ✓
+- `AuthStoreTests` — all passing ✓
+
+### Carry Forward
+- Priority 4: per-store sync verification (RecipeStore, CookedMealStore, ProfileStore, WeeklyPlanStore)
+
+---
+
 ## 2026-04-25 — iOS auth/session reliability
 
 ### Done
