@@ -147,7 +147,7 @@ final class AuthStoreTests: XCTestCase {
 
         let session = makeSession()
         mock.emitAuthStateChange(event: .signedIn, session: session)
-        await Task.yield()
+        await drainObservers()
 
         XCTAssertEqual(store.session?.user.id, session.user.id)
         XCTAssertTrue(store.isAuthenticated)
@@ -161,7 +161,7 @@ final class AuthStoreTests: XCTestCase {
         XCTAssertNotNil(store.session)
 
         mock.emitAuthStateChange(event: .signedOut, session: nil)
-        await Task.yield()
+        await drainObservers()
 
         XCTAssertNil(store.session)
         XCTAssertFalse(store.isAuthenticated)
@@ -175,11 +175,21 @@ final class AuthStoreTests: XCTestCase {
         await store.sessionRestoreTask.value
 
         mock.emitAuthStateChange(event: .tokenRefreshed, session: newSession)
-        await Task.yield()
+        await drainObservers()
 
         XCTAssertEqual(store.session?.accessToken, newSession.accessToken)
         XCTAssertEqual(store.session?.refreshToken, newSession.refreshToken)
     }
+}
+
+// MARK: - Helpers
+
+// A single Task.yield() is not always enough for `for await` on AsyncStream
+// to deliver a buffered event through the MainActor scheduler. Three cycles
+// reliably covers the scheduling latency without introducing a wall-clock delay.
+@MainActor
+private func drainObservers() async {
+    for _ in 0..<3 { await Task.yield() }
 }
 
 // MARK: - MockAuthService
