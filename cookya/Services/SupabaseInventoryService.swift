@@ -19,7 +19,12 @@ struct SupabaseInventoryService: InventorySyncingService {
                 .value
             return records.map(\.domain)
         } catch {
-            throw mapped(error)
+            AppLogger.action(
+                "supabase_inventory_request_failed",
+                screen: "SupabaseInventoryService",
+                metadata: ["operation": "fetchPantry"].merging(SupabaseErrorDiagnostics.metadata(for: error), uniquingKeysWith: { _, new in new })
+            )
+            throw SupabaseErrorDiagnostics.inventorySyncError(from: error)
         }
     }
 
@@ -37,7 +42,12 @@ struct SupabaseInventoryService: InventorySyncingService {
         } catch let e as InventorySyncError {
             throw e
         } catch {
-            throw mapped(error)
+            AppLogger.action(
+                "supabase_inventory_request_failed",
+                screen: "SupabaseInventoryService",
+                metadata: ["operation": "upsertPantryItem", "itemId": item.id.uuidString].merging(SupabaseErrorDiagnostics.metadata(for: error), uniquingKeysWith: { _, new in new })
+            )
+            throw SupabaseErrorDiagnostics.inventorySyncError(from: error)
         }
     }
 
@@ -49,7 +59,12 @@ struct SupabaseInventoryService: InventorySyncingService {
                 .eq("id", value: id.uuidString)
                 .execute()
         } catch {
-            throw mapped(error)
+            AppLogger.action(
+                "supabase_inventory_request_failed",
+                screen: "SupabaseInventoryService",
+                metadata: ["operation": "deletePantryItem", "itemId": id.uuidString].merging(SupabaseErrorDiagnostics.metadata(for: error), uniquingKeysWith: { _, new in new })
+            )
+            throw SupabaseErrorDiagnostics.inventorySyncError(from: error)
         }
     }
 
@@ -64,7 +79,12 @@ struct SupabaseInventoryService: InventorySyncingService {
                 .value
             return records.map(\.domain)
         } catch {
-            throw mapped(error)
+            AppLogger.action(
+                "supabase_inventory_request_failed",
+                screen: "SupabaseInventoryService",
+                metadata: ["operation": "fetchGrocery"].merging(SupabaseErrorDiagnostics.metadata(for: error), uniquingKeysWith: { _, new in new })
+            )
+            throw SupabaseErrorDiagnostics.inventorySyncError(from: error)
         }
     }
 
@@ -82,7 +102,12 @@ struct SupabaseInventoryService: InventorySyncingService {
         } catch let e as InventorySyncError {
             throw e
         } catch {
-            throw mapped(error)
+            AppLogger.action(
+                "supabase_inventory_request_failed",
+                screen: "SupabaseInventoryService",
+                metadata: ["operation": "upsertGroceryItem", "itemId": item.id.uuidString].merging(SupabaseErrorDiagnostics.metadata(for: error), uniquingKeysWith: { _, new in new })
+            )
+            throw SupabaseErrorDiagnostics.inventorySyncError(from: error)
         }
     }
 
@@ -94,7 +119,12 @@ struct SupabaseInventoryService: InventorySyncingService {
                 .eq("id", value: id.uuidString)
                 .execute()
         } catch {
-            throw mapped(error)
+            AppLogger.action(
+                "supabase_inventory_request_failed",
+                screen: "SupabaseInventoryService",
+                metadata: ["operation": "deleteGroceryItem", "itemId": id.uuidString].merging(SupabaseErrorDiagnostics.metadata(for: error), uniquingKeysWith: { _, new in new })
+            )
+            throw SupabaseErrorDiagnostics.inventorySyncError(from: error)
         }
     }
 
@@ -124,13 +154,6 @@ struct SupabaseInventoryService: InventorySyncingService {
         return user.id
     }
 
-    private func mapped(_ error: Error) -> InventorySyncError {
-        if let e = error as? InventorySyncError { return e }
-        if let urlError = error as? URLError {
-            return urlError.code == .cancelled ? .cancelled : .networkError
-        }
-        return .networkError
-    }
 }
 
 // MARK: - DTOs

@@ -135,10 +135,10 @@ struct HomeView: View {
                 if let recommendation = bestNextStep {
                     AppLogger.action("home_recommendation_shown", screen: "Home", metadata: ["type": String(describing: recommendation).components(separatedBy: "(").first ?? String(describing: recommendation)])
                 }
-                await inventoryStore.refreshIfNeeded()
+                await inventoryStore.refreshIfNeededFromView()
             }
             .refreshable {
-                await inventoryStore.refresh()
+                await inventoryStore.refreshFromView()
             }
         }
     }

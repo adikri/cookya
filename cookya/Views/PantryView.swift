@@ -107,7 +107,7 @@ struct PantryView: View {
             }
         }
         .refreshable {
-            await inventoryStore.refresh()
+            await inventoryStore.refreshFromView()
         }
         .sheet(isPresented: $isShowingItemPicker) {
             KnownItemPickerView(title: "Add Pantry Item") { suggestion in

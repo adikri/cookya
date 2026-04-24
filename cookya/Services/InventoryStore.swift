@@ -150,6 +150,22 @@ final class InventoryStore: ObservableObject {
         await refresh()
     }
 
+    func refreshIfNeededFromView() async {
+        guard !hasAttemptedInitialSync else { return }
+        hasAttemptedInitialSync = true
+        await refreshFromView()
+    }
+
+    func refreshFromView() async {
+        // SwiftUI `.task` / `.refreshable` work can be cancelled when the view
+        // hierarchy changes. Run the sync in an unstructured task so the
+        // inventory sync itself survives those lifecycle cancellations.
+        let syncTask = Task { @MainActor in
+            await refresh()
+        }
+        await syncTask.value
+    }
+
     func refresh() async {
         guard !isSyncing else { return }
         isSyncing = true
@@ -185,7 +201,39 @@ final class InventoryStore: ObservableObject {
                     }
                 }
             }
-            groceryItems = Self.mergedGrocery(local: groceryItems, remote: remoteGrocery)
+
+            // Push local-only pantry items that predate the Supabase integration.
+            // Awaited inline so refresh() is deterministic for tests and the
+            // `inventory_sync_succeeded` log reflects the true end of sync.
+            let remotePantryIDs = Set(remotePantry.map(\.id))
+            let pantryLocalOnly = dedupedPantry.items.filter { !remotePantryIDs.contains($0.id) }
+            if !pantryLocalOnly.isEmpty {
+                AppLogger.action(
+                    "inventory_sync_uploading_local_only",
+                    screen: "InventoryStore",
+                    metadata: ["pantryLocalOnlyCount": String(pantryLocalOnly.count)]
+                )
+                for item in pantryLocalOnly {
+                    _ = try await inventoryService.upsertPantryItem(item)
+                }
+            }
+
+            let mergedGrocery = Self.mergedGrocery(local: groceryItems, remote: remoteGrocery)
+            groceryItems = mergedGrocery
+
+            let remoteGroceryIDs = Set(remoteGrocery.map(\.id))
+            let groceryLocalOnly = mergedGrocery.filter { !remoteGroceryIDs.contains($0.id) }
+            if !groceryLocalOnly.isEmpty {
+                AppLogger.action(
+                    "inventory_sync_uploading_local_only",
+                    screen: "InventoryStore",
+                    metadata: ["groceryLocalOnlyCount": String(groceryLocalOnly.count)]
+                )
+                for item in groceryLocalOnly {
+                    _ = try await inventoryService.upsertGroceryItem(item)
+                }
+            }
+
             persistCache()
             lastSyncError = nil
             AppLogger.action(

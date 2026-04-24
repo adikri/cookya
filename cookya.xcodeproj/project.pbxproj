@@ -53,8 +53,8 @@
 		40A100482F5D000000D3C60A /* CookedHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100492F5D000000D3C60A /* CookedHistoryView.swift */; };
 		40A1004A2F5D000000D3C60A /* PurchaseExpirySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1004B2F5D000000D3C60A /* PurchaseExpirySheet.swift */; };
 		40A100502F5D300000D3C60A /* KnownInventoryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100512F5D300000D3C60A /* KnownInventoryItem.swift */; };
-		40A100522F5D300000D3C60B /* PantryItemCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100532F5D300000D3C60B /* PantryItemCatalog.swift */; };
 		40A100522F5D300000D3C60A /* KnownItemStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100532F5D300000D3C60A /* KnownItemStore.swift */; };
+		40A100522F5D300000D3C60B /* PantryItemCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100532F5D300000D3C60B /* PantryItemCatalog.swift */; };
 		40A100542F5D300000D3C60A /* KnownItemPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100552F5D300000D3C60A /* KnownItemPickerView.swift */; };
 		40A100562F5D300000D3C60A /* StructuredQuantity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100572F5D300000D3C60A /* StructuredQuantity.swift */; };
 		40A100582F5D300000D3C60A /* QuantityInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100592F5D300000D3C60A /* QuantityInputView.swift */; };
@@ -63,6 +63,7 @@
 		40A1005E2F5D300000D3C60A /* PersistencePayloadValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A1005F2F5D300000D3C60A /* PersistencePayloadValidator.swift */; };
 		40A100602F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100612F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift */; };
 		40A100642F5D500000D3C60A /* HomeRecommendationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100632F5D500000D3C60A /* HomeRecommendationEngine.swift */; };
+		40A100662F5D600000D3C60A /* SupabaseErrorDiagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100652F5D600000D3C60A /* SupabaseErrorDiagnostics.swift */; };
 		40A100902F9A010000D3C60A /* NutritionGoals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A100912F9A010000D3C60A /* NutritionGoals.swift */; };
 		40B000042F60000000D3C60A /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000012F60000000D3C60A /* KeychainStore.swift */; };
 		40B000052F60000000D3C60A /* BackendAuthToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B000022F60000000D3C60A /* BackendAuthToken.swift */; };
@@ -80,12 +81,12 @@
 		40E000042F9C010000D3C60A /* SupabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000052F9C000000D3C60A /* SupabaseManager.swift */; };
 		40E000062F9C010000D3C60A /* AuthStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000072F9C000000D3C60A /* AuthStore.swift */; };
 		40E000082F9C010000D3C60B /* AuthServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000092F9C000000D3C60B /* AuthServiceProtocol.swift */; };
+		40E0000B2F9C010000D3C60A /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000092F9C000000D3C60A /* SignInView.swift */; };
 		40F000012F9C010000D3C60C /* SupabaseInventoryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F000022F9C000000D3C60C /* SupabaseInventoryService.swift */; };
 		40F000032F9C010000D3C60D /* SnapshotSyncingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F000042F9C000000D3C60D /* SnapshotSyncingService.swift */; };
+		40F000052F9C010000D3C60E /* SupabaseSnapshotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F000062F9C000000D3C60E /* SupabaseSnapshotService.swift */; };
 		40F000072F9C010000D3C60F /* StoreSyncProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F000082F9C000000D3C60F /* StoreSyncProtocols.swift */; };
 		40F000092F9C010000D3C610 /* SupabaseStoreSyncServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F0000A2F9C000000D3C610 /* SupabaseStoreSyncServices.swift */; };
-		40F000052F9C010000D3C60E /* SupabaseSnapshotService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F000062F9C000000D3C60E /* SupabaseSnapshotService.swift */; };
-		40E0000B2F9C010000D3C60A /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E000092F9C000000D3C60A /* SignInView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -156,8 +157,8 @@
 		40A1004C2F5D100000D3C60A /* AppDefaults.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppDefaults.xcconfig; sourceTree = "<group>"; };
 		40A1004D2F5D100000D3C60A /* Secrets.xcconfig.example */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig.example; sourceTree = "<group>"; };
 		40A100512F5D300000D3C60A /* KnownInventoryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnownInventoryItem.swift; sourceTree = "<group>"; };
-		40A100532F5D300000D3C60B /* PantryItemCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryItemCatalog.swift; sourceTree = "<group>"; };
 		40A100532F5D300000D3C60A /* KnownItemStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnownItemStore.swift; sourceTree = "<group>"; };
+		40A100532F5D300000D3C60B /* PantryItemCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryItemCatalog.swift; sourceTree = "<group>"; };
 		40A100552F5D300000D3C60A /* KnownItemPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnownItemPickerView.swift; sourceTree = "<group>"; };
 		40A100572F5D300000D3C60A /* StructuredQuantity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructuredQuantity.swift; sourceTree = "<group>"; };
 		40A100592F5D300000D3C60A /* QuantityInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuantityInputView.swift; sourceTree = "<group>"; };
@@ -166,6 +167,7 @@
 		40A1005F2F5D300000D3C60A /* PersistencePayloadValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistencePayloadValidator.swift; sourceTree = "<group>"; };
 		40A100612F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneratedRecipeCachePolicy.swift; sourceTree = "<group>"; };
 		40A100632F5D500000D3C60A /* HomeRecommendationEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeRecommendationEngine.swift; sourceTree = "<group>"; };
+		40A100652F5D600000D3C60A /* SupabaseErrorDiagnostics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseErrorDiagnostics.swift; sourceTree = "<group>"; };
 		40A100912F9A010000D3C60A /* NutritionGoals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionGoals.swift; sourceTree = "<group>"; };
 		40B000012F60000000D3C60A /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
 		40B000022F60000000D3C60A /* BackendAuthToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendAuthToken.swift; sourceTree = "<group>"; };
@@ -186,9 +188,9 @@
 		40E000092F9C000000D3C60B /* AuthServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthServiceProtocol.swift; sourceTree = "<group>"; };
 		40F000022F9C000000D3C60C /* SupabaseInventoryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseInventoryService.swift; sourceTree = "<group>"; };
 		40F000042F9C000000D3C60D /* SnapshotSyncingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotSyncingService.swift; sourceTree = "<group>"; };
+		40F000062F9C000000D3C60E /* SupabaseSnapshotService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseSnapshotService.swift; sourceTree = "<group>"; };
 		40F000082F9C000000D3C60F /* StoreSyncProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreSyncProtocols.swift; sourceTree = "<group>"; };
 		40F0000A2F9C000000D3C610 /* SupabaseStoreSyncServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseStoreSyncServices.swift; sourceTree = "<group>"; };
-		40F000062F9C000000D3C60E /* SupabaseSnapshotService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseSnapshotService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -388,6 +390,7 @@
 				40A1003F2F5C200000D3C60A /* AppLogger.swift */,
 				40A100612F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift */,
 				40A100632F5D500000D3C60A /* HomeRecommendationEngine.swift */,
+				40A100652F5D600000D3C60A /* SupabaseErrorDiagnostics.swift */,
 				40B000012F60000000D3C60A /* KeychainStore.swift */,
 				40A1005F2F5D300000D3C60A /* PersistencePayloadValidator.swift */,
 			);
@@ -618,6 +621,7 @@
 				40A1005A2F5D300000D3C60A /* AppPersistenceKey.swift in Sources */,
 				40A100602F5D400000D3C60A /* GeneratedRecipeCachePolicy.swift in Sources */,
 				40A100642F5D500000D3C60A /* HomeRecommendationEngine.swift in Sources */,
+				40A100662F5D600000D3C60A /* SupabaseErrorDiagnostics.swift in Sources */,
 				40A1005E2F5D300000D3C60A /* PersistencePayloadValidator.swift in Sources */,
 				40A100502F5D300000D3C60A /* KnownInventoryItem.swift in Sources */,
 				40A100522F5D300000D3C60B /* PantryItemCatalog.swift in Sources */,

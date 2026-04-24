@@ -102,7 +102,7 @@ struct GroceryListView: View {
             }
         }
         .refreshable {
-            await inventoryStore.refresh()
+            await inventoryStore.refreshFromView()
         }
         .sheet(isPresented: $isShowingItemPicker) {
             KnownItemPickerView(title: "Add Grocery Item") { suggestion in

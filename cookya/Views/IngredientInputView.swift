@@ -196,7 +196,7 @@ struct IngredientInputView: View {
         }
         .task {
             AppLogger.screen("CookNow", metadata: ["profile": profileStore.activeProfile?.name ?? "Guest"])
-            await inventoryStore.refreshIfNeeded()
+            await inventoryStore.refreshIfNeededFromView()
         }
         .confirmationDialog(
             "Use pantry item instead?",

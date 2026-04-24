@@ -20,7 +20,12 @@ struct SupabaseSnapshotService: SnapshotSyncingService {
         } catch let e as SnapshotSyncError {
             throw e
         } catch {
-            throw SnapshotSyncError.networkError
+            AppLogger.action(
+                "supabase_snapshot_request_failed",
+                screen: "SupabaseSnapshotService",
+                metadata: ["operation": "fetchLatest"].merging(SupabaseErrorDiagnostics.metadata(for: error), uniquingKeysWith: { _, new in new })
+            )
+            throw SupabaseErrorDiagnostics.snapshotSyncError(from: error)
         }
     }
 
@@ -35,7 +40,12 @@ struct SupabaseSnapshotService: SnapshotSyncingService {
         } catch let e as SnapshotSyncError {
             throw e
         } catch {
-            throw SnapshotSyncError.networkError
+            AppLogger.action(
+                "supabase_snapshot_request_failed",
+                screen: "SupabaseSnapshotService",
+                metadata: ["operation": "upsertLatest"].merging(SupabaseErrorDiagnostics.metadata(for: error), uniquingKeysWith: { _, new in new })
+            )
+            throw SupabaseErrorDiagnostics.snapshotSyncError(from: error)
         }
     }
 

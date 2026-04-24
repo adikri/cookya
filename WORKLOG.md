@@ -18,6 +18,87 @@ Use this file to keep daily planning and end-of-day progress visible.
 - Note what carries into the next session
 - Push to GitHub after the wrap-up
 
+---
+
+## 2026-04-24 — Slice H1: Home screen structure + design tokens
+
+### Done
+- Created `mobile/theme.ts` — colors, spacing, typography, radius tokens matching iOS
+- Created `mobile/components/SectionHeader.tsx`, `ActionCard.tsx`, `ManagementCard.tsx`
+- Rewrote `mobile/app/(tabs)/index.tsx` with iOS Home layout:
+  - Greeting ("What's cooking [email]?!")
+  - Let's Cook hero card with pantry chip and inline recipe generation
+  - Kitchen Management cards (Pantry + Grocery, live item counts, navigate to tabs)
+  - Stub comments for H2 (Nutrition), H3 (Best Next Step), H4 (Attention Needed), H5 (Cook Faster)
+- Hidden Home tab header (greeting is the page title)
+- `npm run typecheck` clean, `npm test` 28/28
+
+### Carry Forward (next slices)
+- H2: ProfileStore + CookedMealStore → nutrition progress card
+- H3: HomeRecommendationEngine (pure TS) → Best Next Step
+- H4: Expiry filters on pantryStore → Attention Needed
+- H5: RecipeStore → Cook Faster section
+
+---
+
+## 2026-04-24 — Mobile test infrastructure + Android device setup
+
+### Done
+- Diagnosed Android device testing: Expo Go + QR code requires no SDK; USB/ADB path requires Android Studio
+- Installed missing expo-router peer deps: `react-native-safe-area-context`, `react-native-screens`, `react-native-gesture-handler`
+- Fixed 2 TypeScript bugs: `ListEmptyContent` → `ListEmptyComponent` in `pantry.tsx` and `grocery.tsx`
+- Fixed `recipeService.ts` to read env vars inside the function (module-level constants break Jest)
+- Set up Jest (jest-expo ~54, @testing-library/react-native, @types/jest)
+- Wrote 28 unit tests across 4 files: `pantryStore`, `groceryStore`, `authStore`, `recipeService`
+- Added `npm run typecheck` and `npm test` scripts to `mobile/package.json`
+- Used smoke-test layout (`<Text>Cookya boots ✓</Text>`) to confirm Layer 1 (bundle renders) before restoring auth
+- Confirmed web build works at `localhost:8081` via `npx expo start --web`
+- Documented all mobile rules in `CLAUDE.md` under new `mobile/` section
+
+### Lessons captured in CLAUDE.md
+- Expo Go QR path vs USB/ADB path and when each is needed
+- expo-router peer dep list
+- Env vars inside functions rule (testability)
+- Zustand v5 setState partial merge in tests
+- Smoke-test layout pattern for blank-screen debugging
+- `ListEmptyComponent` correct prop name
+
+### Carry Forward
+- Android testing: parked until device is available again — run `npm run typecheck && npm test` first, then `npx expo start` + QR scan
+- Web testing flow: `npx expo start --web --clear` → sign up at localhost:8081 → verify auth → pantry/grocery CRUD
+
+---
+
+## 2026-04-24 — iOS inventory local-only sync hardening
+
+### Done
+- Added `InventoryStore.refresh()` recovery path for local-only pantry/grocery rows that exist on-device but are missing in Supabase
+- Removed silent failure swallowing during local-only upload so refresh now surfaces sync errors instead of reporting false success
+- Added regression tests for:
+  - pantry local-only upload
+  - grocery local-only upload
+  - no re-upload when the row already exists remotely
+  - no upload when local inventory is empty
+  - failure-path sync error reporting for pantry/grocery local-only uploads
+- Added `SupabaseErrorDiagnostics` to log underlying Supabase request failures with structured metadata
+- Fixed `Swift.CancellationError` mapping so cancelled view-bound sync work is no longer misreported as `networkError`
+- Decoupled view-triggered inventory refresh from SwiftUI task cancellation via `refreshFromView()` / `refreshIfNeededFromView()`
+
+### Validated
+- `Cmd + B`
+- `InventoryStoreTests`
+- `SupabaseErrorDiagnosticsTests`
+- Manual iPhone flow:
+  - created a true local-only pantry item while offline
+  - confirmed it was absent in Supabase before refresh
+  - restored connectivity
+  - pulled to refresh on Home
+  - observed `inventory_sync_uploading_local_only` and `inventory_sync_succeeded`
+  - confirmed the row appeared in Supabase after refresh
+
+### Carry Forward
+- Snapshot backup currently logs multiple `backend_snapshot_upsert_succeeded` events around a single pantry save; investigate and deduplicate that path as a separate slice
+
 ### If tokens run out mid-session (interrupt)
 - Claude maintains `RESUME.md` automatically throughout each session — no manual action needed
 - The next session reads `RESUME.md` first and picks up from **Exact next step**
