@@ -87,7 +87,7 @@ struct cookyaApp: App {
         }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .inactive || newPhase == .background {
-                backupCoordinator.refreshBackup()
+                backupCoordinator.refreshBackup(flushUpload: true)
             }
         }
     }

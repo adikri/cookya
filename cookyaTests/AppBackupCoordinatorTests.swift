@@ -7,11 +7,13 @@ final class AppBackupCoordinatorTests: XCTestCase {
     private var testSuiteName: String!
     private var backupFileURL: URL!
     private var backupDirectoryURL: URL!
+    private var snapshotService: MockSnapshotSyncService!
 
     override func setUp() {
         super.setUp()
         testSuiteName = "AppBackupCoordinatorTests.\(UUID().uuidString)"
         testDefaults = UserDefaults(suiteName: testSuiteName)
+        snapshotService = MockSnapshotSyncService()
         backupDirectoryURL = FileManager.default.temporaryDirectory
             .appendingPathComponent("cookya-backup-tests-\(UUID().uuidString)", isDirectory: true)
         backupFileURL = backupDirectoryURL.appendingPathComponent("state-backup-v1.json")
@@ -24,6 +26,7 @@ final class AppBackupCoordinatorTests: XCTestCase {
         if let backupDirectoryURL {
             try? FileManager.default.removeItem(at: backupDirectoryURL)
         }
+        snapshotService = nil
         testDefaults = nil
         testSuiteName = nil
         backupFileURL = nil
@@ -99,13 +102,64 @@ final class AppBackupCoordinatorTests: XCTestCase {
         XCTAssertEqual(testDefaults.data(forKey: AppPersistenceKey.pantryItems), localPantryData)
     }
 
-    private func makeCoordinator() -> AppBackupCoordinator {
+    func testRefreshBackupCoalescesRapidSnapshotUploads() async throws {
+        let notificationCenter = NotificationCenter()
+        let coordinator = makeCoordinator(
+            notificationCenter: notificationCenter,
+            uploadDebounceNanoseconds: 20_000_000
+        )
+        coordinator.startObserving()
+
+        let pantryData = try JSONEncoder.withISO8601Dates().encode([
+            PantryItem(name: "Rice", quantityText: "1 cup", category: .grains)
+        ])
+        let knownItemsData = try JSONEncoder().encode([
+            KnownInventoryItem(
+                name: "Rice",
+                defaultCategory: .grains,
+                lastQuantityText: "1 cup",
+                lastSource: .pantry
+            )
+        ])
+
+        testDefaults.set(pantryData, forKey: AppPersistenceKey.pantryItems)
+        notificationCenter.post(name: UserDefaults.didChangeNotification, object: testDefaults)
+
+        testDefaults.set(knownItemsData, forKey: AppPersistenceKey.knownInventoryItems)
+        notificationCenter.post(name: UserDefaults.didChangeNotification, object: testDefaults)
+
+        try await Task.sleep(nanoseconds: 120_000_000)
+
+        XCTAssertEqual(snapshotService.upsertedBackups.count, 1)
+        XCTAssertEqual(snapshotService.upsertedBackups.first?.snapshot.pantryItemsData, pantryData)
+        XCTAssertEqual(snapshotService.upsertedBackups.first?.snapshot.knownInventoryItemsData, knownItemsData)
+    }
+
+    private func makeCoordinator(
+        notificationCenter: NotificationCenter = NotificationCenter(),
+        uploadDebounceNanoseconds: UInt64 = 350_000_000
+    ) -> AppBackupCoordinator {
         AppBackupCoordinator(
             userDefaults: testDefaults,
             fileManager: .default,
-            notificationCenter: NotificationCenter(),
-            backupFileURL: backupFileURL
+            notificationCenter: notificationCenter,
+            backupFileURL: backupFileURL,
+            snapshotService: snapshotService,
+            uploadDebounceNanoseconds: uploadDebounceNanoseconds
         )
+    }
+}
+
+@MainActor
+private final class MockSnapshotSyncService: SnapshotSyncingService {
+    private(set) var upsertedBackups: [CookyaExportBackup] = []
+
+    func fetchLatest() async throws -> CookyaExportBackup {
+        throw SnapshotSyncError.notFound
+    }
+
+    func upsertLatest(_ backup: CookyaExportBackup) async throws {
+        upsertedBackups.append(backup)
     }
 }
 

@@ -53,21 +53,27 @@ final class AppBackupCoordinator {
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
     private let snapshotService: any SnapshotSyncingService
+    private let uploadDebounceNanoseconds: UInt64
     private var defaultsObserver: NSObjectProtocol?
     private var isApplyingRestore = false
+    private var pendingUploadTask: Task<Void, Never>?
+    private var pendingUploadData: Data?
+    private var lastUploadedData: Data?
 
     init(
         userDefaults: UserDefaults = .standard,
         fileManager: FileManager = .default,
         notificationCenter: NotificationCenter = .default,
         backupFileURL: URL? = nil,
-        snapshotService: (any SnapshotSyncingService)? = nil
+        snapshotService: (any SnapshotSyncingService)? = nil,
+        uploadDebounceNanoseconds: UInt64 = 350_000_000
     ) {
         self.userDefaults = userDefaults
         self.fileManager = fileManager
         self.notificationCenter = notificationCenter
         self.backupFileURL = backupFileURL ?? Self.defaultBackupFileURL(fileManager: fileManager)
         self.snapshotService = snapshotService ?? SupabaseSnapshotService(client: SupabaseManager.shared.client)
+        self.uploadDebounceNanoseconds = uploadDebounceNanoseconds
 
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
@@ -82,6 +88,7 @@ final class AppBackupCoordinator {
         if let defaultsObserver {
             notificationCenter.removeObserver(defaultsObserver)
         }
+        pendingUploadTask?.cancel()
     }
 
     func restoreIfNeeded() {
@@ -127,7 +134,7 @@ final class AppBackupCoordinator {
         refreshBackup()
     }
 
-    func refreshBackup() {
+    func refreshBackup(flushUpload: Bool = false) {
         let snapshot = AppBackupSnapshot(
             pantryItemsData: userDefaults.data(forKey: AppPersistenceKey.pantryItems),
             groceryItemsData: userDefaults.data(forKey: AppPersistenceKey.groceryItems),
@@ -151,17 +158,7 @@ final class AppBackupCoordinator {
             try data.write(to: backupFileURL, options: .atomic)
 
             let export = CookyaExportBackup(snapshot: snapshot)
-            Task { @MainActor in
-                do {
-                    try await snapshotService.upsertLatest(export)
-                    AppLogger.action("backend_snapshot_upsert_succeeded", metadata: ["version": String(export.version)])
-                } catch {
-                    AppLogger.action(
-                        "backend_snapshot_upsert_failed",
-                        metadata: ["error": String(describing: error)]
-                    )
-                }
-            }
+            enqueueSnapshotUpload(export: export, encodedSnapshot: data, flush: flushUpload)
         } catch {
             AppLogger.action(
                 "backup_refresh_failed",
@@ -234,6 +231,10 @@ final class AppBackupCoordinator {
         guard fileManager.fileExists(atPath: backupFileURL.path) else { return }
         do {
             try fileManager.removeItem(at: backupFileURL)
+            pendingUploadTask?.cancel()
+            pendingUploadTask = nil
+            pendingUploadData = nil
+            lastUploadedData = nil
         } catch {
             AppLogger.action(
                 "backup_remove_failed",
@@ -249,6 +250,42 @@ final class AppBackupCoordinator {
         let directory = backupFileURL.deletingLastPathComponent()
         if !fileManager.fileExists(atPath: directory.path) {
             try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
+        }
+    }
+
+    private func enqueueSnapshotUpload(export: CookyaExportBackup, encodedSnapshot: Data, flush: Bool) {
+        if lastUploadedData == encodedSnapshot {
+            return
+        }
+
+        pendingUploadTask?.cancel()
+        pendingUploadData = encodedSnapshot
+
+        pendingUploadTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+
+            if !flush {
+                try? await Task.sleep(nanoseconds: uploadDebounceNanoseconds)
+            }
+
+            if Task.isCancelled { return }
+            guard self.pendingUploadData == encodedSnapshot else { return }
+
+            do {
+                try await self.snapshotService.upsertLatest(export)
+                self.lastUploadedData = encodedSnapshot
+                AppLogger.action("backend_snapshot_upsert_succeeded", metadata: ["version": String(export.version)])
+            } catch {
+                AppLogger.action(
+                    "backend_snapshot_upsert_failed",
+                    metadata: ["error": String(describing: error)]
+                )
+            }
+
+            if self.pendingUploadData == encodedSnapshot {
+                self.pendingUploadData = nil
+                self.pendingUploadTask = nil
+            }
         }
     }
 

@@ -99,6 +99,28 @@ Use this file to keep daily planning and end-of-day progress visible.
 ### Carry Forward
 - Snapshot backup currently logs multiple `backend_snapshot_upsert_succeeded` events around a single pantry save; investigate and deduplicate that path as a separate slice
 
+---
+
+## 2026-04-24 — iOS snapshot upload deduping
+
+### Done
+- Added backend snapshot upload coalescing inside `AppBackupCoordinator`
+- Rapid `UserDefaults` changes now collapse into one remote snapshot upsert instead of firing a backend write per defaults notification
+- Added immediate flush behavior when the app moves to inactive/background so the latest snapshot is still uploaded promptly on lifecycle exit
+- Added regression coverage proving multiple rapid local persistence changes result in one snapshot upload carrying the latest combined state
+
+### Validated
+- `Cmd + B`
+- `AppBackupCoordinatorTests`
+- `InventoryStoreTests`
+- `SupabaseErrorDiagnosticsTests`
+- Manual iPhone flow:
+  - saved one pantry item
+  - verified only one `backend_snapshot_upsert_succeeded` event around that save
+
+### Carry Forward
+- Worker/mobile/doc changes already in the branch remain uncommitted and should stay isolated from this iOS slice
+
 ### If tokens run out mid-session (interrupt)
 - Claude maintains `RESUME.md` automatically throughout each session — no manual action needed
 - The next session reads `RESUME.md` first and picks up from **Exact next step**
