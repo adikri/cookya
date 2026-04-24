@@ -1,6 +1,7 @@
 import Supabase
 
 protocol AuthServiceProtocol {
+    var authStateChanges: AsyncStream<(event: AuthChangeEvent, session: Session?)> { get }
     func signIn(email: String, password: String) async throws -> Session
     func signUp(email: String, password: String) async throws -> AuthResponse
     func signOut() async throws
@@ -12,6 +13,10 @@ struct LiveAuthService: AuthServiceProtocol {
 
     init(_ authClient: AuthClient) {
         self.authClient = authClient
+    }
+
+    var authStateChanges: AsyncStream<(event: AuthChangeEvent, session: Session?)> {
+        authClient.authStateChanges
     }
 
     func signIn(email: String, password: String) async throws -> Session {

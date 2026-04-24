@@ -21,10 +21,17 @@ final class AuthStore: ObservableObject {
 
     private let authService: any AuthServiceProtocol
     private(set) var sessionRestoreTask: Task<Void, Never>!
+    private var authStateObservationTask: Task<Void, Never>?
 
     init(authService: (any AuthServiceProtocol)? = nil) {
         self.authService = authService ?? LiveAuthService(SupabaseManager.shared.client.auth)
+        authStateObservationTask = Task { await observeAuthStateChanges() }
         sessionRestoreTask = Task { await restoreSession() }
+    }
+
+    deinit {
+        sessionRestoreTask?.cancel()
+        authStateObservationTask?.cancel()
     }
 
     func signIn(email: String, password: String) async throws {
@@ -63,6 +70,28 @@ final class AuthStore: ObservableObject {
             }
         } catch {
             session = nil
+        }
+    }
+
+    private func observeAuthStateChanges() async {
+        for await state in authService.authStateChanges {
+            switch state.event {
+            case .initialSession:
+                continue
+            case .signedIn, .tokenRefreshed, .userUpdated, .passwordRecovery, .mfaChallengeVerified:
+                session = state.session
+                if let session = state.session {
+                    AppLogger.action(
+                        "auth_state_changed",
+                        metadata: ["event": state.event.rawValue, "userId": session.user.id.uuidString]
+                    )
+                } else {
+                    AppLogger.action("auth_state_changed", metadata: ["event": state.event.rawValue])
+                }
+            case .signedOut, .userDeleted:
+                session = nil
+                AppLogger.action("auth_state_changed", metadata: ["event": state.event.rawValue])
+            }
         }
     }
 }

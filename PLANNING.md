@@ -97,11 +97,20 @@ These are the main technical priorities that still matter.
    - `HomeView` still contains too much recommendation logic
    - `SavedRecipesView` now has planning-hub shaping logic that should eventually move toward a dedicated ViewModel/service-backed layer
 
+2. **Keep backup/restore and sync trust tight** *(carried from item 3)*
+   - next durability work: restore behavior and multi-store sync verification
+
+3. **Keep backup/restore and sync trust tight**
+   - inventory local-only recovery is now hardened and validated
+   - snapshot upload churn is now deduped and validated
+   - next durability work should focus on restore behavior and multi-store sync verification
+
 ### Done (no longer open)
 
 - **Data durability / backup** — KV snapshot via Cloudflare Worker.
 - **Recipe cache eviction policy** — `GeneratedRecipeCachePolicy`: LRU, capped at 50, tested.
 - **Harden store decode / persist failures** — `AppLogger` on all decode fallbacks; `assertionFailure` on encode failures in all stores.
+- **Auth/session reliability** — `AuthStore` now observes Supabase auth state changes after launch; root view responds to sign-in/out/token-refresh events without relaunch. Validated on device.
 
 ### Later
 
@@ -128,11 +137,14 @@ Use these markers consistently:
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Lightweight cloud/data backup | **Built** | KV snapshot via Cloudflare Worker. |
+| Lightweight cloud/data backup | **Built** | Supabase `user_snapshots` JSONB backup via `SupabaseSnapshotService`. |
 | Backend recipe generation relay (no client OpenAI key) | **Built** | Cloudflare Worker with static token auth. |
+| Inventory local-only sync recovery | **Built** | `InventoryStore.refresh()` now uploads local-only pantry/grocery rows missing in Supabase; validated on device with offline-created local-only item. |
+| Snapshot upload deduping | **Built** | `AppBackupCoordinator` now coalesces rapid local persistence changes into one backend snapshot upsert; validated on device. |
 | Store decode/persist hardening | **Built** | AppLogger on decode fallbacks; assertionFailure on encode failures in all stores. |
 | Recipe cache eviction policy | **Built** | GeneratedRecipeCachePolicy: LRU eviction, cap of 50, tested. |
 | Home recommendation extraction | **Built** | `HomeRecommendationEngine` extracted with full test coverage. |
+| Auth/session reliability | **Next** | `AuthStore` must subscribe to Supabase auth state changes and be validated on-device for post-launch session drift. |
 | Broader test coverage | **Later** | Extend beyond current regression coverage. |
 
 ### Phase N — Nutrition Layer (current priority)
@@ -207,9 +219,10 @@ Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home`
 2. ~~`codex/nutrition-home`~~ **Done**
 3. ~~`codex/saved-planning-hub`~~ **Done**
 4. ~~`codex/weekly-meal-plan`~~ **Done**
-5. `codex/supabase-foundation` — Supabase project + schema + iOS integration **← current**
-6. `codex/react-native-android` — Android app connecting to same Supabase backend
-7. `codex/android-feature-parity` — nutrition, weekly plan, saved recipes on Android
+5. `codex/ios-auth-session-hardening` — validate post-launch auth/session behavior on device
+6. `codex/ios-backup-restore-durability` — verify restore/import/shared-store durability paths
+7. `codex/react-native-android` — Android app connecting to same Supabase backend
+8. `codex/android-feature-parity` — nutrition, weekly plan, saved recipes on Android
 
 ---
 

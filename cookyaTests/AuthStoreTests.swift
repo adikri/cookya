@@ -137,6 +137,49 @@ final class AuthStoreTests: XCTestCase {
 
         XCTAssertFalse(store.isLoading)
     }
+
+    // MARK: - auth state changes
+
+    func testAuthStateSignedInAfterLaunchSetsSession() async {
+        let mock = MockAuthService(sessionResult: .failure(URLError(.userAuthenticationRequired)))
+        let store = AuthStore(authService: mock)
+        await store.sessionRestoreTask.value
+
+        let session = makeSession()
+        mock.emitAuthStateChange(event: .signedIn, session: session)
+        await Task.yield()
+
+        XCTAssertEqual(store.session?.user.id, session.user.id)
+        XCTAssertTrue(store.isAuthenticated)
+    }
+
+    func testAuthStateSignedOutAfterLaunchClearsSession() async {
+        let session = makeSession()
+        let mock = MockAuthService(sessionResult: .success(session))
+        let store = AuthStore(authService: mock)
+        await store.sessionRestoreTask.value
+        XCTAssertNotNil(store.session)
+
+        mock.emitAuthStateChange(event: .signedOut, session: nil)
+        await Task.yield()
+
+        XCTAssertNil(store.session)
+        XCTAssertFalse(store.isAuthenticated)
+    }
+
+    func testAuthStateTokenRefreshedReplacesSession() async {
+        let oldSession = makeSession(userId: UUID())
+        let newSession = makeSession(userId: oldSession.user.id)
+        let mock = MockAuthService(sessionResult: .success(oldSession))
+        let store = AuthStore(authService: mock)
+        await store.sessionRestoreTask.value
+
+        mock.emitAuthStateChange(event: .tokenRefreshed, session: newSession)
+        await Task.yield()
+
+        XCTAssertEqual(store.session?.accessToken, newSession.accessToken)
+        XCTAssertEqual(store.session?.refreshToken, newSession.refreshToken)
+    }
 }
 
 // MARK: - MockAuthService
@@ -146,6 +189,8 @@ private final class MockAuthService: AuthServiceProtocol {
     private let signUpResult: Result<AuthResponse, Error>
     private let signOutError: Error?
     private let sessionResult: Result<Session, Error>
+    private let authStateChangesStream: AsyncStream<(event: AuthChangeEvent, session: Session?)>
+    private let authStateChangesContinuation: AsyncStream<(event: AuthChangeEvent, session: Session?)>.Continuation
 
     init(
         signInResult: Result<Session, Error> = .failure(URLError(.userAuthenticationRequired)),
@@ -153,10 +198,17 @@ private final class MockAuthService: AuthServiceProtocol {
         signOutError: Error? = nil,
         sessionResult: Result<Session, Error> = .failure(URLError(.userAuthenticationRequired))
     ) {
+        let (stream, continuation) = AsyncStream<(event: AuthChangeEvent, session: Session?)>.makeStream()
+        self.authStateChangesStream = stream
+        self.authStateChangesContinuation = continuation
         self.signInResult = signInResult
         self.signUpResult = signUpResult
         self.signOutError = signOutError
         self.sessionResult = sessionResult
+    }
+
+    var authStateChanges: AsyncStream<(event: AuthChangeEvent, session: Session?)> {
+        authStateChangesStream
     }
 
     func signIn(email: String, password: String) async throws -> Session {
@@ -173,6 +225,10 @@ private final class MockAuthService: AuthServiceProtocol {
 
     func currentSession() async throws -> Session {
         try sessionResult.get()
+    }
+
+    func emitAuthStateChange(event: AuthChangeEvent, session: Session?) {
+        authStateChangesContinuation.yield((event: event, session: session))
     }
 }
 
@@ -191,11 +247,11 @@ private func makeUser(id: UUID = UUID()) -> User {
 
 private func makeSession(userId: UUID = UUID()) -> Session {
     Session(
-        accessToken: "test-access-token",
+        accessToken: "test-access-token-\(UUID().uuidString)",
         tokenType: "bearer",
         expiresIn: 3600,
         expiresAt: Date().timeIntervalSince1970 + 3600,
-        refreshToken: "test-refresh-token",
+        refreshToken: "test-refresh-token-\(UUID().uuidString)",
         user: makeUser(id: userId)
     )
 }

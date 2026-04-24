@@ -121,9 +121,22 @@ Use this file to keep daily planning and end-of-day progress visible.
 ### Carry Forward
 - Worker/mobile/doc changes already in the branch remain uncommitted and should stay isolated from this iOS slice
 
-### If tokens run out mid-session (interrupt)
-- Claude maintains `RESUME.md` automatically throughout each session — no manual action needed
-- The next session reads `RESUME.md` first and picks up from **Exact next step**
+---
+
+## 2026-04-25 — iOS auth/session reliability
+
+### Done
+- `AuthServiceProtocol` now exposes Supabase `authStateChanges`
+- `AuthStore` observes Supabase auth state changes after launch; updates session on `SIGNED_IN`, `TOKEN_REFRESHED`, `USER_UPDATED`, `PASSWORD_RECOVERY`, `MFA_CHALLENGE_VERIFIED`; clears session on `SIGNED_OUT`, `USER_DELETED`; cancels observer on deinit
+- Added `AuthStoreTests` coverage for post-launch signed-in event, signed-out event, and token-refresh replacing the active session
+
+### Validated
+- `Cmd + B` ✓
+- `AuthStoreTests` ✓
+- Manual iPhone flow ✓ — sign out → `SignInView` appears immediately; sign in → `MainTabView` appears immediately; no relaunch required
+
+### Carry Forward
+- Remaining RESUME priority order: backup/restore durability → per-store sync verification → Android/mobile
 
 **When resumed work completes**, Claude adds a `### Session Resumed` block to that day's entry:
 ```
