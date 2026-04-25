@@ -202,7 +202,7 @@ Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home`
 | iOS Supabase integration — inventory | **Built** | `SupabaseInventoryService` replaces `BackendInventoryService` for pantry/grocery CRUD. Cloudflare Worker KV inventory endpoints no longer used. |
 | iOS Supabase integration — snapshot | **Built** | `SupabaseSnapshotService` replaces `BackendSnapshotService`. Full backup stored as JSONB in `user_snapshots` table. Cloudflare Worker is now OpenAI relay only. |
 | iOS Supabase integration — all stores | **Built** | `RecipeStore`, `CookedMealStore`, `ProfileStore`, `WeeklyPlanStore` now sync to Supabase via injected services. Optimistic local update + background sync on every mutation. All 7 Supabase tables are now live. |
-| React Native Android app | **Next** | New RN project. Same Supabase backend. Core loop: home, pantry, grocery, recipe generation. Target: Play Store. |
+| React Native Android app | **Active** | Expo SDK 54 / RN 0.81.5. Auth, pantry, grocery, recipe generation, profile + sign-out built and web-validated on `codex/react-native-android`. Android device test pending. |
 | Push notifications | **Later** | Expiring items, "haven’t planned dinner yet." Requires Supabase auth first. |
 | Household accounts / shared pantry | **Later** | After Supabase is in place. Key feature for partner sharing. |
 | iOS App Store distribution | **Later** | Requires paid Apple Developer account ($99/yr) — deferred. |
@@ -213,10 +213,30 @@ Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home`
 2. ~~`codex/nutrition-home`~~ **Done**
 3. ~~`codex/saved-planning-hub`~~ **Done**
 4. ~~`codex/weekly-meal-plan`~~ **Done**
-5. `codex/ios-auth-session-hardening` — validate post-launch auth/session behavior on device
-6. `codex/ios-backup-restore-durability` — verify restore/import/shared-store durability paths
-7. `codex/react-native-android` — Android app connecting to same Supabase backend
-8. `codex/android-feature-parity` — nutrition, weekly plan, saved recipes on Android
+5. ~~`codex/ios-auth-session-hardening`~~ **Done** — post-launch session drift fixed and validated on device
+6. ~~`codex/ios-backup-restore-durability`~~ **Done** — restore/backup/store-sync test coverage complete
+7. `codex/react-native-android` — **Active** — Android parity slices M2–M10 in progress (see Android Roadmap section below)
+
+---
+
+## 7. Android Roadmap — parity slices
+
+Branch: `codex/react-native-android`. Each slice: typecheck → Jest → manual web → Android device → WORKLOG → commit.
+
+Once Android reaches parity, **every feature branch touches both platforms**. A feature is not done until both platforms ship it. See `DECISIONS.md` for the parallel development strategy.
+
+| Slice | What | Status |
+|---|---|---|
+| M1 | Auth, pantry, grocery, recipe gen, profile + sign-out | **Built** — web-validated |
+| M2 | Category picker (9 categories matching iOS), error display on all screens | **Built** |
+| M3 | Save recipes — Save button on RecipeCard, Saved tab, `savedRecipeStore` | **Built** |
+| M4 | User profile + dietary prefs — name, vegetarian, avoid items; pass to recipe gen | **Built** |
+| M5 | Cooked meal history — "I cooked this" on any recipe, `cookedMealStore` | **Built** |
+| M6 | Nutrition progress on Home — today's macros vs profile goals | **Built** |
+| M7 | Weekly meal planning — up to 7 meals, missing ingredients, add to grocery | **Built** |
+| M8 | Home recommendation engine — tonight's pick based on nutrition gap | **Built** |
+| M9 | Known items / catalog — 290-item search-first picker | **Later** |
+| M10 | Expiry dates on pantry items | **Later** |
 
 ---
 

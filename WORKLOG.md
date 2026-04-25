@@ -591,3 +591,52 @@ All 4 iOS hardening priorities done and validated. Branch clean. No active inter
 ### Carry Forward
 - Android device test: sign in → pantry → recipe → grocery → sign out
 - Next feature slice TBD after device validation
+
+---
+
+## 2026-04-26 — Android M2: category picker + error display (in progress)
+
+### Goal
+Fix category data correctness on Pantry and Grocery: both screens were hardcoding `category: 'pantry'` on every insert, sending meaningless data to Supabase and degrading recipe generation. Add error display so store failures are visible to users.
+
+### Done locally (not yet validated or committed)
+- `CategoryPicker` component: horizontal scrollable chip row, 9 categories matching iOS (vegetables, protein, grains, dairy, fruit, bakery, condiments, beverages, other), icon + label, selected state highlighted in primary colour
+- Pantry and Grocery screens updated: CategoryPicker in add form, default category 'vegetables', error banner when `store.error` is non-null
+- typecheck: clean; Jest: 29/29 passing
+
+### Exact next step
+1. Manual web test — reload Expo web, verify category picker appears and works in both Pantry and Grocery add forms
+2. User confirms pass/fail
+3. Update PLANNING.md M2 status to Built
+4. Commit: CategoryPicker.tsx + pantry.tsx + grocery.tsx + WORKLOG + PLANNING + DECISIONS
+
+### Branch state
+- `codex/react-native-android`
+- Last committed: `207b68e` (M1 session log)
+- Uncommitted: `mobile/components/CategoryPicker.tsx`, `mobile/app/(tabs)/pantry.tsx`, `mobile/app/(tabs)/grocery.tsx`, `PLANNING.md`, `DECISIONS.md`, `WORKLOG.md`
+
+---
+
+## 2026-04-26 — Android parity sprint: M2–M8
+
+### Context
+User direction: no more slice-by-slice Android gates until device is available. Build to iOS parity in one pass; full device test session when device is ready.
+
+### Done
+- **M2**: CategoryPicker component (9 categories, horizontal chip row), error banners on Pantry and Grocery; delete confirmation Alerts removed (unreliable on web, unnecessary on native); typecheck + Jest clean
+- **M3**: `savedRecipeStore` (fetch/save/toggleFavorite/delete, optimistic delete); Saved tab with plan integration and favorite toggle; Save Recipe button on RecipeCard
+- **M4**: `profileStore` (fetch/upsert, user_id-scoped); Profile tab redesigned with name, vegetarian toggle, avoid-foods input; profile passed to `generateRecipe` so Worker receives dietary context
+- **M5**: `cookedMealStore` (logCooked/fetchToday, tracks today's macros); "I Cooked This" button on RecipeCard
+- **M6**: Nutrition progress bars on Home (calories + protein vs profile goals); only shown when profile has goals set
+- **M7**: `weeklyPlanStore` (add/remove/clearAll, 7-meal cap); Plan tab with "Add All Ingredients to Grocery" one-tap action
+- **M8**: Tonight's Pick recommendation card on Home (highest-protein saved recipe when protein gap > 20g)
+- Types extended: `SavedRecipe`, `CookedMealRecord`, `UserProfile`, `NutritionGoals`, `WeeklyPlanMeal`
+- `recipeService` updated to pass `profile.isVegetarian` and `profile.avoid_food_items` to Worker
+
+### Validation pending
+- Full device test session when Android device is available
+- M9 (290-item catalog picker) and M10 (expiry dates) deferred to post-device-test
+
+### Branch state
+- `codex/react-native-android`
+- Typecheck: clean | Jest: 29/29

@@ -12,42 +12,39 @@ export default function TabsLayout() {
         headerTitleStyle: { fontWeight: '600' },
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textTertiary,
-        tabBarLabelStyle: { fontSize: 12 },
+        tabBarLabelStyle: { fontSize: 11 },
         tabBarStyle: { backgroundColor: colors.background, borderTopColor: colors.border },
       }}
     >
       <Tabs.Screen
         name="index"
-        options={{
-          title: 'Home',
-          headerShown: false,
-          tabBarLabel: 'Home',
-          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🏠</Text>,
-        }}
+        options={{ title: 'Home', headerShown: false, tabBarLabel: 'Home',
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🏠</Text> }}
       />
       <Tabs.Screen
         name="pantry"
-        options={{
-          title: 'Pantry',
-          tabBarLabel: 'Pantry',
-          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🥫</Text>,
-        }}
+        options={{ title: 'Pantry', tabBarLabel: 'Pantry',
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🥫</Text> }}
       />
       <Tabs.Screen
         name="grocery"
-        options={{
-          title: 'Grocery',
-          tabBarLabel: 'Grocery',
-          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🛒</Text>,
-        }}
+        options={{ title: 'Grocery', tabBarLabel: 'Grocery',
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🛒</Text> }}
+      />
+      <Tabs.Screen
+        name="saved"
+        options={{ title: 'Saved', tabBarLabel: 'Saved',
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🔖</Text> }}
+      />
+      <Tabs.Screen
+        name="plan"
+        options={{ title: 'Plan', tabBarLabel: 'Plan',
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>📅</Text> }}
       />
       <Tabs.Screen
         name="profile"
-        options={{
-          title: 'Profile',
-          tabBarLabel: 'Profile',
-          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>👤</Text>,
-        }}
+        options={{ title: 'Profile', tabBarLabel: 'Profile',
+          tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>👤</Text> }}
       />
     </Tabs>
   )

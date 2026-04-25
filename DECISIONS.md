@@ -41,6 +41,23 @@ Format: date · decision · options considered · reason.
 
 ---
 
+## 2026-04-26
+
+### Parallel iOS + Android development strategy
+
+**Decision:** Once Android reaches iOS parity, every feature ships on both platforms in a single branch. One branch, both platforms, one commit/PR. A feature is not done until iOS and Android both pass their gates.
+
+**Options considered:**
+- Separate feature branches per platform (e.g. `feature/save-recipes-ios`, `feature/save-recipes-android`) — clean isolation but creates tracking overhead and risks platforms drifting.
+- iOS-first then Android as follow-up PRs — simpler short-term but historically leads to Android always being behind.
+- Single branch, both platforms together — slightly more planning discipline required but keeps the codebase honest about parity.
+
+**Reason:** The Supabase schema is the shared contract between platforms. Any schema migration is a blocking dependency for both platforms before either can ship the feature. Keeping both in the same branch makes this dependency explicit and prevents schema drift. The repo is already a monorepo (`cookya/` + `mobile/`) so branch-per-feature already spans both.
+
+**Rule for temporary divergence:** UI-only features with no schema dependency may ship iOS first with Android in the same or next session. iOS-only features (Apple Sign In, Xcode tooling) and Android-only fixes (Expo behaviour) stay platform-specific and don't block the other.
+
+---
+
 ## 2026-04-22
 
 ### Android-first distribution strategy
