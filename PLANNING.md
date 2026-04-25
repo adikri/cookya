@@ -95,15 +95,7 @@ These are the main technical priorities that still matter.
 
 1. **Move high-value logic out of Views incrementally**
    - `HomeView` still contains too much recommendation logic
-   - `SavedRecipesView` now has planning-hub shaping logic that should eventually move toward a dedicated ViewModel/service-backed layer
-
-2. **Move high-value logic out of Views incrementally** *(carried)*
-   - `HomeView` still contains too much recommendation logic
-
-3. **Keep backup/restore and sync trust tight**
-   - inventory local-only recovery is now hardened and validated
-   - snapshot upload churn is now deduped and validated
-   - next durability work should focus on restore behavior and multi-store sync verification
+   - `SavedRecipesView` has planning-hub shaping logic that should move toward a ViewModel/service layer
 
 ### Done (no longer open)
 
@@ -146,7 +138,7 @@ Use these markers consistently:
 | Store decode/persist hardening | **Built** | AppLogger on decode fallbacks; assertionFailure on encode failures in all stores. |
 | Recipe cache eviction policy | **Built** | GeneratedRecipeCachePolicy: LRU eviction, cap of 50, tested. |
 | Home recommendation extraction | **Built** | `HomeRecommendationEngine` extracted with full test coverage. |
-| Auth/session reliability | **Next** | `AuthStore` must subscribe to Supabase auth state changes and be validated on-device for post-launch session drift. |
+| Auth/session reliability | **Built** | `AuthStore` observes Supabase auth state changes after launch. Root view responds to sign-in/out/token-refresh without relaunch. Validated on device. |
 | Broader test coverage | **Later** | Extend beyond current regression coverage. |
 
 ### Phase N — Nutrition Layer (current priority)

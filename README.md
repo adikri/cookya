@@ -13,6 +13,7 @@ This repository contains the **iPhone app** plus optional **backends** so you ca
 | Path | What it is |
 |------|----------------|
 | `cookya/` | iOS SwiftUI app (personal daily driver + feature prototype) |
+| `mobile/` | Android React Native app (Expo managed workflow) — public Play Store target |
 | `worker/` | Cloudflare Worker — **OpenAI recipe relay only** (inventory and snapshot moved to Supabase). See [`worker/README.md`](worker/README.md). |
 | `backend/` | Optional local Node/Express relay for development. See [`backend/README.md`](backend/README.md). |
 | `supabase/` | Database migrations for the Supabase PostgreSQL backend. |
@@ -49,7 +50,7 @@ Full detail: [`OPENAI_SETUP.md`](OPENAI_SETUP.md).
 1. Deploy the Worker and set secrets (`OPENAI_API_KEY`, `COOKYA_APP_TOKEN`). Step-by-step: [`worker/README.md`](worker/README.md).  
 2. In `Secrets.xcconfig`, set `COOKYA_BACKEND_BASE_URL` to your Worker base URL (no secret keys in the app bundle for OpenAI).  
 3. On the device: **Profile → Backend access** — paste the same long random value you set as `COOKYA_APP_TOKEN` on the Worker (stored in Keychain).  
-4. Recipe generation and optional inventory/snapshot sync then talk to **your** Worker.
+4. Recipe generation then talks to **your** Worker. Inventory sync and app snapshot backup are handled by Supabase, not the Worker.
 
 **Option B — Local relay on your Mac (good for hacking on the API)**  
 
@@ -91,7 +92,7 @@ For the current product narrative, what is built vs in progress, and engineering
 ## Security
 
 - Do **not** commit `cookya/Config/Secrets.xcconfig`, `worker/.dev.vars`, or `backend/.env`.  
-- Optional: enable the repo’s PII/secret pre-commit hook — [`SKILLS.md`](SKILLS.md) (“Prevent committing PII/secrets”).
+- Optional: enable the repo’s PII/secret pre-commit hook via `git config core.hooksPath .githooks`.
 
 ---
 

@@ -69,11 +69,19 @@ type Env = {
   OPENAI_MODEL?: string;
 };
 
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Max-Age": "86400",
+} as const;
+
 function json(data: unknown, init?: ResponseInit): Response {
   return new Response(JSON.stringify(data), {
     ...init,
     headers: {
       "content-type": "application/json; charset=utf-8",
+      ...CORS_HEADERS,
       ...(init?.headers ?? {}),
     },
   });
@@ -368,6 +376,10 @@ async function callOpenAI(body: BackendRecipeGenerateRequest, env: Env): Promise
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
+    if (request.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: CORS_HEADERS });
+    }
+
     const url = new URL(request.url);
 
     if (request.method === "GET" && url.pathname === "/health") {
@@ -417,12 +429,12 @@ export default {
             if (!legacy) return notFound();
             return new Response(legacy, {
               status: 200,
-              headers: { "content-type": "application/json; charset=utf-8" },
+              headers: { "content-type": "application/json; charset=utf-8", ...CORS_HEADERS },
             });
           }
           return new Response(raw, {
             status: 200,
-            headers: { "content-type": "application/json; charset=utf-8" },
+            headers: { "content-type": "application/json; charset=utf-8", ...CORS_HEADERS },
           });
         }
         if (request.method === "PUT") {

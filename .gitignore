@@ -18,12 +18,15 @@ DerivedData/
 *.crash
 *.ips
 
-# Node (backend)
+# Node (backend, mobile)
 node_modules/
 **/node_modules/
 backend/dist/
 backend/.env
 worker/.dev.vars
+mobile/.env
+mobile/.env.local
+mobile/dist/
 
 # Claude Code session data (plans, memory — local only)
 .claude/

@@ -22,7 +22,8 @@ final class SupabaseManager {
             supabaseURL: config.supabaseURL,
             supabaseKey: config.supabasePublishableKey,
             options: SupabaseClientOptions(
-                db: .init(encoder: encoder, decoder: decoder)
+                db: .init(encoder: encoder, decoder: decoder),
+                auth: .init(emitLocalSessionAsInitialSession: true)
             )
         )
         AppLogger.action("supabase_client_initialized", screen: "SupabaseManager", metadata: ["url": config.supabaseURL.host ?? "unknown"])

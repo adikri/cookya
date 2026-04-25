@@ -75,6 +75,34 @@ cd worker && npx wrangler deploy
 cd backend && npm install && npm run dev
 ```
 
+### Mobile (React Native / Expo) — `mobile/`
+
+**CLI checks — fully headless, run these before any commit:**
+```bash
+cd mobile && npm run typecheck   # must exit 0
+cd mobile && npm test            # must be all green
+```
+
+**Web dev server (required for browser testing):**
+```bash
+cd mobile && npx expo start --web --clear
+# Opens at http://localhost:8081
+# Press w in terminal if browser doesn't open automatically
+```
+
+**Android device testing:**
+- Expo Go + QR code: no Android SDK needed — scan the QR shown in terminal with Expo Go app
+- USB/ADB (`press a` in terminal): requires Android Studio SDK + `ANDROID_HOME` set in `~/.zshrc`
+- Default to QR code path; USB is only needed for builds/profiling
+
+**Hard-won mobile rules:**
+- `expo-router` requires these peer deps — always install together: `react-native-safe-area-context`, `react-native-screens`, `react-native-gesture-handler`
+- Never read env vars at module level in services — read inside the function so Jest can control `process.env` per test
+- Zustand v5 `setState` in tests: use partial merge (no second `true` arg) — replace mode requires the full state including all action functions
+- When app shows blank/nothing on device, use a smoke-test layout (no Supabase, no auth, just `<Text>`) to confirm the bundle renders before debugging auth
+- `ListEmptyComponent` is the correct FlatList prop — `ListEmptyContent` silently does nothing
+- **Never use `npm install react react-dom`** — always use `npx expo install react react-dom`. The `npm install` path resolves versions independently and causes `react`/`react-dom` version mismatch crashes on web. `npx expo install` pins both to the exact Expo SDK-compatible version with no `^` range.
+
 ---
 
 ## Architecture
@@ -97,12 +125,16 @@ All stores are initialized in `cookyaApp.swift` with an injected `UserDefaults` 
 - `CookedMealStore` — cooked history
 - `KnownItemStore` — pantry/grocery memory for autocomplete
 - `ProfileStore` — user dietary profile
+- `WeeklyPlanStore` — saved-recipe weekly planning
+- `AuthStore` — Supabase auth session + root auth state
 - `BackendSyncStatusStore` — last-sync metadata
 
 **Services** (`Services/`) — protocol-first, no direct store dependencies:
 - `RecipeGeneratingService` / `OpenAIRecipeService` / `BackendRecipeService` — LLM recipe generation
-- `BackendInventoryService` / `BackendSnapshotService` — Cloudflare Worker sync
-- `InventorySyncingService` — orchestrates inventory push/pull
+- `SupabaseInventoryService` — live pantry/grocery sync backend
+- `SupabaseSnapshotService` — live full-app snapshot backend
+- `BackendInventoryService` / `BackendSnapshotService` — older worker-backed paths retained only as fallback/testing context, not live wiring
+- `InventorySyncingService` — inventory push/pull contract
 - `AppBackupCoordinator` — export/import and cloud snapshot restore on launch
 
 **ViewModels** (`ViewModels/`) — currently only `RecipeViewModel`. Other views still hold some logic directly (acknowledged technical debt; extract incrementally, not wholesale).
@@ -125,7 +157,10 @@ UserDefaults ──▶ Stores ──▶ @EnvironmentObject ──▶ Views / Vie
 
 Single `worker/src/index.ts`. Routes:
 - `POST /api/recipe/generate` — auth via `COOKYA_APP_TOKEN` header, proxies to OpenAI
-- KV inventory and snapshot endpoints — partitioned by token scope
+
+Current reality:
+- treat the Worker as **OpenAI recipe relay only**
+- inventory sync and snapshot backup are live on Supabase, not Worker KV
 
 Env vars set via `wrangler secret put`: `OPENAI_API_KEY`, `COOKYA_APP_TOKEN`. KV namespace bound as `COOKYA_KV`.
 
@@ -198,6 +233,15 @@ Every slice of work follows this order. No steps skipped, no reordering.
 - Never start coding (step 2) before the plan is agreed (step 1)
 - Never update docs (step 5) before tests are confirmed green (step 4)
 - Never commit code without its docs, or docs without their code
+
+### Current iOS hardening order
+
+If working on iOS stabilization, follow this order unless the user explicitly changes it:
+1. inventory sync correctness
+2. auth/session reliability
+3. backup/restore durability
+4. remaining per-store Supabase sync verification
+5. only then broader Android/mobile work
 
 ---
 
