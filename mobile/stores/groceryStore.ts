@@ -64,17 +64,20 @@ export const useGroceryStore = create<GroceryState>((set, get) => ({
   markPurchased: async (id: string, item: GroceryItem) => {
     set({ error: null })
     try {
-      // Delete from grocery
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
       const { error: deleteError } = await supabase
         .from('grocery_items')
         .delete()
         .eq('id', id)
       if (deleteError) throw deleteError
 
-      // Add to pantry
       const { error: insertError } = await supabase
         .from('pantry_items')
         .insert({
+          id: crypto.randomUUID(),
+          user_id: user.id,
           name: item.name,
           quantity_text: item.quantity_text,
           category: item.category,

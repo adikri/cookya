@@ -82,10 +82,10 @@ describe('addItem', () => {
 })
 
 describe('markPurchased', () => {
-  it('removes item from grocery list on success', async () => {
+  it('removes item from grocery list and adds to pantry on success', async () => {
     const item = mockItem('1', 'Tomatoes')
     useGroceryStore.setState({ items: [item, mockItem('2', 'Spinach')] })
-
+    mockGetUser.mockResolvedValue({ data: { user: { id: 'user1' } } })
     mockFrom
       .mockReturnValueOnce({
         delete: () => ({ eq: () => Promise.resolve({ error: null }) }),
@@ -104,7 +104,7 @@ describe('markPurchased', () => {
   it('sets error and keeps item if grocery delete fails', async () => {
     const item = mockItem('1', 'Tomatoes')
     useGroceryStore.setState({ items: [item] })
-
+    mockGetUser.mockResolvedValue({ data: { user: { id: 'user1' } } })
     mockFrom.mockReturnValue({
       delete: () => ({ eq: () => Promise.resolve({ error: new Error('Delete failed') }) }),
     })
@@ -113,6 +113,17 @@ describe('markPurchased', () => {
 
     expect(useGroceryStore.getState().items).toEqual([item])
     expect(useGroceryStore.getState().error).toBe('Delete failed')
+  })
+
+  it('sets error if not authenticated', async () => {
+    const item = mockItem('1', 'Tomatoes')
+    useGroceryStore.setState({ items: [item] })
+    mockGetUser.mockResolvedValue({ data: { user: null } })
+
+    await useGroceryStore.getState().markPurchased('1', item)
+
+    expect(useGroceryStore.getState().items).toEqual([item])
+    expect(useGroceryStore.getState().error).toBe('Not authenticated')
   })
 })
 

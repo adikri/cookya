@@ -29,10 +29,7 @@ export default function GroceryScreen() {
   }
 
   const handlePurchased = (id: string, item: any) => {
-    Alert.alert('Mark as purchased?', '', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Mark Purchased', onPress: () => markPurchased(id, item), style: 'default' },
-    ])
+    markPurchased(id, item)
   }
 
   const handleDelete = (id: string) => {
