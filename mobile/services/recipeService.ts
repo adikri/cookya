@@ -1,6 +1,6 @@
-import { Recipe, PantryItem } from '../types'
+import { Recipe, PantryItem, UserProfile } from '../types'
 
-export async function generateRecipe(pantryItems: PantryItem[]): Promise<Recipe> {
+export async function generateRecipe(pantryItems: PantryItem[], profile?: UserProfile | null): Promise<Recipe> {
   const workerUrl = process.env.EXPO_PUBLIC_WORKER_URL || ''
   const workerToken = process.env.EXPO_PUBLIC_WORKER_TOKEN || ''
 
@@ -22,6 +22,10 @@ export async function generateRecipe(pantryItems: PantryItem[]): Promise<Recipe>
       manualIngredients: [],
       difficulty: 'medium',
       servings: 2,
+      profile: profile ? {
+        isVegetarian: profile.is_vegetarian,
+        avoidFoodItems: profile.avoid_food_items,
+      } : null,
     }),
   })
 
