@@ -564,3 +564,30 @@ All 4 iOS hardening priorities done and validated. Branch clean. No active inter
 
 ### Carry Forward
 - Decide next direction: Android/mobile work or remaining iOS items (HomeView refactor, broader test coverage)
+
+---
+
+## 2026-04-26 — Android mobile: first end-to-end web validation (M1)
+
+### Done
+- Created branch `codex/react-native-android`
+- Committed all existing `mobile/` work to git (was untracked — safety checkpoint)
+- Applied theme system to Pantry and Grocery screens (were using raw hex/magic numbers)
+- Fixed `markPurchased` bug: pantry_items insert was missing `id` and `user_id` (same NOT NULL issue as iOS); removed Alert.alert confirmation wrapper (unreliable in Expo web)
+- Added Profile tab with sign-out (👤); tab bar themed with design tokens
+- Updated groceryStore tests: added mockGetUser setup + not-authenticated error path (29 tests total)
+- Fixed pii-scan-staged.sh false positive: excluded @example.com/@test.com from email pattern
+
+### Web validation (Expo web)
+- Sign in ✓
+- Pantry add ✓
+- Recipe generation from pantry ✓ (all items used — intentional, matches iOS)
+- Grocery add ✓, mark purchased ✓ (after fix)
+- Profile tab + sign out ✓
+
+### Pending
+- Android device test (device not available today) — core loop identical to web; validate when available
+
+### Carry Forward
+- Android device test: sign in → pantry → recipe → grocery → sign out
+- Next feature slice TBD after device validation
