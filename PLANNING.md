@@ -235,8 +235,8 @@ Once Android reaches parity, **every feature branch touches both platforms**. A 
 | M6 | Nutrition progress on Home — today's macros vs profile goals | **Built** |
 | M7 | Weekly meal planning — up to 7 meals, missing ingredients, add to grocery | **Built** |
 | M8 | Home recommendation engine — tonight's pick based on nutrition gap | **Built** |
-| M9 | Known items / catalog — 290-item search-first picker | **Later** |
-| M10 | Expiry dates on pantry items | **Later** |
+| M9 | Known items / catalog — 290-item search-first picker | **Built** |
+| M10 | Expiry dates on pantry items | **Built** |
 
 ---
 

@@ -640,3 +640,17 @@ User direction: no more slice-by-slice Android gates until device is available. 
 ### Branch state
 - `codex/react-native-android`
 - Typecheck: clean | Jest: 29/29
+
+---
+
+## 2026-04-26 — Android parity: M9, M10, tests, plan fix
+
+### Done
+- **Plan screen fix**: unplanned recipes now have an "+ Add" button; plan respects 7-meal cap in UI
+- **Tests — 4 new store test suites**: savedRecipeStore (8 tests), profileStore (4 tests), cookedMealStore (3 tests), weeklyPlanStore (5 tests); recipeService gets 2 new profile-context tests. Total: 52 tests (up from 29)
+- **M9 — Item catalog**: 230-item `catalog.json` (all iOS items, mapped to Android categories including full Indian staples section); `ItemPicker` modal (search-first, shows top 30 on empty query, filters to 50 on input, custom item fallback); wired into Pantry and Grocery add forms via "Search catalog" button
+- **M10 — Expiry dates**: quick-pick chip selector on Pantry add form (Today / 3 days / 1 week / 2 weeks / 1 month / No expiry); `pantryStore.addItem` extended to accept optional `expiryDate`; expiry label shown on each row (⚠️ Expired / Expires today / Expires in Xd); expired items dimmed
+
+### All Android parity slices M1–M10: complete
+### Typecheck: clean | Jest: 52/52
+### Pending: full device test session when Android device available

@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react'
 import { View, FlatList, TouchableOpacity, Text, TextInput, Alert } from 'react-native'
 import { useGroceryStore } from '../../stores/groceryStore'
 import { CategoryPicker } from '../../components/CategoryPicker'
+import { ItemPicker } from '../../components/ItemPicker'
 import { colors, spacing, radius, typography } from '../../theme'
 
 export default function GroceryScreen() {
   const { items, fetchItems, addItem, markPurchased, deleteItem, isLoading, error } = useGroceryStore()
   const [showAddForm, setShowAddForm] = useState(false)
+  const [showPicker, setShowPicker] = useState(false)
   const [name, setName] = useState('')
   const [quantity, setQuantity] = useState('')
   const [category, setCategory] = useState('vegetables')
@@ -22,10 +24,7 @@ export default function GroceryScreen() {
       return
     }
     await addItem(name, quantity, category, note)
-    setName('')
-    setQuantity('')
-    setCategory('vegetables')
-    setNote('')
+    setName(''); setQuantity(''); setCategory('vegetables'); setNote('')
     setShowAddForm(false)
   }
 
@@ -114,6 +113,15 @@ export default function GroceryScreen() {
           borderTopColor: colors.border,
           gap: spacing.md,
         }}>
+          <TouchableOpacity
+            onPress={() => setShowPicker(true)}
+            style={{
+              padding: spacing.md, borderRadius: radius.button, alignItems: 'center',
+              borderWidth: 1, borderColor: colors.primary, borderStyle: 'dashed',
+            }}
+          >
+            <Text style={[typography.subheadline, { color: colors.primary }]}>🔍  Search catalog</Text>
+          </TouchableOpacity>
           <TextInput
             placeholder="Item name"
             value={name}
@@ -208,6 +216,13 @@ export default function GroceryScreen() {
             + Add Item
           </Text>
         </TouchableOpacity>
+      )}
+
+      {showPicker && (
+        <ItemPicker
+          onSelect={(n, q, c) => { setName(n); setQuantity(q); setCategory(c) }}
+          onDismiss={() => setShowPicker(false)}
+        />
       )}
     </View>
   )

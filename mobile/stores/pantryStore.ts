@@ -7,7 +7,7 @@ interface PantryState {
   isLoading: boolean
   error: string | null
   fetchItems: () => Promise<void>
-  addItem: (name: string, quantity: string, category: string) => Promise<void>
+  addItem: (name: string, quantity: string, category: string, expiryDate?: string | null) => Promise<void>
   deleteItem: (id: string) => Promise<void>
 }
 
@@ -32,7 +32,7 @@ export const usePantryStore = create<PantryState>((set, get) => ({
     }
   },
 
-  addItem: async (name: string, quantity: string, category: string) => {
+  addItem: async (name: string, quantity: string, category: string, expiryDate?: string | null) => {
     set({ error: null })
     try {
       const { data: { user } } = await supabase.auth.getUser()
@@ -45,6 +45,7 @@ export const usePantryStore = create<PantryState>((set, get) => ({
           name,
           quantity_text: quantity,
           category,
+          expiry_date: expiryDate ?? null,
           updated_at: new Date().toISOString(),
         })
         .select()
