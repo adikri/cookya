@@ -145,6 +145,26 @@ Use this file to keep daily planning and end-of-day progress visible.
 
 ---
 
+## 2026-04-25 — Per-store sync verification (S1)
+
+### Done
+- Created `cookyaTests/StoreSyncTests.swift` with 4 test classes (one per store)
+- `RecipeStoreSyncTests`: save→upsertSavedRecipe, remove→deleteSavedRecipe, nil-service local-only
+- `CookedMealStoreSyncTests`: addRecord→upsertRecord, deleteRecord→deleteRecord, nil-service local-only
+- `ProfileStoreSyncTests`: createRegisteredProfile→upsertProfile, nil-service local-only
+- `WeeklyPlanStoreSyncTests`: add→upsertMeal, remove→deleteMeal, clearAll→clearAllMeals, nil-service local-only
+- All 4 mocks record calls and expose reset(); drainSync() helper reuses 3-yield pattern from auth tests
+
+### Validated
+- `Cmd + B` ✓
+- `StoreSyncTests` — 13/13 ✓
+- Full suite still green ✓
+
+### Carry Forward
+- iOS hardening priorities complete — decide next: Android/mobile or further iOS work
+
+---
+
 ## 2026-04-25 — iOS auth/session reliability
 
 ### Done

@@ -97,8 +97,8 @@ These are the main technical priorities that still matter.
    - `HomeView` still contains too much recommendation logic
    - `SavedRecipesView` now has planning-hub shaping logic that should eventually move toward a dedicated ViewModel/service-backed layer
 
-2. **Keep backup/restore and sync trust tight** *(carried from item 3)*
-   - next durability work: restore behavior and multi-store sync verification
+2. **Move high-value logic out of Views incrementally** *(carried)*
+   - `HomeView` still contains too much recommendation logic
 
 3. **Keep backup/restore and sync trust tight**
    - inventory local-only recovery is now hardened and validated
@@ -111,6 +111,8 @@ These are the main technical priorities that still matter.
 - **Recipe cache eviction policy** — `GeneratedRecipeCachePolicy`: LRU, capped at 50, tested.
 - **Harden store decode / persist failures** — `AppLogger` on all decode fallbacks; `assertionFailure` on encode failures in all stores.
 - **Auth/session reliability** — `AuthStore` now observes Supabase auth state changes after launch; root view responds to sign-in/out/token-refresh events without relaunch. Validated on device.
+- **Backup/restore durability** — `restoreFromBackendIfNeeded()` now has full test coverage (happy path, guard, notFound, notAuthenticated, networkError).
+- **Per-store sync verification** — All 4 store sync protocols (SavedRecipeSyncing, CookedMealSyncing, ProfileSyncing, WeeklyPlanSyncing) have mutation→upsert and mutation→delete coverage in `StoreSyncTests`.
 
 ### Later
 
