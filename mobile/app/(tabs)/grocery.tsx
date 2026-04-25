@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { View, FlatList, TouchableOpacity, Text, TextInput, Alert } from 'react-native'
 import { useGroceryStore } from '../../stores/groceryStore'
+import { colors, spacing, radius, typography } from '../../theme'
 
 export default function GroceryScreen() {
   const { items, fetchItems, addItem, markPurchased, deleteItem, isLoading } = useGroceryStore()
@@ -30,11 +31,7 @@ export default function GroceryScreen() {
   const handlePurchased = (id: string, item: any) => {
     Alert.alert('Mark as purchased?', '', [
       { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Mark Purchased',
-        onPress: () => markPurchased(id, item),
-        style: 'default',
-      },
+      { text: 'Mark Purchased', onPress: () => markPurchased(id, item), style: 'default' },
     ])
   }
 
@@ -46,116 +43,133 @@ export default function GroceryScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <FlatList
         data={items}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: 16,
-              borderBottomWidth: 1,
-              borderBottomColor: '#eee',
-            }}
-          >
+          <View style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingHorizontal: spacing.lg,
+            paddingVertical: spacing.md,
+            borderBottomWidth: 1,
+            borderBottomColor: colors.border,
+          }}>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 16, fontWeight: '600' }}>{item.name}</Text>
-              <Text style={{ color: '#666', fontSize: 14 }}>
-                {item.quantity_text} • {item.category}
+              <Text style={[typography.headline, { color: colors.textPrimary }]}>
+                {item.name}
+              </Text>
+              <Text style={[typography.subheadline, { color: colors.textSecondary, marginTop: spacing.xs }]}>
+                {item.quantity_text} · {item.category}
               </Text>
               {item.note && (
-                <Text style={{ color: '#999', fontSize: 12, marginTop: 4 }}>
-                  Note: {item.note}
+                <Text style={[typography.caption, { color: colors.textTertiary, marginTop: spacing.xs }]}>
+                  {item.note}
                 </Text>
               )}
             </View>
-            <View style={{ flexDirection: 'row', gap: 8, marginLeft: 12 }}>
+            <View style={{ flexDirection: 'row', gap: spacing.xs, marginLeft: spacing.md }}>
               <TouchableOpacity
                 onPress={() => handlePurchased(item.id, item)}
-                style={{ padding: 8 }}
+                style={{
+                  padding: spacing.sm,
+                  backgroundColor: colors.success + '1F',
+                  borderRadius: radius.button,
+                }}
               >
-                <Text style={{ color: '#007AFF', fontWeight: '600' }}>✓</Text>
+                <Text style={[typography.headline, { color: colors.success }]}>✓</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => handleDelete(item.id)}
-                style={{ padding: 8 }}
+                style={{
+                  padding: spacing.sm,
+                  backgroundColor: colors.danger + '1F',
+                  borderRadius: radius.button,
+                }}
               >
-                <Text style={{ color: '#FF3B30', fontWeight: '600' }}>✕</Text>
+                <Text style={[typography.headline, { color: colors.danger }]}>✕</Text>
               </TouchableOpacity>
             </View>
           </View>
         )}
         ListEmptyComponent={
           !isLoading ? (
-            <View style={{ padding: 20, alignItems: 'center' }}>
-              <Text style={{ color: '#999' }}>No items in grocery list</Text>
+            <View style={{ padding: spacing.xl, alignItems: 'center' }}>
+              <Text style={[typography.subheadline, { color: colors.textTertiary }]}>
+                No items in grocery list
+              </Text>
             </View>
           ) : null
         }
       />
 
       {showAddForm && (
-        <View
-          style={{
-            padding: 16,
-            backgroundColor: '#f5f5f5',
-            borderTopWidth: 1,
-            borderTopColor: '#ddd',
-          }}
-        >
+        <View style={{
+          padding: spacing.lg,
+          backgroundColor: colors.surface,
+          borderTopWidth: 1,
+          borderTopColor: colors.border,
+          gap: spacing.md,
+        }}>
           <TextInput
             placeholder="Item name"
             value={name}
             onChangeText={setName}
-            placeholderTextColor="#999"
+            placeholderTextColor={colors.textTertiary}
             style={{
               borderWidth: 1,
-              borderColor: '#ddd',
-              padding: 12,
-              borderRadius: 8,
-              marginBottom: 12,
+              borderColor: colors.border,
+              padding: spacing.md,
+              borderRadius: radius.button,
+              ...typography.body,
+              color: colors.textPrimary,
+              backgroundColor: colors.background,
             }}
           />
           <TextInput
             placeholder="Quantity (e.g., 2 cups)"
             value={quantity}
             onChangeText={setQuantity}
-            placeholderTextColor="#999"
+            placeholderTextColor={colors.textTertiary}
             style={{
               borderWidth: 1,
-              borderColor: '#ddd',
-              padding: 12,
-              borderRadius: 8,
-              marginBottom: 12,
+              borderColor: colors.border,
+              padding: spacing.md,
+              borderRadius: radius.button,
+              ...typography.body,
+              color: colors.textPrimary,
+              backgroundColor: colors.background,
             }}
           />
           <TextInput
             placeholder="Note (optional)"
             value={note}
             onChangeText={setNote}
-            placeholderTextColor="#999"
+            placeholderTextColor={colors.textTertiary}
             style={{
               borderWidth: 1,
-              borderColor: '#ddd',
-              padding: 12,
-              borderRadius: 8,
-              marginBottom: 12,
+              borderColor: colors.border,
+              padding: spacing.md,
+              borderRadius: radius.button,
+              ...typography.body,
+              color: colors.textPrimary,
+              backgroundColor: colors.background,
             }}
           />
-          <View style={{ flexDirection: 'row', gap: 8 }}>
+          <View style={{ flexDirection: 'row', gap: spacing.sm }}>
             <TouchableOpacity
               onPress={handleAddItem}
               style={{
                 flex: 1,
-                backgroundColor: '#007AFF',
-                padding: 12,
-                borderRadius: 8,
+                backgroundColor: colors.primary,
+                padding: spacing.md,
+                borderRadius: radius.button,
+                alignItems: 'center',
               }}
             >
-              <Text style={{ color: '#fff', fontWeight: '600', textAlign: 'center' }}>
+              <Text style={[typography.headline, { color: colors.background }]}>
                 Add Item
               </Text>
             </TouchableOpacity>
@@ -163,12 +177,13 @@ export default function GroceryScreen() {
               onPress={() => setShowAddForm(false)}
               style={{
                 flex: 1,
-                backgroundColor: '#ccc',
-                padding: 12,
-                borderRadius: 8,
+                backgroundColor: colors.border,
+                padding: spacing.md,
+                borderRadius: radius.button,
+                alignItems: 'center',
               }}
             >
-              <Text style={{ color: '#fff', fontWeight: '600', textAlign: 'center' }}>
+              <Text style={[typography.headline, { color: colors.textSecondary }]}>
                 Cancel
               </Text>
             </TouchableOpacity>
@@ -180,13 +195,14 @@ export default function GroceryScreen() {
         <TouchableOpacity
           onPress={() => setShowAddForm(true)}
           style={{
-            backgroundColor: '#007AFF',
-            padding: 16,
-            margin: 16,
-            borderRadius: 8,
+            backgroundColor: colors.primary,
+            padding: spacing.lg,
+            margin: spacing.lg,
+            borderRadius: radius.button,
+            alignItems: 'center',
           }}
         >
-          <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600', textAlign: 'center' }}>
+          <Text style={[typography.headline, { color: colors.background }]}>
             + Add Item
           </Text>
         </TouchableOpacity>
