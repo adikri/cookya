@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
 import { View, FlatList, TouchableOpacity, Text, TextInput, Alert } from 'react-native'
 import { usePantryStore } from '../../stores/pantryStore'
+import { CategoryPicker } from '../../components/CategoryPicker'
 import { colors, spacing, radius, typography } from '../../theme'
 
 export default function PantryScreen() {
-  const { items, fetchItems, addItem, deleteItem, isLoading } = usePantryStore()
+  const { items, fetchItems, addItem, deleteItem, isLoading, error } = usePantryStore()
   const [showAddForm, setShowAddForm] = useState(false)
   const [name, setName] = useState('')
   const [quantity, setQuantity] = useState('')
-  const [category, setCategory] = useState('pantry')
+  const [category, setCategory] = useState('vegetables')
 
   useEffect(() => {
     fetchItems()
@@ -22,15 +23,12 @@ export default function PantryScreen() {
     await addItem(name, quantity, category)
     setName('')
     setQuantity('')
-    setCategory('pantry')
+    setCategory('vegetables')
     setShowAddForm(false)
   }
 
   const handleDelete = (id: string) => {
-    Alert.alert('Delete item?', '', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', onPress: () => deleteItem(id), style: 'destructive' },
-    ])
+    deleteItem(id)
   }
 
   return (
@@ -77,6 +75,12 @@ export default function PantryScreen() {
         }
       />
 
+      {error ? (
+        <View style={{ paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, backgroundColor: colors.danger + '1F' }}>
+          <Text style={[typography.caption, { color: colors.danger }]}>{error}</Text>
+        </View>
+      ) : null}
+
       {showAddForm && (
         <View style={{
           padding: spacing.lg,
@@ -115,6 +119,7 @@ export default function PantryScreen() {
               backgroundColor: colors.background,
             }}
           />
+          <CategoryPicker value={category} onChange={setCategory} />
           <View style={{ flexDirection: 'row', gap: spacing.sm }}>
             <TouchableOpacity
               onPress={handleAddItem}
@@ -126,9 +131,7 @@ export default function PantryScreen() {
                 alignItems: 'center',
               }}
             >
-              <Text style={[typography.headline, { color: colors.background }]}>
-                Add Item
-              </Text>
+              <Text style={[typography.headline, { color: colors.background }]}>Add Item</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setShowAddForm(false)}
@@ -140,9 +143,7 @@ export default function PantryScreen() {
                 alignItems: 'center',
               }}
             >
-              <Text style={[typography.headline, { color: colors.textSecondary }]}>
-                Cancel
-              </Text>
+              <Text style={[typography.headline, { color: colors.textSecondary }]}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -159,9 +160,7 @@ export default function PantryScreen() {
             alignItems: 'center',
           }}
         >
-          <Text style={[typography.headline, { color: colors.background }]}>
-            + Add Item
-          </Text>
+          <Text style={[typography.headline, { color: colors.background }]}>+ Add Item</Text>
         </TouchableOpacity>
       )}
     </View>

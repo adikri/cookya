@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
 import { View, FlatList, TouchableOpacity, Text, TextInput, Alert } from 'react-native'
 import { useGroceryStore } from '../../stores/groceryStore'
+import { CategoryPicker } from '../../components/CategoryPicker'
 import { colors, spacing, radius, typography } from '../../theme'
 
 export default function GroceryScreen() {
-  const { items, fetchItems, addItem, markPurchased, deleteItem, isLoading } = useGroceryStore()
+  const { items, fetchItems, addItem, markPurchased, deleteItem, isLoading, error } = useGroceryStore()
   const [showAddForm, setShowAddForm] = useState(false)
   const [name, setName] = useState('')
   const [quantity, setQuantity] = useState('')
-  const [category, setCategory] = useState('pantry')
+  const [category, setCategory] = useState('vegetables')
   const [note, setNote] = useState('')
 
   useEffect(() => {
@@ -23,7 +24,7 @@ export default function GroceryScreen() {
     await addItem(name, quantity, category, note)
     setName('')
     setQuantity('')
-    setCategory('pantry')
+    setCategory('vegetables')
     setNote('')
     setShowAddForm(false)
   }
@@ -33,10 +34,7 @@ export default function GroceryScreen() {
   }
 
   const handleDelete = (id: string) => {
-    Alert.alert('Delete item?', '', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', onPress: () => deleteItem(id), style: 'destructive' },
-    ])
+    deleteItem(id)
   }
 
   return (
@@ -102,6 +100,12 @@ export default function GroceryScreen() {
         }
       />
 
+      {error ? (
+        <View style={{ paddingHorizontal: spacing.lg, paddingVertical: spacing.sm, backgroundColor: colors.danger + '1F' }}>
+          <Text style={[typography.caption, { color: colors.danger }]}>{error}</Text>
+        </View>
+      ) : null}
+
       {showAddForm && (
         <View style={{
           padding: spacing.lg,
@@ -155,6 +159,7 @@ export default function GroceryScreen() {
               backgroundColor: colors.background,
             }}
           />
+          <CategoryPicker value={category} onChange={setCategory} />
           <View style={{ flexDirection: 'row', gap: spacing.sm }}>
             <TouchableOpacity
               onPress={handleAddItem}
