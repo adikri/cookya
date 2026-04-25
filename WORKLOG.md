@@ -548,3 +548,19 @@ Files changed (currently uncommitted):
 ### Carry Forward
 - Next likely product-safety slice: export/import backup before any reinstall-risk debugging
 - Keep using this file at the start and end of each work session
+
+---
+
+## 2026-04-26 — Branch cleanup + intermittent networkError resolved
+
+### Done
+- Fixed stale PLANNING.md (auth/session marked Built; removed duplicate Next entry)
+- Committed parked dirty files: .gitignore, CLAUDE.md (mobile rules), README.md, worker CORS fix
+- Added `emitLocalSessionAsInitialSession: true` to SupabaseManager; silences Supabase SDK deprecation warning
+- Manual validation confirmed: intermittent networkError on pull-to-refresh is resolved — was caused by auth session drift, now fixed by the auth/session reliability slice
+
+### Branch state
+All 4 iOS hardening priorities done and validated. Branch clean. No active interrupts.
+
+### Carry Forward
+- Decide next direction: Android/mobile work or remaining iOS items (HomeView refactor, broader test coverage)
