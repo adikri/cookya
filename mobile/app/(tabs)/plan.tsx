@@ -8,7 +8,7 @@ import { colors, spacing, radius, typography } from '../../theme'
 import { SectionHeader } from '../../components/SectionHeader'
 
 export default function PlanScreen() {
-  const { meals, fetchMeals, removeMeal, clearAll, isLoading, error } = useWeeklyPlanStore()
+  const { meals, fetchMeals, addMeal, removeMeal, clearAll, isLoading, error } = useWeeklyPlanStore()
   const { recipes: savedRecipes, fetchRecipes } = useSavedRecipeStore()
   const { addItem: addGroceryItem } = useGroceryStore()
   const { email } = useAuthStore()
@@ -20,6 +20,13 @@ export default function PlanScreen() {
 
   const plannedIds = new Set(meals.map(m => m.saved_recipe_id))
   const unplanned = savedRecipes.filter(r => !plannedIds.has(r.id))
+
+  const handleAddMeal = async (savedRecipeId: string) => {
+    const { data: { user } } = await (await import('../../services/supabase')).supabase.auth.getUser()
+    if (!user) return
+    const recipe = savedRecipes.find(r => r.id === savedRecipeId)
+    if (recipe) await addMeal(recipe, user.id)
+  }
 
   const handleAddAllToGrocery = async () => {
     const { data: { user } } = await (await import('../../services/supabase')).supabase.auth.getUser()
@@ -69,7 +76,7 @@ export default function PlanScreen() {
               </TouchableOpacity>
             )}
 
-            {unplanned.length > 0 && (
+            {unplanned.length > 0 && meals.length < 7 && (
               <View style={{ gap: spacing.md }}>
                 <SectionHeader title="Add to Plan" subtitle="From your saved recipes" />
                 {unplanned.map(r => (
@@ -80,9 +87,19 @@ export default function PlanScreen() {
                     <View style={{ flex: 1 }}>
                       <Text style={[typography.subheadline, { color: colors.textPrimary }]}>{r.recipe.title}</Text>
                       <Text style={[typography.caption, { color: colors.textTertiary }]}>
-                        {r.recipe.protein}g protein
+                        {r.recipe.protein}g protein · {r.recipe.calories} cal
                       </Text>
                     </View>
+                    <TouchableOpacity
+                      onPress={() => handleAddMeal(r.id)}
+                      style={{
+                        marginLeft: spacing.md, paddingHorizontal: spacing.md,
+                        paddingVertical: spacing.sm, borderRadius: radius.button,
+                        backgroundColor: colors.primary + '1F', borderWidth: 1, borderColor: colors.primary,
+                      }}
+                    >
+                      <Text style={[typography.caption, { color: colors.primary, fontWeight: '600' }]}>+ Add</Text>
+                    </TouchableOpacity>
                   </View>
                 ))}
               </View>

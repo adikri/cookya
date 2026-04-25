@@ -88,6 +88,46 @@ describe('generateRecipe', () => {
     expect(options.headers['Authorization']).toBe('Bearer mytoken')
   })
 
+  it('sends profile context when provided', async () => {
+    process.env.EXPO_PUBLIC_WORKER_URL = 'https://worker.example.com'
+    process.env.EXPO_PUBLIC_WORKER_TOKEN = 'token123'
+
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve(mockRecipe),
+    })
+
+    const profile = {
+      id: 'p1', user_id: 'u1', name: 'Adi', age: 30,
+      weight_kg: 75, height_cm: 175, is_vegetarian: true,
+      avoid_food_items: ['nuts'], nutrition_goals: null,
+      created_at: '', updated_at: '',
+    }
+
+    await generateRecipe(pantryItems, profile)
+
+    const [, options] = (global.fetch as jest.Mock).mock.calls[0]
+    const body = JSON.parse(options.body)
+    expect(body.profile.isVegetarian).toBe(true)
+    expect(body.profile.avoidFoodItems).toEqual(['nuts'])
+  })
+
+  it('sends null profile when not provided', async () => {
+    process.env.EXPO_PUBLIC_WORKER_URL = 'https://worker.example.com'
+    process.env.EXPO_PUBLIC_WORKER_TOKEN = 'token123'
+
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve(mockRecipe),
+    })
+
+    await generateRecipe(pantryItems)
+
+    const [, options] = (global.fetch as jest.Mock).mock.calls[0]
+    const body = JSON.parse(options.body)
+    expect(body.profile).toBeNull()
+  })
+
   it('throws on non-ok response', async () => {
     process.env.EXPO_PUBLIC_WORKER_URL = 'https://worker.example.com'
     process.env.EXPO_PUBLIC_WORKER_TOKEN = 'token123'
