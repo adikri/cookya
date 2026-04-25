@@ -24,8 +24,8 @@ PATTERNS=(
   # Apple device UDIDs start with 00008 and have a dash at position 9 (e.g. 00008110-000E3C40…)
   "00008[0-9A-Fa-f]{3}-[0-9A-Fa-f]{4,}"
 
-  # Emails with a non-trivial local part (5+ chars) to avoid test fixtures like a@b.com
-  "[A-Za-z0-9._%+-]{5,}@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+  # Emails with a non-trivial local part (5+ chars); excludes common test fixture domains
+  "[A-Za-z0-9._%+-]{5,}@(?!example\\.com|test\\.com|localhost)[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
 )
 
 FOUND=0
