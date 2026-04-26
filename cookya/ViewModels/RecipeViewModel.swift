@@ -9,6 +9,7 @@ final class RecipeViewModel: ObservableObject {
     @Published var selectedPantryQuantities: [UUID: String] = [:]
     @Published var selectedDifficulty: Difficulty = .easy
     @Published var servings: Int = 1
+    @Published var targetDish: String = ""
     @Published var isLoading: Bool = false
     @Published var generatedRecipe: Recipe?
     @Published var generatedPantrySelections: [PantryRecipeSelection] = []
@@ -80,11 +81,15 @@ final class RecipeViewModel: ObservableObject {
         )
     }
 
+    func selectAllPantry(_ items: [PantryItem]) {
+        selectedPantryItemIDs = Set(items.map(\.id))
+    }
+
     func generateRecipe(profile: UserProfile?, pantryItems: [PantryItem], nutritionGap: NutritionGap? = nil, forceRefresh: Bool = false) {
         let selectedPantrySelections = currentPantrySelections(from: pantryItems)
         let selectedPantryItems = selectedPantrySelections.map(\.pantryItem)
 
-        guard !selectedPantryItems.isEmpty || !ingredients.isEmpty else {
+        guard !selectedPantryItems.isEmpty || !ingredients.isEmpty || !targetDish.isEmpty else {
             generationError = "Choose pantry items or add manual ingredients first."
             return
         }
@@ -178,6 +183,7 @@ final class RecipeViewModel: ObservableObject {
             servings: servings,
             profile: profile,
             prioritizedIngredients: pantrySelections.map(\.pantryItem).filter(\.isExpiringSoon),
+            targetDish: targetDish,
             nutritionGap: nutritionGap
         )
     }

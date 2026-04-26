@@ -175,7 +175,7 @@ Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home`
 | Reusable planning detail | **Built** | Readiness, grouped ingredients, cook vs grocery CTA. |
 | Home -> planning detail routing | **Built** | Saved-recipe recommendations now deep-link into planning detail. |
 | Saved planning hub | **Built** | Saved recipes with readiness badges, macros per row, goal-fit context in detail view. |
-| Recipe entry points beyond Saved/Home | **Next** | Add a clearer recipe-first starting surface. |
+| Recipe entry points beyond Saved/Home | **Built** | `DishSearchView`: type a dish name → generate recipe targeting that dish using available pantry as context. Accessible from Home hero "I have a dish in mind" CTA. |
 | Dish-name search | **Later** | Search for a target meal and compare it against pantry. |
 | Pantry comparison + grocery add everywhere | **Next** | Reuse planning detail for all recipe-first flows. |
 

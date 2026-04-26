@@ -100,6 +100,7 @@ private struct BackendRecipeRequest: Encodable {
     let prioritizedIngredientNames: [String]
     let locationContext: String?
     let nutritionGap: BackendNutritionGap?
+    let targetDish: String?
 
     init(from request: RecipeGenerationRequest) {
         pantryItems = request.pantrySelections.map {
@@ -121,6 +122,8 @@ private struct BackendRecipeRequest: Encodable {
         nutritionGap = request.nutritionGap.map {
             BackendNutritionGap(remainingCalories: $0.remainingCalories, remainingProteinG: $0.remainingProteinG)
         }
+        let dish = request.targetDish.trimmingCharacters(in: .whitespacesAndNewlines)
+        targetDish = dish.isEmpty ? nil : dish
     }
 }
 

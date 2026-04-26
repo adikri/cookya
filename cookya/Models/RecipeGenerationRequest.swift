@@ -7,6 +7,7 @@ struct RecipeGenerationRequest: Hashable {
     var servings: Int
     var profile: UserProfile?
     var prioritizedIngredients: [PantryItem]
+    var targetDish: String = ""
     // Not included in fingerprint — changes daily and should not bust the recipe cache
     var nutritionGap: NutritionGap?
 
@@ -40,13 +41,16 @@ struct RecipeGenerationRequest: Hashable {
 
         let profilePart = profile?.id.uuidString.lowercased() ?? "guest"
 
+        let dishPart = Self.normalize(targetDish)
+
         return [
             "pantry:\(pantryPart)",
             "manual:\(manualPart)",
             "difficulty:\(difficulty.rawValue)",
             "servings:\(servings)",
             "profile:\(profilePart)",
-            "priority:\(prioritizedPart)"
+            "priority:\(prioritizedPart)",
+            "dish:\(dishPart)"
         ].joined(separator: ";")
     }
 

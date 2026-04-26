@@ -97,8 +97,17 @@ struct OpenAIRecipeService: RecipeGeneratingService {
         """
         }
 
+        let dishTarget = request.targetDish.trimmingCharacters(in: .whitespacesAndNewlines)
+        let opening = dishTarget.isEmpty
+            ? "Create one home-cooking recipe using these ingredients and requested difficulty."
+            : "Create a home-cooked \(dishTarget) recipe. Use the available pantry items where they naturally fit this dish; omit any that don't belong."
+
+        let dishConstraint = dishTarget.isEmpty
+            ? ""
+            : "\n        - The recipe must be \(dishTarget) or a close authentic variant of it."
+
         let userPrompt = """
-        Create one home-cooking recipe using these ingredients and requested difficulty.
+        \(opening)
 
         Ingredients:
         \(ingredientRows)
@@ -120,7 +129,7 @@ struct OpenAIRecipeService: RecipeGeneratingService {
         - Prefer expiring pantry items when they fit naturally.
         - Make the recipe suitable for exactly \(request.servings) serving(s).
         - If a selected pantry quantity is provided, treat it as the target amount to use for that ingredient.
-        - Estimate protein, carbs, fat, and fiber accurately for the given servings.
+        - Estimate protein, carbs, fat, and fiber accurately for the given servings.\(dishConstraint)
 
         Output only JSON matching the schema exactly.
         """

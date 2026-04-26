@@ -20,6 +20,21 @@ Use this file to keep daily planning and end-of-day progress visible.
 
 ---
 
+## 2026-04-27 — HomeView redesign + recipe-first (targetDish)
+
+### Done
+- **HomeView redesign**: collapsed 8-section layout into 3 layers: greeting → tonight hero card → compact expiring-soon banner. Removed Kitchen Management cards, Cook Faster section, Best Next Step heading. All 9 `HomeRecommendation` cases map to hero card content with contextual tint/label/CTAs.
+- **N1 nutrition**: one-line `Text` inline at bottom of hero card (`Today X/Y kcal · X/Yg protein`) — no bars.
+- **Recipe-first (targetDish)**: added `targetDish: String` to `RecipeGenerationRequest` (with fingerprint), `RecipeViewModel.targetDish` + `selectAllPantry()`. OpenAI and backend prompts branch on `targetDish` — dish-first changes opening sentence and adds a hard constraint. Worker updated too.
+- **DishSearchView**: new view — text field (auto-focused), pantry context note, Generate button, navigates to `RecipeResultView` via `navigationDestination`. Registered in `project.pbxproj`.
+- "I have a dish in mind" CTA wired to `DishSearchView` in hero `.cookFromPantry` and `.useSoon` states.
+
+### Carry Forward
+- Build + test in Xcode (`Cmd+B`, then run `HomeRecommendationEngineTests`)
+- Manual device test: verify hero card states, DishSearchView generation, inline nutrition
+
+---
+
 ## 2026-04-26 — Android device testing fixes (safe area, sign-up flow, profile fields)
 
 ### Done

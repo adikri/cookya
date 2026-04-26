@@ -47,6 +47,7 @@ type BackendRecipeGenerateRequest = {
   prioritizedIngredientNames: string[];
   locationContext?: string | null;
   nutritionGap?: NutritionGap | null;
+  targetDish?: string | null;
 };
 
 type Recipe = {
@@ -225,6 +226,14 @@ function enforceWriteRateLimit(
 }
 
 function buildUserPrompt(body: BackendRecipeGenerateRequest): string {
+  const dishTarget = body.targetDish?.trim() ?? "";
+  const opening = dishTarget
+    ? `Create a home-cooked ${dishTarget} recipe. Use the available pantry items where they naturally fit this dish; omit any that don't belong.`
+    : "Create one home-cooking recipe using these ingredients and requested difficulty.";
+  const dishConstraint = dishTarget
+    ? `\n- The recipe must be ${dishTarget} or a close authentic variant of it.`
+    : "";
+
   const ingredientRows = [
     ...(body.manualIngredients ?? []),
     ...(body.pantryItems ?? []).map((p) => ({
@@ -267,7 +276,7 @@ function buildUserPrompt(body: BackendRecipeGenerateRequest): string {
     : [];
 
   return [
-    "Create one home-cooking recipe using these ingredients and requested difficulty.",
+    opening,
     "",
     "Ingredients:",
     JSON.stringify(ingredientRows),
@@ -289,7 +298,7 @@ function buildUserPrompt(body: BackendRecipeGenerateRequest): string {
     "- Keep recipe realistic for home cooking.",
     `- Make the recipe suitable for exactly ${body.servings} serving(s).`,
     "- If a selected pantry quantity is provided, treat it as the target amount to use for that ingredient.",
-    "- Estimate protein, carbs, fat, and fiber accurately for the given servings.",
+    "- Estimate protein, carbs, fat, and fiber accurately for the given servings." + dishConstraint,
     "",
     "Output only JSON matching the schema exactly.",
   ].join("\n");
