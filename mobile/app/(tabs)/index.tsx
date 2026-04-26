@@ -7,11 +7,32 @@ import { useSavedRecipeStore } from '../../stores/savedRecipeStore'
 import { useProfileStore } from '../../stores/profileStore'
 import { useCookedMealStore } from '../../stores/cookedMealStore'
 import { generateRecipe } from '../../services/recipeService'
-import { Recipe } from '../../types'
+import { getHomeRecommendation } from '../../services/homeRecommendationEngine'
+import { PantryItem, Recipe, SavedRecipe } from '../../types'
 import { SectionHeader } from '../../components/SectionHeader'
 import { ManagementCard } from '../../components/ManagementCard'
 import { colors, spacing, radius, typography } from '../../theme'
 import { useRouter } from 'expo-router'
+
+function localDateStr(d: Date = new Date()): string {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+function daysUntilExpiry(expiryDate: string): number {
+  const today = new Date(localDateStr() + 'T00:00:00')
+  const expiry = new Date(expiryDate + 'T00:00:00')
+  return Math.round((expiry.getTime() - today.getTime()) / 86400000)
+}
+
+function expiryLabel(days: number): string {
+  if (days < 0) return `expired ${Math.abs(days)} day${Math.abs(days) === 1 ? '' : 's'} ago`
+  if (days === 0) return 'expires today'
+  if (days === 1) return 'expires tomorrow'
+  return `expires in ${days} days`
+}
 
 export default function HomeScreen() {
   const router = useRouter()
@@ -74,19 +95,35 @@ export default function HomeScreen() {
     await logCooked(recipe, user.id, user.id, profile?.name ?? email ?? 'Me')
   }
 
-  // Tonight's pick: highest-protein saved recipe when protein gap > 20g
   const dailyProteinGoal = profile?.nutrition_goals?.daily_protein_g ?? 0
-  const proteinGap = dailyProteinGoal - todayProteinG
-  const tonightsPick = proteinGap > 20
-    ? savedRecipes.reduce<typeof savedRecipes[0] | null>((best, r) =>
-        !best || r.recipe.protein > best.recipe.protein ? r : best, null)
-    : null
+  const dailyCalGoal = profile?.nutrition_goals?.daily_calories ?? 0
+
+  // H3: Best Next Step
+  const recommendation = getHomeRecommendation({
+    pantryItems,
+    savedRecipes,
+    todayProteinG,
+    dailyProteinGoal,
+  })
+
+  // H4: Attention Needed — items expiring within 3 days (or already expired)
+  const expiringItems = pantryItems
+    .filter(item => item.expiry_date !== null)
+    .map(item => ({ ...item, daysLeft: daysUntilExpiry(item.expiry_date!) }))
+    .filter(item => item.daysLeft <= 3)
+    .sort((a, b) => a.daysLeft - b.daysLeft)
+
+  // H5: Cook Faster — favorites first, then by saved_at descending, cap at 3
+  const cookFasterRecipes = [...savedRecipes]
+    .sort((a, b) => {
+      if (a.is_favorite !== b.is_favorite) return a.is_favorite ? -1 : 1
+      return b.saved_at.localeCompare(a.saved_at)
+    })
+    .slice(0, 3)
 
   const cookSubtitle = pantryItems.length === 0
     ? 'Build your pantry first, then generate recipes around what you already have.'
     : 'Use your pantry as the base. Your dietary preferences are applied automatically.'
-
-  const dailyCalGoal = profile?.nutrition_goals?.daily_calories ?? 0
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: colors.background }}>
@@ -97,7 +134,20 @@ export default function HomeScreen() {
           What's cooking {greeting}?!
         </Text>
 
-        {/* Nutrition progress — only show when profile has goals */}
+        {/* H3: Best Next Step */}
+        {recommendation && (
+          <RecommendationCard recommendation={recommendation} onPress={() => {
+            if (recommendation.type === 'fill-pantry') router.push('/(tabs)/pantry')
+            else router.push('/(tabs)/saved')
+          }} />
+        )}
+
+        {/* H4: Attention Needed */}
+        {expiringItems.length > 0 && (
+          <AttentionNeededSection items={expiringItems} onPress={() => router.push('/(tabs)/pantry')} />
+        )}
+
+        {/* H2: Nutrition progress */}
         {dailyCalGoal > 0 && (
           <View style={{ gap: spacing.md }}>
             <SectionHeader title="Today's Nutrition" subtitle="" />
@@ -108,26 +158,16 @@ export default function HomeScreen() {
           </View>
         )}
 
-        {/* Tonight's pick */}
-        {tonightsPick && (
-          <View style={{ gap: spacing.md }}>
-            <SectionHeader title="Tonight's Pick" subtitle={`+${Math.round(proteinGap)}g protein gap`} />
-            <TouchableOpacity
-              onPress={() => router.push('/(tabs)/saved')}
-              activeOpacity={0.8}
-              style={{ backgroundColor: colors.success + '1F', padding: spacing.lg, borderRadius: radius.card, gap: spacing.xs }}
-            >
-              <Text style={[typography.headline, { color: colors.textPrimary }]}>
-                🏆  {tonightsPick.recipe.title}
-              </Text>
-              <Text style={[typography.subheadline, { color: colors.textSecondary }]}>
-                {tonightsPick.recipe.protein}g protein · {tonightsPick.recipe.calories} cal
-              </Text>
-            </TouchableOpacity>
-          </View>
+        {/* H5: Cook Faster */}
+        {cookFasterRecipes.length > 0 && (
+          <CookFasterSection
+            recipes={cookFasterRecipes}
+            hasMore={savedRecipes.length > 3}
+            onPress={() => router.push('/(tabs)/saved')}
+          />
         )}
 
-        {/* Cook from pantry */}
+        {/* Let's Cook */}
         <View style={{ gap: spacing.md }}>
           <SectionHeader title="Let's Cook" subtitle={cookSubtitle} />
           <TouchableOpacity
@@ -204,6 +244,145 @@ export default function HomeScreen() {
   )
 }
 
+// ─── Sub-components ──────────────────────────────────────────────────────────
+
+type HomeRecommendation = ReturnType<typeof getHomeRecommendation>
+
+function RecommendationCard({ recommendation, onPress }: {
+  recommendation: NonNullable<HomeRecommendation>
+  onPress: () => void
+}) {
+  if (recommendation.type === 'fill-pantry') {
+    return (
+      <TouchableOpacity onPress={onPress} activeOpacity={0.8} style={{
+        backgroundColor: colors.warning + '1F', padding: spacing.lg,
+        borderRadius: radius.card, gap: spacing.xs,
+      }}>
+        <Text style={[typography.headline, { color: colors.textPrimary }]}>🥘  Build your pantry</Text>
+        <Text style={[typography.subheadline, { color: colors.textSecondary }]}>
+          Add your first ingredients to start generating recipes.
+        </Text>
+      </TouchableOpacity>
+    )
+  }
+
+  if (recommendation.type === 'tonight-pick') {
+    return (
+      <TouchableOpacity onPress={onPress} activeOpacity={0.8} style={{
+        backgroundColor: colors.success + '1F', padding: spacing.lg,
+        borderRadius: radius.card, gap: spacing.xs,
+      }}>
+        <Text style={[typography.caption, { color: colors.success, fontWeight: '700', letterSpacing: 0.5 }]}>
+          TONIGHT'S PICK  ·  +{recommendation.proteinGap}g protein gap
+        </Text>
+        <Text style={[typography.headline, { color: colors.textPrimary }]}>
+          🏆  {recommendation.recipe.recipe.title}
+        </Text>
+        <Text style={[typography.subheadline, { color: colors.textSecondary }]}>
+          {recommendation.recipe.recipe.protein}g protein · {recommendation.recipe.recipe.calories} cal
+        </Text>
+      </TouchableOpacity>
+    )
+  }
+
+  // cook-favorite
+  return (
+    <TouchableOpacity onPress={onPress} activeOpacity={0.8} style={{
+      backgroundColor: colors.primary + '1F', padding: spacing.lg,
+      borderRadius: radius.card, gap: spacing.xs,
+    }}>
+      <Text style={[typography.caption, { color: colors.primary, fontWeight: '700', letterSpacing: 0.5 }]}>
+        COOK TONIGHT
+      </Text>
+      <Text style={[typography.headline, { color: colors.textPrimary }]}>
+        ⭐  {recommendation.recipe.recipe.title}
+      </Text>
+      <Text style={[typography.subheadline, { color: colors.textSecondary }]}>
+        {recommendation.recipe.recipe.protein}g protein · {recommendation.recipe.recipe.calories} cal
+      </Text>
+    </TouchableOpacity>
+  )
+}
+
+function AttentionNeededSection({ items, onPress }: {
+  items: (PantryItem & { daysLeft: number })[]
+  onPress: () => void
+}) {
+  return (
+    <View style={{ gap: spacing.md }}>
+      <SectionHeader title="Attention Needed" subtitle="" />
+      <View style={{ backgroundColor: colors.surface, borderRadius: radius.card, overflow: 'hidden' }}>
+        {items.slice(0, 3).map((item, idx) => (
+          <View key={item.id} style={{
+            flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+            paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
+            borderBottomWidth: idx < Math.min(items.length, 3) - 1 ? 1 : 0,
+            borderBottomColor: colors.border,
+          }}>
+            <Text style={[typography.subheadline, { color: colors.textPrimary }]}>{item.name}</Text>
+            <Text style={[typography.caption, {
+              color: item.daysLeft < 0 ? colors.danger : item.daysLeft === 0 ? colors.warning : colors.textSecondary,
+              fontWeight: '600',
+            }]}>
+              {expiryLabel(item.daysLeft)}
+            </Text>
+          </View>
+        ))}
+        <TouchableOpacity onPress={onPress} activeOpacity={0.8} style={{
+          paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
+          borderTopWidth: 1, borderTopColor: colors.border,
+        }}>
+          <Text style={[typography.subheadline, { color: colors.primary, fontWeight: '600' }]}>
+            Review in Pantry →
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  )
+}
+
+function CookFasterSection({ recipes, hasMore, onPress }: {
+  recipes: SavedRecipe[]
+  hasMore: boolean
+  onPress: () => void
+}) {
+  return (
+    <View style={{ gap: spacing.md }}>
+      <SectionHeader title="Cook Faster" subtitle="Jump into a meal you've already saved." />
+      <View style={{ backgroundColor: colors.surface, borderRadius: radius.card, overflow: 'hidden' }}>
+        {recipes.map((saved, idx) => (
+          <TouchableOpacity key={saved.id} onPress={onPress} activeOpacity={0.8} style={{
+            flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+            paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
+            borderBottomWidth: idx < recipes.length - 1 ? 1 : 0,
+            borderBottomColor: colors.border,
+          }}>
+            <View style={{ flex: 1, gap: 2 }}>
+              <Text style={[typography.subheadline, { color: colors.textPrimary }]}>
+                {saved.is_favorite ? '⭐  ' : ''}{saved.recipe.title}
+              </Text>
+              <Text style={[typography.caption, { color: colors.textSecondary }]}>
+                {saved.recipe.protein}g protein · {saved.recipe.calories} cal
+              </Text>
+            </View>
+            <Text style={{ color: colors.textTertiary, fontSize: 18 }}>›</Text>
+          </TouchableOpacity>
+        ))}
+        {hasMore && (
+          <TouchableOpacity onPress={onPress} activeOpacity={0.8} style={{
+            paddingHorizontal: spacing.lg, paddingVertical: spacing.md,
+            borderTopWidth: 1, borderTopColor: colors.border,
+          }}>
+            <Text style={[typography.subheadline, { color: colors.primary, fontWeight: '600' }]}>
+              See all saved recipes →
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    </View>
+  )
+}
+
 function NutritionBar({ label, current, goal, unit, color }: {
   label: string; current: number; goal: number; unit: string; color: string
 }) {
@@ -262,7 +441,6 @@ function RecipeCard({ recipe, isSaved, onSave, onCooked }: {
         ))}
       </View>
 
-      {/* Actions */}
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
         <TouchableOpacity
           onPress={onSave}

@@ -237,6 +237,11 @@ Once Android reaches parity, **every feature branch touches both platforms**. A 
 | M8 | Home recommendation engine — tonight's pick based on nutrition gap | **Built** |
 | M9 | Known items / catalog — 290-item search-first picker | **Built** |
 | M10 | Expiry dates on pantry items | **Built** |
+| H1 | Home screen layout — greeting, Let's Cook hero, Kitchen Management cards | **Built** |
+| H2 | Nutrition progress on Home (calories + protein bars) | **Built** |
+| H3 | Best Next Step — `homeRecommendationEngine` (fill-pantry / tonight-pick / cook-favorite) | **Built** |
+| H4 | Attention Needed — expiring pantry items (≤ 3 days) with colored labels | **Built** |
+| H5 | Cook Faster — favorites-first saved recipe shortcuts, cap 3, see-all link | **Built** |
 
 ---
 

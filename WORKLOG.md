@@ -20,6 +20,21 @@ Use this file to keep daily planning and end-of-day progress visible.
 
 ---
 
+## 2026-04-26 — Android Home screen H3+H4+H5
+
+### Done
+- Created `mobile/services/homeRecommendationEngine.ts` — pure TS function with discriminated union output (`fill-pantry | tonight-pick | cook-favorite | null`); priority: pantry empty → protein gap + saved recipe → saved favorite → null
+- Folded standalone Tonight's Pick logic into the engine (one recommendation surface instead of two)
+- Added **H3: Best Next Step** — renders the engine output as a contextual card (fill-pantry = orange, tonight-pick = green, cook-favorite = primary blue)
+- Added **H4: Attention Needed** — expiry-aware pantry warning section; items expiring ≤ 3 days shown with colored labels; expiry math done in local timezone (YYYY-MM-DD string compare, not UTC Date objects)
+- Added **H5: Cook Faster** — favorites-first saved recipe list, capped at 3 rows, "See all" link when more exist
+- `npm run typecheck` clean, `npm test` 61/61
+
+### Carry Forward
+- Android device validation session (QR scan with Expo Go, verify all Home sections on device)
+
+---
+
 ## 2026-04-24 — Slice H1: Home screen structure + design tokens
 
 ### Done
