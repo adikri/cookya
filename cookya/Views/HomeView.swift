@@ -61,6 +61,26 @@ struct HomeView: View {
     private var tonightHeroCard: some View {
         VStack(alignment: .leading, spacing: 16) {
             heroContent
+
+            // Secondary cooking CTAs — always present when pantry is non-empty
+            // and the hero isn't already the cookFromPantry two-CTA state
+            if showSecondaryCTAs {
+                Divider()
+                HStack(spacing: 12) {
+                    NavigationLink { IngredientInputView() } label: {
+                        Text("Cook from pantry")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+
+                    NavigationLink { DishSearchView() } label: {
+                        Text("I have a dish in mind")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                }
+            }
+
             if let nutrition = inlineNutrition {
                 Divider()
                 nutrition
@@ -71,6 +91,14 @@ struct HomeView: View {
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 20))
+    }
+
+    private var showSecondaryCTAs: Bool {
+        guard !inventoryStore.usablePantryItems.isEmpty else { return false }
+        switch bestNextStep {
+        case .cookFromPantry, .none: return false
+        default: return true
+        }
     }
 
     @ViewBuilder
