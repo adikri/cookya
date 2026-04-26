@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { usePantryStore } from '../../stores/pantryStore'
 import { useGroceryStore } from '../../stores/groceryStore'
 import { useAuthStore } from '../../stores/authStore'
@@ -46,6 +47,7 @@ export default function HomeScreen() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
 
+  const insets = useSafeAreaInsets()
   const greeting = email ? email.split('@')[0] : 'there'
 
   useEffect(() => {
@@ -127,7 +129,7 @@ export default function HomeScreen() {
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: colors.background }}>
-      <View style={{ padding: spacing.lg, gap: spacing.xl }}>
+      <View style={{ paddingTop: insets.top + spacing.lg, paddingHorizontal: spacing.lg, paddingBottom: spacing.lg, gap: spacing.xl }}>
 
         {/* Greeting */}
         <Text style={[typography.title2, { color: colors.textPrimary }]}>

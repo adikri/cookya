@@ -4,17 +4,20 @@ import { supabase } from '../services/supabase'
 interface AuthState {
   isLoading: boolean
   isSignedIn: boolean
+  isNewUser: boolean
   email: string | null
   error: string | null
   signUp: (email: string, password: string) => Promise<void>
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
   checkSession: () => Promise<void>
+  clearNewUser: () => void
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   isLoading: true,
   isSignedIn: false,
+  isNewUser: false,
   email: null,
   error: null,
 
@@ -23,7 +26,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const { error } = await supabase.auth.signUp({ email, password })
       if (error) throw error
-      set({ isSignedIn: true, email })
+      set({ isSignedIn: true, isNewUser: true, email })
     } catch (err) {
       set({ error: (err as Error).message })
     } finally {
@@ -55,6 +58,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ isLoading: false })
     }
   },
+
+  clearNewUser: () => set({ isNewUser: false }),
 
   checkSession: async () => {
     set({ isLoading: true })

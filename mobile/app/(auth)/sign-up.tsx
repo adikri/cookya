@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { View, TextInput, TouchableOpacity, Text, Alert } from 'react-native'
-import { useRouter, Link } from 'expo-router'
+import { Link } from 'expo-router'
 import { useAuthStore } from '../../stores/authStore'
 
 export default function SignUpScreen() {
-  const router = useRouter()
   const { signUp, isLoading } = useAuthStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -21,8 +20,7 @@ export default function SignUpScreen() {
     }
     try {
       await signUp(email, password)
-      Alert.alert('Success', 'Account created! Please sign in.')
-      router.replace('/(auth)/sign-in')
+      // Auth guard in _layout.tsx detects isNewUser and navigates to profile tab
     } catch (err) {
       Alert.alert('Sign up failed', (err as Error).message)
     }

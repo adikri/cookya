@@ -4,7 +4,7 @@ import { View, ActivityIndicator } from 'react-native'
 import { useAuthStore } from '../stores/authStore'
 
 export default function RootLayout() {
-  const { isLoading, isSignedIn, checkSession } = useAuthStore()
+  const { isLoading, isSignedIn, isNewUser, checkSession, clearNewUser } = useAuthStore()
   const router = useRouter()
   const segments = useSegments()
 
@@ -18,7 +18,12 @@ export default function RootLayout() {
     if (!isSignedIn && !inAuthGroup) {
       router.replace('/(auth)/sign-in')
     } else if (isSignedIn && inAuthGroup) {
-      router.replace('/(tabs)')
+      if (isNewUser) {
+        clearNewUser()
+        router.replace('/(tabs)/profile')
+      } else {
+        router.replace('/(tabs)')
+      }
     }
   }, [isSignedIn, isLoading, segments])
 

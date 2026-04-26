@@ -20,6 +20,19 @@ Use this file to keep daily planning and end-of-day progress visible.
 
 ---
 
+## 2026-04-26 — Android device testing fixes (safe area, sign-up flow, profile fields)
+
+### Done
+- **Safe area**: `useSafeAreaInsets` added to Home screen; `paddingTop: insets.top + spacing.lg` prevents greeting text being hidden by punch-hole camera
+- **Sign-up → Profile redirect**: added `isNewUser` flag to `authStore`; `_layout.tsx` routes new users to `/(tabs)/profile` instead of Home; sign-up screen removed manual Alert/navigation
+- **Profile fields**: added Age, Height (cm), Weight (kg), BMI (calculated, read-only with label), nutrition goals display; auto-calculates `daily_calories` and `daily_protein_g` from biometrics (Mifflin-St Jeor neutral) when all three are saved
+- `ProfileField` extracted as a reusable component within profile.tsx
+
+### Carry Forward
+- Continue Android device testing: T1–T10 test plan
+
+---
+
 ## 2026-04-26 — Android Home screen H3+H4+H5
 
 ### Done

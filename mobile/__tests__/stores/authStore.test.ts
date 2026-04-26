@@ -14,7 +14,7 @@ jest.mock('../../services/supabase', () => ({
 import { supabase } from '../../services/supabase'
 const mockAuth = supabase.auth as jest.Mocked<typeof supabase.auth>
 
-const initialState = { isLoading: true, isSignedIn: false, email: null, error: null }
+const initialState = { isLoading: true, isSignedIn: false, isNewUser: false, email: null, error: null }
 
 beforeEach(() => {
   useAuthStore.setState(initialState)
@@ -84,13 +84,20 @@ describe('signIn', () => {
 })
 
 describe('signUp', () => {
-  it('sets isSignedIn on successful registration', async () => {
+  it('sets isSignedIn and isNewUser on successful registration', async () => {
     mockAuth.signUp.mockResolvedValue({ error: null } as any)
 
     await useAuthStore.getState().signUp('new@example.com', 'password123')
 
     expect(useAuthStore.getState().isSignedIn).toBe(true)
+    expect(useAuthStore.getState().isNewUser).toBe(true)
     expect(useAuthStore.getState().email).toBe('new@example.com')
+  })
+
+  it('clearNewUser resets isNewUser to false', async () => {
+    useAuthStore.setState({ isNewUser: true })
+    useAuthStore.getState().clearNewUser()
+    expect(useAuthStore.getState().isNewUser).toBe(false)
   })
 
   it('sets error when email already registered', async () => {
