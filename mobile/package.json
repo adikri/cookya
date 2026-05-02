@@ -40,5 +40,8 @@
     "jest-expo": "~54.0.0",
     "typescript": "~5.9.2"
   },
+  "overrides": {
+    "react-test-renderer": "19.1.0"
+  },
   "private": true
 }
