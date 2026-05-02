@@ -41,14 +41,20 @@ Use this file to keep daily planning and end-of-day progress visible.
 - Identified table-stakes gaps: URL recipe import, household sharing, photo-based pantry add, voice-add, grocery delivery integrations
 - Wrote `docs/COMPETITIVE.md`: full competitor profiles, comparison matrix, UI/UX references with store links and concrete patterns to study (and anti-patterns to avoid), 9 patterns synthesized for Android rewrite, 4 strategic moves
 - Added market-context pointer to `PLANNING.md` so the new doc isn't orphaned
+- Audited git state: found 7 local-only `codex/*` branches (64+ unpushed commits including the entire Android RN app and Supabase migration), commit-granularity violations on recent commits (e.g. `da74265` shipping nutrition layer + weekly meal plan + worker bug fix as one), inconsistent PR vs direct-to-main workflow, 63% of last 30 commits touching `project.pbxproj` (signing churn riding along)
+- **Pushed all 6 unmerged `codex/*` branches to `origin`** — eliminated the dataloss-on-laptop-failure risk
+- Deleted local `codex/mvp-recipe-flow` (already merged via PR #1)
+- **Reconciled `PLANNING.md` with reality:** added Phase E (Data Quality at Entry), Section 6 (Android Roadmap — slices M1–M10 + H1–H5), updated Phase A and Phase D to mark Supabase migration items + Android RN app as `Built (on codex/react-native-android, awaiting merge to main)`, updated Recommended near-term order to call out merging `codex/react-native-android` as the highest-leverage next step. Renumbered downstream sections to 7 and 8.
 
 ### Commits (session 4)
-- *(pending — competitive analysis doc + PLANNING pointer)*
+- `68f6507` Add docs/COMPETITIVE.md: cooking-app landscape and UI/UX reference
+- *(pending — PLANNING.md reality reconciliation)*
 
 ### Carry Forward
+- **Highest-leverage next step:** merge `codex/react-native-android` into `main`. That branch is a superset of `codex/supabase-store-sync` and brings 35+ Built items onto the trunk. Needs build/test verification + likely a PR for review.
 - Strategic moves from `docs/COMPETITIVE.md` are recommendations, not commitments — when one is decided, capture rationale in `DECISIONS.md` and scope/timing in `PLANNING.md`
-- Likely Phase D additions worth considering: URL recipe import + photo-based pantry add (cheap credibility unlocks for Android launch)
-- Existing carry-forward from session 3 still open (Supabase project setup)
+- Likely Phase D additions worth considering once Android lands: URL recipe import + photo-based pantry add (cheap credibility unlocks)
+- Git habit changes from the audit: one story per commit (no "X and Y and Z" titles), `git add <file>` not `git add -A`, separate `chore: signing` commits when `project.pbxproj` only contains `DEVELOPMENT_TEAM`/`ProvisioningStyle` churn, push at end of every session
 
 ---
 

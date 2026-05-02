@@ -120,21 +120,27 @@ These are the main technical priorities that still matter.
 ## 5. Reality-Based Roadmap
 
 Use these markers consistently:
-- **Built** — already shipped in the current branch/product
+- **Built** — landed on `main`
+- **Built (on `<branch>`, awaiting merge to main)** — code exists and is validated on the named branch but has not yet been merged into `main`. When that branch lands, drop the parenthetical.
 - **Active** — currently started or partially implemented
 - **Next** — should come soon and materially affects product direction
 - **Later** — important but not the immediate focus
+
+> **Reality vs `main` (as of 2026-05-02):** the Supabase migration and the React Native Android app are largely built on `codex/react-native-android` (which supersedes `codex/supabase-store-sync`) but have not yet been merged to `main`. Items below tagged with that branch reflect work that exists in the repository but has not landed on the trunk. Merging that branch is the highest-leverage next step — until then, `main` is several phases behind reality.
 
 ### Phase A — Protect and Stabilize What Already Works
 **Goal:** make the current app safe to rely on daily.
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Lightweight cloud/data backup | **Built** | KV snapshot via Cloudflare Worker. |
+| Lightweight cloud/data backup | **Built** on `main` (KV snapshot via Cloudflare Worker); **superseded** on `codex/react-native-android` by Supabase `user_snapshots` JSONB backup via `SupabaseSnapshotService`. |
 | Backend recipe generation relay (no client OpenAI key) | **Built** | Cloudflare Worker with static token auth. |
 | Store decode/persist hardening | **Built** | AppLogger on decode fallbacks; assertionFailure on encode failures in all stores. |
 | Recipe cache eviction policy | **Built** | GeneratedRecipeCachePolicy: LRU eviction, cap of 50, tested. |
 | Home recommendation extraction | **Built** | `HomeRecommendationEngine` extracted with full test coverage. |
+| Inventory local-only sync recovery | **Built (on `codex/react-native-android`, awaiting merge to main)** | `InventoryStore.refresh()` uploads local-only pantry/grocery rows missing in Supabase; validated on device. |
+| Snapshot upload deduping | **Built (on `codex/react-native-android`, awaiting merge to main)** | `AppBackupCoordinator` coalesces rapid local persistence changes into one backend snapshot upsert; validated on device. |
+| Auth/session reliability | **Built (on `codex/react-native-android`, awaiting merge to main)** | `AuthStore` observes Supabase auth state changes after launch; root view responds to sign-in/out/token-refresh without relaunch. Validated on device. |
 | Broader test coverage | **Later** | Extend beyond current regression coverage. |
 
 ### Phase N — Nutrition Layer (current priority)
@@ -152,6 +158,15 @@ The use case is a health-conscious user who wants nutritionally dense home-cooke
 
 Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home` (UI + recommendation engine).
 
+### Phase E — Data Quality at Entry
+**Goal:** prevent bad data from entering the pantry/grocery before it can sync to Supabase and affect recipe generation, readiness detection, and nutrition tracking.
+
+| Item | Status | Notes |
+|------|--------|-------|
+| Catalog-backed item picker | **Built (on `codex/react-native-android`, awaiting merge to main)** | `PantryItemCatalog` with ~290 items (including Indian staples). `KnownItemPickerView` redesigned: search-first with 3-col category grid, recent items capped at 5, category drill-down, "Add new item" always visible. Picker is the primary Add entry point in PantryView and GroceryListView. |
+| Fuzzy autocomplete on known items | **Later** | Picker already filters catalog + history. Deeper fuzzy matching ("tomatoe" → "Tomatoes") can be added later if needed. |
+| Unit canonicalization picker | **Later** | `QuantityInputView` already has Quick Pick mode. Full enforcement deferred. |
+
 ### Phase B — Complete Recipe-First Planning
 **Goal:** let users start from the meal they want, not only from pantry inventory. **Deferred until after Phase N.**
 
@@ -160,7 +175,7 @@ Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home`
 | Reusable planning detail | **Built** | Readiness, grouped ingredients, cook vs grocery CTA. |
 | Home -> planning detail routing | **Built** | Saved-recipe recommendations now deep-link into planning detail. |
 | Saved planning hub | **Built** | Saved recipes with readiness badges, macros per row, goal-fit context in detail view. |
-| Recipe entry points beyond Saved/Home | **Next** | Add a clearer recipe-first starting surface. |
+| Recipe entry points beyond Saved/Home | **Built (on `codex/react-native-android`, awaiting merge to main)** | `DishSearchView`: type a dish name → generate recipe targeting that dish using available pantry as context. Accessible from Home hero "I have a dish in mind" CTA. |
 | Dish-name search | **Later** | Search for a target meal and compare it against pantry. |
 | Pantry comparison + grocery add everywhere | **Next** | Reuse planning detail for all recipe-first flows. |
 
@@ -182,27 +197,54 @@ Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home`
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Supabase auth (email + Google) | **Next** | Email/password for all platforms. Google Sign In for Android. Apple Sign In deferred (requires paid Apple Developer). |
-| Supabase database schema | **Next** | PostgreSQL tables for pantry, grocery, saved recipes, cooked records, weekly plan, profile. Replaces UserDefaults + Cloudflare KV for sync. |
-| iOS Supabase integration | **Next** | Replace BackendInventoryService + KV snapshot with Supabase. Keep Cloudflare Worker as OpenAI relay only. |
-| React Native Android app | **Next** | New RN project. Same Supabase backend. Core loop: home, pantry, grocery, recipe generation. Target: Play Store. |
-| Push notifications | **Later** | Expiring items, "haven’t planned dinner yet." Requires Supabase auth first. |
+| Supabase auth (email + Google) | **Built (on `codex/react-native-android`, awaiting merge to main)** | Email/password and Google Sign In wired. Apple Sign In deferred (requires paid Apple Developer). |
+| Supabase database schema + RLS | **Built (on `codex/react-native-android`, awaiting merge to main)** | 6 tables (pantry, grocery, saved_recipes, cooked_meal_records, weekly_plan_meals, profiles). RLS enabled on all tables. Migration in `supabase/migrations/20260423_initial_schema.sql`. |
+| iOS Supabase integration — inventory | **Built (on `codex/react-native-android`, awaiting merge to main)** | `SupabaseInventoryService` replaces `BackendInventoryService` for pantry/grocery CRUD. Cloudflare Worker KV inventory endpoints no longer used. |
+| iOS Supabase integration — snapshot | **Built (on `codex/react-native-android`, awaiting merge to main)** | `SupabaseSnapshotService` replaces `BackendSnapshotService`. Full backup stored as JSONB in `user_snapshots` table. Cloudflare Worker is now OpenAI relay only. |
+| iOS Supabase integration — all stores | **Built (on `codex/react-native-android`, awaiting merge to main)** | `RecipeStore`, `CookedMealStore`, `ProfileStore`, `WeeklyPlanStore` sync to Supabase via injected services. Optimistic local update + background sync on every mutation. All 7 Supabase tables live. |
+| React Native Android app | **Active (on `codex/react-native-android`, awaiting merge to main)** | Expo SDK 54 / RN 0.81.5. Auth, pantry, grocery, recipe generation, profile + sign-out, weekly plan, nutrition, item picker, home recommendations all built and web-validated. Android device test pending. See section 6 below. |
+| Push notifications | **Later** | Expiring items, "haven't planned dinner yet." Requires Supabase auth first. |
 | Household accounts / shared pantry | **Later** | After Supabase is in place. Key feature for partner sharing. |
 | iOS App Store distribution | **Later** | Requires paid Apple Developer account ($99/yr) — deferred. |
 
 ### Recommended near-term order
 
-1. ~~`codex/nutrition-layer`~~ **Done**
-2. ~~`codex/nutrition-home`~~ **Done**
-3. ~~`codex/saved-planning-hub`~~ **Done**
-4. ~~`codex/weekly-meal-plan`~~ **Done**
-5. `codex/supabase-foundation` — Supabase project + schema + iOS integration **← current**
-6. `codex/react-native-android` — Android app connecting to same Supabase backend
-7. `codex/android-feature-parity` — nutrition, weekly plan, saved recipes on Android
+1. ~~`codex/nutrition-layer`~~ **Done** (on main)
+2. ~~`codex/nutrition-home`~~ **Done** (on main)
+3. ~~`codex/saved-planning-hub`~~ **Done** (on main)
+4. ~~`codex/weekly-meal-plan`~~ **Done** (on main)
+5. ~~`codex/supabase-foundation` / `codex/supabase-store-sync`~~ **Done on branch, not yet merged to main** — Supabase auth + schema + iOS integration for all 7 stores
+6. **Merge `codex/react-native-android` to main** ← **highest-leverage next step** — supersedes (5) since it builds on top of it; brings Supabase + Android RN onto the trunk
+7. `codex/android-device-validation` — finish Android device testing for parity slices M1–H5
+8. `codex/android-play-store-prep` — release build, signing, store listing assets
 
 ---
 
-## 6. Architecture Conventions
+## 6. Android Roadmap — parity slices
+
+Branch: `codex/react-native-android`. Each slice: typecheck → Jest → manual web → Android device → WORKLOG → commit. All slices below are Built on the branch; only Android device validation remains.
+
+| Slice | What | Status |
+|---|---|---|
+| M1 | Auth, pantry, grocery, recipe gen, profile + sign-out | **Built** — web-validated |
+| M2 | Category picker (9 categories matching iOS), error display on all screens | **Built** |
+| M3 | Save recipes — Save button, Saved tab, `savedRecipeStore` | **Built** |
+| M4 | User profile + dietary prefs — passed to recipe gen | **Built** |
+| M5 | Cooked meal history — "I cooked this" on any recipe, `cookedMealStore` | **Built** |
+| M6 | Nutrition progress on Home — today's macros vs profile goals | **Built** |
+| M7 | Weekly meal planning — up to 7 meals, missing ingredients, add to grocery | **Built** |
+| M8 | Home recommendation engine — tonight's pick based on nutrition gap | **Built** |
+| M9 | Known items / catalog — 290-item search-first picker | **Built** |
+| M10 | Expiry dates on pantry items | **Built** |
+| H1 | Home screen layout — greeting, Let's Cook hero, Kitchen Management cards | **Built** |
+| H2 | Nutrition progress on Home (calories + protein bars) | **Built** |
+| H3 | Best Next Step — fill-pantry / tonight-pick / cook-favorite | **Built** |
+| H4 | Attention Needed — expiring pantry items (≤ 3 days) with colored labels | **Built** |
+| H5 | Cook Faster — favorites-first saved recipe shortcuts, cap 3, see-all link | **Built** |
+
+---
+
+## 7. Architecture Conventions
 
 This is still a **SwiftUI MVVM-leaning app with protocol-driven services**, but the codebase is not yet perfectly strict MVVM. Treat that honestly.
 
@@ -262,7 +304,7 @@ Also:
 
 ---
 
-## 7. Working Rules for Codex / Engineering Workflow
+## 8. Working Rules for Codex / Engineering Workflow
 
 ### Before starting work
 - read `PLANNING.md`
