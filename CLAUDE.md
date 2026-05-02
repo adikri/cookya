@@ -186,6 +186,21 @@ At the end of every working session, before stopping:
 
 ---
 
+## Branching workflow
+
+This repo uses **trunk-based development with parity-by-commit**, not long-lived integration branches.
+
+- `main` is always shippable on every supported platform (iOS today; iOS + Android once `codex/react-native-android` lands).
+- One feature = one short-lived branch off `main` = one PR = merge = delete the branch.
+- **Foundation work merges to `main` first**, before features that depend on it. Features stack on the trunk, never on each other. (The historical mistake on this repo was letting Supabase migration sit on a branch while Android features stacked on top of it; that produced `codex/react-native-android` with 39 unmergeable commits.)
+- For multi-platform features, parity is a **per-commit norm**, not a branch-level gate: every PR ships every platform in the same commit (or paired commits in the same PR). Don't merge a PR that only updates one platform.
+- A branch lives at most a few days. If a branch is older than a week without merging, it's a smell — split it, rebase it, or merge it.
+- Doc-only and tiny-fix changes commit directly to `main`. Features (anything touching app code) go through a branch + PR.
+
+**Why these rules exist:** see `DECISIONS.md` 2026-05-02 entries on `codex/react-native-android` parity-gate (the one-time exit move) and trunk-based with parity-by-commit (the ongoing model).
+
+---
+
 ## Engineering habits
 
 **Classify failures fast (< 2 min):**

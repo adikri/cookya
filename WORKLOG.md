@@ -46,15 +46,55 @@ Use this file to keep daily planning and end-of-day progress visible.
 - Deleted local `codex/mvp-recipe-flow` (already merged via PR #1)
 - **Reconciled `PLANNING.md` with reality:** added Phase E (Data Quality at Entry), Section 6 (Android Roadmap — slices M1–M10 + H1–H5), updated Phase A and Phase D to mark Supabase migration items + Android RN app as `Built (on codex/react-native-android, awaiting merge to main)`, updated Recommended near-term order to call out merging `codex/react-native-android` as the highest-leverage next step. Renumbered downstream sections to 7 and 8.
 
+- **Renamed worktree branch** from `claude/mystifying-perlman-6edff6` to `docs/competitive-and-reality-check` so origin sees a meaningful name; landed via fast-forward on main; deleted the redundant local branch after.
+- **Added DECISIONS entry: parity-gated merge for `codex/react-native-android`** — captured rationale before it could evaporate.
+- **Process clarity pass (the "stop letting branches accumulate" conversation):**
+  - Diagnosed the long-lived-branch problem: foundation work (Supabase migration) entangled with feature work, blocked from merging to main, then everything Android-dependent stacked on top, then a parity gate compounded it.
+  - Locked plan = **option A**: validate `codex/react-native-android` once on real Android device via EAS APK, merge as one milestone, then go trunk-based with parity-by-commit forever after.
+  - Captured the new ongoing model in `CLAUDE.md` ("Branching workflow") and `DECISIONS.md` (new entry: trunk-based with parity-by-commit). Reframed the existing parity-gate decision as a one-time exit move so future sessions don't reapply it.
+  - Discussed Q1 (sibling-equal `ios/` `mobile/` `web/` `shared/` layout) — deferred until after the big merge lands. Discussed web platform — deferred until after Android Play Store launch. Neither captured in DECISIONS yet; will be captured when committed to.
+  - Discussed Q2 (EAS Build → APK as the partner-distribution mechanism) — full step-by-step provided in conversation; will become an actual `infra/eas-android-distribution` slice next session.
+
 ### Commits (session 4)
 - `68f6507` Add docs/COMPETITIVE.md: cooking-app landscape and UI/UX reference
-- *(pending — PLANNING.md reality reconciliation)*
+- `f25c5c5` Reconcile PLANNING.md with reality on codex/react-native-android
+- `6033269` DECISIONS.md: log parity-gated merge for codex/react-native-android
+- *(pending — process-clarity capture: CLAUDE.md branching workflow + DECISIONS.md trunk-based entry + this WORKLOG extension)*
 
-### Carry Forward
-- **Highest-leverage next step:** merge `codex/react-native-android` into `main`. That branch is a superset of `codex/supabase-store-sync` and brings 35+ Built items onto the trunk. Needs build/test verification + likely a PR for review.
-- Strategic moves from `docs/COMPETITIVE.md` are recommendations, not commitments — when one is decided, capture rationale in `DECISIONS.md` and scope/timing in `PLANNING.md`
-- Likely Phase D additions worth considering once Android lands: URL recipe import + photo-based pantry add (cheap credibility unlocks)
-- Git habit changes from the audit: one story per commit (no "X and Y and Z" titles), `git add <file>` not `git add -A`, separate `chore: signing` commits when `project.pbxproj` only contains `DEVELOPMENT_TEAM`/`ProvisioningStyle` churn, push at end of every session
+### Carry Forward — sequenced plan for next session(s)
+
+**Slice 1: EAS Build → APK setup** (~1–2 hours, branch `infra/eas-android-distribution` off `codex/react-native-android`)
+- Add `android.package` to `mobile/app.json` (e.g. `com.adikri.cookya`)
+- `npm install -g eas-cli && eas login && eas build:configure`
+- Wire env vars: public values in `eas.json`, sensitive worker token via `eas secret:create`
+- `eas build --profile preview --platform android` → APK URL
+- Install on Adi's phone + partner's phone; smoke-test signin
+
+**Slice 2: Android validation smoke test** (~1 evening, on the same branch — log results in WORKLOG)
+- Phase 0 pre-flight: install, launch, sign-in screen
+- Phase 1 auth: signup, signin, session restore on relaunch
+- Phase 2 pantry: add via picker, add free-form, edit, delete, sync to iOS
+- Phase 3 grocery + purchase → pantry round-trip
+- Phase 4 recipe generation: pantry → recipe → save; iOS coherence check
+- Phase 5 cook + decrement: cooked-this → pantry decrement → nutrition card update; safe-quantity block
+- Phase 6 cross-cutting: signout/signin, kill-during-sync, snapshot backup
+- Phase 7 disparity log: any cosmetic deltas → log; any data/auth/crash → block
+- **Pass criterion:** all `block` rows clear → merge is safe.
+
+**Slice 3: PR `codex/react-native-android → main`** (the big merge)
+- One PR; squash or merge commit, your call
+- After merge: drop the "Built (on `codex/react-native-android`, awaiting merge to main)" annotations in `PLANNING.md` since they're now just Built; delete the merged branch locally and on origin
+
+**Slice 4: First trunk-based feature** (whatever the next product priority is)
+- Short branch off main → PR with both platforms updated → merge → delete branch
+- This is where the new `CLAUDE.md` Branching workflow rule starts paying off
+
+**Other carry-forward (don't lose):**
+- Strategic moves from `docs/COMPETITIVE.md` are recommendations; when one is decided, capture rationale in `DECISIONS.md` and scope in `PLANNING.md`
+- Likely Phase D additions once Android lands: URL recipe import + photo-based pantry add (cheap credibility unlocks)
+- Project structure restructure (sibling `ios/` `mobile/` `web/` `shared/`) — deferred; pick up after the big merge
+- Web platform — deferred until after Android Play Store launch
+- Git habit changes from the audit: one story per commit, `git add <file>` not `git add -A`, separate `chore: signing` commits, push at end of every session
 
 ---
 

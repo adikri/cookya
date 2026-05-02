@@ -46,8 +46,14 @@ Format: date · decision · options considered · reason.
 
 ## 2026-05-02
 
-### Parity-gated merge for codex/react-native-android
-**Decision:** Defer merging `codex/react-native-android` into `main` until iOS and Android ship the same feature set. New features land on the branch touching both platforms in lockstep. The merge to main happens as one parity-aligned snapshot.
-**Options considered:** Merge now and continue building feature-by-feature on main; merge in pieces (Supabase migration first, RN app later); keep the branch as the integration line until parity holds (current).
-**Reason:** Validating Android requires iOS as the reference behavior — when a flow works differently on the two platforms, it's not clear which is correct. Merging early would force iOS-on-main to absorb the branch's iOS state, but if Android still lags on a feature the next release would ship a broken parity story. Holding the merge until both platforms are aligned guarantees Android device validation can treat iOS as the truth, and that any post-merge release ships the same product on both platforms. The visible expression of this decision in PLANNING.md is the "Android device test pending" note in section 6 and the Built-on-branch labels across Phase A / Phase B / Phase D / Phase E.
+### Parity-gated merge for codex/react-native-android (one-time exit move)
+**Decision:** Defer merging `codex/react-native-android` into `main` until iOS and Android both pass smoke validation on the branch's current state. The merge happens as one milestone landing the Supabase migration + Android RN app + accumulated iOS features all at once.
+**Scope:** This decision applies to the *current* branch only. It is **not** the ongoing development model — see the next entry for that.
+**Options considered:** Merge now without validation; surgical commit-splitting to land Supabase first and Android later; one-shot validate-then-merge (chosen).
+**Reason:** Validating Android requires iOS as the reference behavior, so device-testing has to happen on a branch where both are aligned. The branch is too entangled to split surgically — Supabase, RN app, and iOS feature commits are interleaved across 39 commits. Cleanest exit: validate once, land once, then never let a branch get this big again.
+
+### Trunk-based development with parity-by-commit (ongoing model)
+**Decision:** Going forward, every feature is a short-lived branch off `main`, merged within days via PR. Foundation work merges first; features stack on trunk, never on each other. For multi-platform features, parity is enforced **per-commit** — a PR ships every supported platform in the same commit (or paired commits in the same PR) — not via long-lived parity branches.
+**Options considered:** GitFlow (develop / release / main branches); long-lived integration branches with periodic parity merges (status quo, what created `codex/react-native-android`); trunk-based with parity-by-commit (chosen).
+**Reason:** Long-lived integration branches accumulate work that becomes harder to land. `codex/react-native-android` ended up holding Supabase migration + Android RN app + iOS feature parity + ongoing work, none of which finish independently — and it took weeks of stacking before the entanglement was visible. Trunk-based keeps `main` always shippable, branches cognitively light, and merge risk small. Parity-by-commit replaces parity-by-branch: instead of holding back `main` until a parity batch is ready, every PR is required to ship every platform. Operational rules captured in `CLAUDE.md` under "Branching workflow."
 
