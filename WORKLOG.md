@@ -32,6 +32,26 @@ Use this file to keep daily planning and end-of-day progress visible.
 
 ---
 
+## 2026-05-01 → 2026-05-02 (session 4)
+
+### Done
+- Researched the cooking / pantry / meal-planning app landscape (SuperCook, Plant Jammer, DishGen/ChefGPT, Samsung Food, Mealime, Paprika, AnyList, Eat This Much, PlateJoy [shut down 2025], MyFitnessPal, Cronometer)
+- Identified Cookya's three closest competitors: Samsung Food (broadest features), Paprika (closest pantry depth), DishGen/ChefGPT (closest AI generation)
+- Identified Cookya's defensible differentiators: expiry-bucket pantry as recommendation primitive, decrement-on-cook with safe-quantity validation, near-miss grocery suggestions, purchase→pantry confirmation loop, protein-gap reranker against live pantry
+- Identified table-stakes gaps: URL recipe import, household sharing, photo-based pantry add, voice-add, grocery delivery integrations
+- Wrote `docs/COMPETITIVE.md`: full competitor profiles, comparison matrix, UI/UX references with store links and concrete patterns to study (and anti-patterns to avoid), 9 patterns synthesized for Android rewrite, 4 strategic moves
+- Added market-context pointer to `PLANNING.md` so the new doc isn't orphaned
+
+### Commits (session 4)
+- *(pending — competitive analysis doc + PLANNING pointer)*
+
+### Carry Forward
+- Strategic moves from `docs/COMPETITIVE.md` are recommendations, not commitments — when one is decided, capture rationale in `DECISIONS.md` and scope/timing in `PLANNING.md`
+- Likely Phase D additions worth considering: URL recipe import + photo-based pantry add (cheap credibility unlocks for Android launch)
+- Existing carry-forward from session 3 still open (Supabase project setup)
+
+---
+
 ## 2026-04-22 (session 3)
 
 ### Done

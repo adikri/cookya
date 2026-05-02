@@ -2,6 +2,8 @@
 
 > Read this file before starting any task. Treat it as the current product and engineering source of truth. Work one feature at a time, keep planning and implementation explicit, and commit at clean checkpoints with complete commit messages.
 
+> **Market context:** see `docs/COMPETITIVE.md` for the competitive landscape, UI/UX references for the Android rewrite, and strategic positioning. Refresh that doc when a major competitor ships a category-shifting feature.
+
 ---
 
 ## 1. Product Vision
