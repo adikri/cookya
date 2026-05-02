@@ -9,7 +9,15 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://ckvltoivakyyosyqtnqm.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNrdmx0b2l2YWt5eW9zeXF0bnFtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4NjQ2MDYsImV4cCI6MjA5MjQ0MDYwNn0.-m1WaqCSakGyZpObp5w0q5UoAh0iJ5fA2iPQOMDrReA",
+        "EXPO_PUBLIC_WORKER_URL": "https://cookya-recipe-relay.cookya-relay.workers.dev"
+      }
     },
     "production": {
       "autoIncrement": true
