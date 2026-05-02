@@ -42,3 +42,12 @@ Format: date · decision · options considered · reason.
 **Options considered:** Nutrition-aware sorting; separate "high protein" section; macros only in detail.
 **Reason:** Readiness-first ordering is the core value of the saved hub. Overriding it with nutrition would make the hub less predictable and defeat its primary purpose. Showing macros inline gives the user the information without changing the structure they rely on.
 
+---
+
+## 2026-05-02
+
+### Parity-gated merge for codex/react-native-android
+**Decision:** Defer merging `codex/react-native-android` into `main` until iOS and Android ship the same feature set. New features land on the branch touching both platforms in lockstep. The merge to main happens as one parity-aligned snapshot.
+**Options considered:** Merge now and continue building feature-by-feature on main; merge in pieces (Supabase migration first, RN app later); keep the branch as the integration line until parity holds (current).
+**Reason:** Validating Android requires iOS as the reference behavior — when a flow works differently on the two platforms, it's not clear which is correct. Merging early would force iOS-on-main to absorb the branch's iOS state, but if Android still lags on a feature the next release would ship a broken parity story. Holding the merge until both platforms are aligned guarantees Android device validation can treat iOS as the truth, and that any post-merge release ships the same product on both platforms. The visible expression of this decision in PLANNING.md is the "Android device test pending" note in section 6 and the Built-on-branch labels across Phase A / Phase B / Phase D / Phase E.
+
