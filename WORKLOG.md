@@ -52,8 +52,9 @@ Use this file to keep daily planning and end-of-day progress visible.
   - Diagnosed the long-lived-branch problem: foundation work (Supabase migration) entangled with feature work, blocked from merging to main, then everything Android-dependent stacked on top, then a parity gate compounded it.
   - Locked plan = **option A**: validate `codex/react-native-android` once on real Android device via EAS APK, merge as one milestone, then go trunk-based with parity-by-commit forever after.
   - Captured the new ongoing model in `CLAUDE.md` ("Branching workflow") and `DECISIONS.md` (new entry: trunk-based with parity-by-commit). Reframed the existing parity-gate decision as a one-time exit move so future sessions don't reapply it.
-  - Discussed Q1 (sibling-equal `ios/` `mobile/` `web/` `shared/` layout) — deferred until after the big merge lands. Discussed web platform — deferred until after Android Play Store launch. Neither captured in DECISIONS yet; will be captured when committed to.
-  - Discussed Q2 (EAS Build → APK as the partner-distribution mechanism) — full step-by-step provided in conversation; will become an actual `infra/eas-android-distribution` slice next session.
+  - Discussed Q1 (sibling-equal `ios/` `mobile/` `web/` `shared/` layout) — deferred until after the big merge lands. Captured as **PLANNING.md Phase F** with Later items so the aspiration doesn't ghost-fade.
+  - Discussed web platform — deferred until after Android Play Store launch. Captured as **PLANNING.md Phase G** with use case (focus mode, bulk grocery from spreadsheet, partner accessibility) so the rationale survives.
+  - Discussed Q2 (EAS Build → APK for partner now, AAB → Play Console later) — full step-by-step in conversation; **DECISIONS.md** entry locked in the chosen path with options considered and reasoning. Implementation tracked as slice 1 in carry-forward.
 
 ### Commits (session 4)
 - `68f6507` Add docs/COMPETITIVE.md: cooking-app landscape and UI/UX reference

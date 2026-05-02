@@ -207,6 +207,32 @@ Branch plan: `codex/nutrition-layer` (model + schema) → `codex/nutrition-home`
 | Household accounts / shared pantry | **Later** | After Supabase is in place. Key feature for partner sharing. |
 | iOS App Store distribution | **Later** | Requires paid Apple Developer account ($99/yr) — deferred. |
 
+### Phase F — Repository structure unification
+**Goal:** sibling-equal multi-platform layout. iOS, Android, and a future web client live as peers — no platform privileged at the repo root.
+
+**Trigger:** after `codex/react-native-android` merges to main (do the restructure once on a unified codebase) and *before* adding the web client (so web doesn't force a second restructure).
+
+| Item | Status | Notes |
+|------|--------|-------|
+| Move iOS Swift code to `ios/` | **Later** | Currently at root: `cookya/`, `cookya.xcodeproj/`, `cookyaTests/`, `cookyaUITests/`. Move all four under `ios/`. Rewrite paths in `cookya.xcodeproj/project.pbxproj`, `scripts/build-sim.sh`, `scripts/test-sim.sh`, `scripts/test-quick.sh`, `scripts/build-device.sh`, plus references in `CLAUDE.md`, `PLANNING.md`, `README.md`, `.githooks/`. One large noisy commit, no behavior change. |
+| Add `shared/` for cross-platform contracts | **Later** | TypeScript types codegenned via `supabase gen types typescript`, API contracts, category/unit constants. Currently `mobile/types/index.ts` redeclares Swift models by hand — drift risk. |
+| Reorganize `scripts/` by platform | **Later** | iOS-specific scripts under `scripts/ios/`; shared utilities at `scripts/`. |
+
+### Phase G — Web client
+**Goal:** browser access to a Cookya account when phone use is impractical (focus mode, accessibility, partner shared use, bulk grocery entry from a planning spreadsheet).
+
+**Use case (from session 4 discussion):** "I'm in deep work, phone is in another room. I just remembered I want to cook something tonight — let me add the missing ingredient to grocery from my browser."
+
+**Trigger:** after Phase D Android Play Store launch. Reason: three platforms before any has real users is over-investment. Prove the model on Android with real users → expand. Phase F (the `web/` directory) is a prerequisite.
+
+| Item | Status | Notes |
+|------|--------|-------|
+| Web shell (Next.js or Vite + React) | **Later** | Auth via Supabase web SDK (already supported by `@supabase/supabase-js`). |
+| Pantry + grocery CRUD on web | **Later** | Same Supabase tables, same RLS — frontend-only addition. |
+| Excel/CSV grocery import | **Later** | User-cited use case: bulk grocery list from a planning spreadsheet. |
+| Photo upload for grocery items | **Later** | Drop a photo → CV identifies items → confirm before commit. Same pattern as the planned mobile fridge-snap. |
+| Recipe view on web | **Later** | Read-only first; cooking mode optional. |
+
 ### Recommended near-term order
 
 1. ~~`codex/nutrition-layer`~~ **Done** (on main)
