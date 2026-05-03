@@ -18,11 +18,13 @@ export default function SignUpScreen() {
       Alert.alert('Error', 'Passwords do not match')
       return
     }
-    try {
-      await signUp(email, password)
-      // Auth guard in _layout.tsx detects isNewUser and navigates to profile tab
-    } catch (err) {
-      Alert.alert('Sign up failed', (err as Error).message)
+    // authStore.signUp catches errors internally and stores them in state.error
+    // (it never re-throws), so we read post-await state instead of try/catch.
+    // On success, _layout.tsx auth guard detects isNewUser and navigates to profile tab.
+    await signUp(email, password)
+    const state = useAuthStore.getState()
+    if (!state.isSignedIn) {
+      Alert.alert('Sign up failed', state.error || 'Unknown error. Please try again.')
     }
   }
 

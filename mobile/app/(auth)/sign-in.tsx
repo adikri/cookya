@@ -14,11 +14,14 @@ export default function SignInScreen() {
       Alert.alert('Error', 'Please fill in all fields')
       return
     }
-    try {
-      await signIn(email, password)
+    // authStore.signIn catches errors internally and stores them in state.error
+    // (it never re-throws), so we read post-await state instead of try/catch.
+    await signIn(email, password)
+    const state = useAuthStore.getState()
+    if (state.isSignedIn) {
       router.replace('/(tabs)')
-    } catch (err) {
-      Alert.alert('Sign in failed', (err as Error).message)
+    } else {
+      Alert.alert('Sign in failed', state.error || 'Unknown error. Please try again.')
     }
   }
 
