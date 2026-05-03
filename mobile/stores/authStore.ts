@@ -1,5 +1,11 @@
 import { create } from 'zustand'
 import { supabase } from '../services/supabase'
+import { usePantryStore } from './pantryStore'
+import { useGroceryStore } from './groceryStore'
+import { useProfileStore } from './profileStore'
+import { useSavedRecipeStore } from './savedRecipeStore'
+import { useCookedMealStore } from './cookedMealStore'
+import { useWeeklyPlanStore } from './weeklyPlanStore'
 
 interface AuthState {
   isLoading: boolean
@@ -52,6 +58,14 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       await supabase.auth.signOut()
       set({ isSignedIn: false, email: null })
+      // Clear all per-user data so the next signed-in user doesn't see stale state.
+      // Without this, partner saw Adi's profile/pantry/etc. after he signed out and she signed in.
+      usePantryStore.getState().reset()
+      useGroceryStore.getState().reset()
+      useProfileStore.getState().reset()
+      useSavedRecipeStore.getState().reset()
+      useCookedMealStore.getState().reset()
+      useWeeklyPlanStore.getState().reset()
     } catch (err) {
       set({ error: (err as Error).message })
     } finally {

@@ -10,6 +10,7 @@ interface SavedRecipeState {
   saveRecipe: (recipe: Recipe, userId: string, profileId: string, profileName: string) => Promise<void>
   toggleFavorite: (id: string, current: boolean) => Promise<void>
   deleteRecipe: (id: string) => Promise<void>
+  reset: () => void
 }
 
 export const useSavedRecipeStore = create<SavedRecipeState>((set, get) => ({
@@ -81,4 +82,6 @@ export const useSavedRecipeStore = create<SavedRecipeState>((set, get) => ({
       set({ recipes: prev, error: (err as Error).message })
     }
   },
+
+  reset: () => set({ recipes: [], isLoading: false, error: null }),
 }))

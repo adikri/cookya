@@ -8,6 +8,7 @@ interface ProfileState {
   error: string | null
   fetchProfile: () => Promise<void>
   upsertProfile: (updates: Partial<Omit<UserProfile, 'id' | 'user_id' | 'created_at' | 'updated_at'>>) => Promise<void>
+  reset: () => void
 }
 
 export const useProfileStore = create<ProfileState>((set, get) => ({
@@ -57,4 +58,6 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       set({ error: (err as Error).message })
     }
   },
+
+  reset: () => set({ profile: null, isLoading: false, error: null }),
 }))

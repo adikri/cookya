@@ -10,6 +10,7 @@ interface CookedMealState {
   error: string | null
   fetchToday: () => Promise<void>
   logCooked: (recipe: Recipe, userId: string, profileId: string, profileName: string) => Promise<void>
+  reset: () => void
 }
 
 function startOfToday(): string {
@@ -78,4 +79,6 @@ export const useCookedMealStore = create<CookedMealState>((set, get) => ({
       set({ error: (err as Error).message })
     }
   },
+
+  reset: () => set({ records: [], todayCalories: 0, todayProteinG: 0, isLoading: false, error: null }),
 }))

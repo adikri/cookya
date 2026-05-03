@@ -9,6 +9,7 @@ interface PantryState {
   fetchItems: () => Promise<void>
   addItem: (name: string, quantity: string, category: string, expiryDate?: string | null) => Promise<void>
   deleteItem: (id: string) => Promise<void>
+  reset: () => void
 }
 
 export const usePantryStore = create<PantryState>((set, get) => ({
@@ -71,4 +72,6 @@ export const usePantryStore = create<PantryState>((set, get) => ({
       set({ error: (err as Error).message })
     }
   },
+
+  reset: () => set({ items: [], isLoading: false, error: null }),
 }))

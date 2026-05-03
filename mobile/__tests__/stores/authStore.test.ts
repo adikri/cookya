@@ -1,4 +1,10 @@
 import { useAuthStore } from '../../stores/authStore'
+import { usePantryStore } from '../../stores/pantryStore'
+import { useGroceryStore } from '../../stores/groceryStore'
+import { useProfileStore } from '../../stores/profileStore'
+import { useSavedRecipeStore } from '../../stores/savedRecipeStore'
+import { useCookedMealStore } from '../../stores/cookedMealStore'
+import { useWeeklyPlanStore } from '../../stores/weeklyPlanStore'
 
 jest.mock('../../services/supabase', () => ({
   supabase: {
@@ -121,5 +127,29 @@ describe('signOut', () => {
 
     expect(useAuthStore.getState().isSignedIn).toBe(false)
     expect(useAuthStore.getState().email).toBeNull()
+  })
+
+  // Regression: without this, partner saw Adi's profile/pantry/etc. after he signed out and she signed in.
+  it('resets all per-user data stores so the next signed-in user does not see stale data', async () => {
+    usePantryStore.setState({ items: [{ id: '1' } as any] })
+    useGroceryStore.setState({ items: [{ id: '2' } as any] })
+    useProfileStore.setState({ profile: { id: '3' } as any })
+    useSavedRecipeStore.setState({ recipes: [{ id: '4' } as any] })
+    useCookedMealStore.setState({ records: [{ id: '5' } as any], todayCalories: 800, todayProteinG: 50 })
+    useWeeklyPlanStore.setState({ meals: [{ id: '6' } as any] })
+
+    useAuthStore.setState({ isSignedIn: true, email: 'adi@example.com', isLoading: false, error: null })
+    mockAuth.signOut.mockResolvedValue({ error: null } as any)
+
+    await useAuthStore.getState().signOut()
+
+    expect(usePantryStore.getState().items).toEqual([])
+    expect(useGroceryStore.getState().items).toEqual([])
+    expect(useProfileStore.getState().profile).toBeNull()
+    expect(useSavedRecipeStore.getState().recipes).toEqual([])
+    expect(useCookedMealStore.getState().records).toEqual([])
+    expect(useCookedMealStore.getState().todayCalories).toBe(0)
+    expect(useCookedMealStore.getState().todayProteinG).toBe(0)
+    expect(useWeeklyPlanStore.getState().meals).toEqual([])
   })
 })

@@ -12,6 +12,7 @@ interface WeeklyPlanState {
   addMeal: (savedRecipe: SavedRecipe, userId: string) => Promise<void>
   removeMeal: (id: string) => Promise<void>
   clearAll: () => Promise<void>
+  reset: () => void
 }
 
 export const useWeeklyPlanStore = create<WeeklyPlanState>((set, get) => ({
@@ -79,4 +80,6 @@ export const useWeeklyPlanStore = create<WeeklyPlanState>((set, get) => ({
       set({ meals: prev, error: (err as Error).message })
     }
   },
+
+  reset: () => set({ meals: [], isLoading: false, error: null }),
 }))

@@ -10,6 +10,7 @@ interface GroceryState {
   addItem: (name: string, quantity: string, category: string, note?: string) => Promise<void>
   markPurchased: (id: string, item: GroceryItem) => Promise<void>
   deleteItem: (id: string) => Promise<void>
+  reset: () => void
 }
 
 export const useGroceryStore = create<GroceryState>((set, get) => ({
@@ -104,4 +105,6 @@ export const useGroceryStore = create<GroceryState>((set, get) => ({
       set({ error: (err as Error).message })
     }
   },
+
+  reset: () => set({ items: [], isLoading: false, error: null }),
 }))
