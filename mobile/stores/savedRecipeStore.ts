@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { supabase } from '../services/supabase'
+import { generateId } from '../services/id'
 import { SavedRecipe, Recipe } from '../types'
 
 interface SavedRecipeState {
@@ -42,7 +43,7 @@ export const useSavedRecipeStore = create<SavedRecipeState>((set, get) => ({
       const { data, error } = await supabase
         .from('saved_recipes')
         .insert({
-          id: crypto.randomUUID(),
+          id: generateId(),
           user_id: userId,
           recipe,
           profile_id: profileId,

@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { supabase } from '../services/supabase'
+import { generateId } from '../services/id'
 import { UserProfile } from '../types'
 
 interface ProfileState {
@@ -43,7 +44,7 @@ export const useProfileStore = create<ProfileState>((set, get) => ({
       const existing = get().profile
       const now = new Date().toISOString()
       const record: Partial<UserProfile> = {
-        ...(existing ?? { id: crypto.randomUUID(), created_at: now }),
+        ...(existing ?? { id: generateId(), created_at: now }),
         ...updates,
         user_id: user.id,
         updated_at: now,

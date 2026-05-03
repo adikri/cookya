@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { supabase } from '../services/supabase'
+import { generateId } from '../services/id'
 import { CookedMealRecord, Recipe } from '../types'
 
 interface CookedMealState {
@@ -52,7 +53,7 @@ export const useCookedMealStore = create<CookedMealState>((set, get) => ({
     set({ error: null })
     try {
       const record = {
-        id: crypto.randomUUID(),
+        id: generateId(),
         user_id: userId,
         cooked_at: new Date().toISOString(),
         profile_id: profileId,

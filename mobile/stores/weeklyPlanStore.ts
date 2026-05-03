@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { supabase } from '../services/supabase'
+import { generateId } from '../services/id'
 import { WeeklyPlanMeal, SavedRecipe } from '../types'
 
 const MAX_MEALS = 7
@@ -43,7 +44,7 @@ export const useWeeklyPlanStore = create<WeeklyPlanState>((set, get) => ({
     set({ error: null })
     try {
       const meal = {
-        id: crypto.randomUUID(),
+        id: generateId(),
         user_id: userId,
         saved_recipe_id: savedRecipe.id,
         recipe_title: savedRecipe.recipe.title,

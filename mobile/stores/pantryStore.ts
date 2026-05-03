@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { supabase } from '../services/supabase'
+import { generateId } from '../services/id'
 import { PantryItem } from '../types'
 
 interface PantryState {
@@ -41,7 +42,7 @@ export const usePantryStore = create<PantryState>((set, get) => ({
       const { data, error } = await supabase
         .from('pantry_items')
         .insert({
-          id: crypto.randomUUID(),
+          id: generateId(),
           user_id: user.id,
           name,
           quantity_text: quantity,
